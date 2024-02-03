@@ -1,9 +1,15 @@
 import { Router } from "express";
 import userRoute from "./routes/userRoute.js";
+import connectToDB from "../utils/database.js";
 const router = Router();
 
-router.get("/", (_, res) => {
-  res.status(201).json({ message: "Connected to Backend!" });
+router.get("/", async (_, res) => {
+  try {
+    await connectToDB();
+    res.status(201).json({ message: "Connected to Backend!" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // routes
