@@ -1,5 +1,6 @@
 import connectToDB from "../../utils/database.js";
 import User from "../../models/user.js";
+import jwt from "jsonwebtoken";
 
 import express from "express";
 const router = express.Router();
@@ -7,6 +8,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   const { email, password, username } = req.body;
   console.log(email, password, username);
+
   try {
     await connectToDB();
     // Find the user by email or username
@@ -30,8 +32,15 @@ router.post("/", async (req, res) => {
         .status(401)
         .json({ message: "Invalid email/username or password" });
     }
+    // User is authenticated, create a JWT token
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET_KEY || "your-secret-key",
+      {
+        expiresIn: "1h",
+      }
+    );
 
-    // User is authenticated, you can create a JWT token or set a session
     // For simplicity, we're just sending a success message here
     return res.status(200).json({
       message: "Login successful",
@@ -41,6 +50,7 @@ router.post("/", async (req, res) => {
         email: user.email,
         // Include other user data as needed
       },
+      token,
     });
   } catch (error) {
     console.error(error);
