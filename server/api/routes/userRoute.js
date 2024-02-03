@@ -16,7 +16,7 @@ router.get("/:username", authMiddleware, async (req, res) => {
     let user = await User.findOne({ username: username });
 
     if (!user) {
-      return res.status(401).send("User not Found!");
+      return res.status(404).json({ error: "User not found" });
     }
     // ? not completed
     // todo: - hide user private data
@@ -59,7 +59,7 @@ router.put("/update/:user_id", authMiddleware, async (req, res) => {
       await user.save();
       return res.json({ message: "User profile updated successfully", user });
     } else {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ error: "Unauthorized" });
     }
   } catch (error) {
     console.error(error);
