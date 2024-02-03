@@ -5,16 +5,20 @@ const authMiddleware = (req, res, next) => {
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+      //   return res.status(401).json({ message: "Unauthorized" });
+      req.authorized = false;
 
-    const decodedToken = jwt.verify(
-      token,
-      process.env.JWT_SECRET_KEY || "your-secret-key"
-    );
-    req.userId = decodedToken.userId;
-    console.log("middleware", req.userId);
-    next();
+      next();
+    } else {
+      const decodedToken = jwt.verify(
+        token,
+        process.env.JWT_SECRET_KEY || "your-secret-key"
+      );
+      req.userId = decodedToken.userId;
+      req.authorized = true;
+
+      next();
+    }
   } catch (error) {
     console.error(error);
     return res.status(401).json({ message: "Unauthorized" });

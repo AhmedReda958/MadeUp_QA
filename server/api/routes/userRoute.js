@@ -17,10 +17,22 @@ router.get("/:username", authMiddleware, async (req, res) => {
     if (!user) {
       return res.status(401).send("User not Found!");
     }
-    return res.json(user);
+    // ? not completed
+    // todo: - hide
+    // if user logedin
+    if (req.authorized) {
+      // his own profile
+      if (req.userId === user._id.valueOf()) {
+        return res.json(user);
+      }
+
+      return res.json(user);
+    } else {
+      return res.json(user);
+    }
   } catch (error) {
     console.error(error);
-    return new res.status(500).send("Internal Server Error");
+    return res.status(500).send("Internal Server Error");
   }
 });
 
