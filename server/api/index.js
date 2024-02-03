@@ -1,6 +1,7 @@
 import { Router } from "express";
-import userRoute from "./routes/userRoute.js";
 import loginRoute from "./routes/loginRoute.js";
+import userRoute from "./routes/userRoute.js";
+import messageRoute from "./routes/messageRoute.js";
 import connectToDB from "../utils/database.js";
 const router = Router();
 
@@ -14,7 +15,8 @@ router.get("/", async (_, res) => {
 });
 
 // routes
-router.use("/user", userRoute);
 router.use("/login", loginRoute);
+router.use("/user", userRoute);
+router.use("/user", messageRoute);
 
 export default router;
