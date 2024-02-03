@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
       { userId: user._id },
       process.env.JWT_SECRET_KEY || "your-secret-key",
       {
-        expiresIn: "1h",
+        expiresIn: "30d",
       }
     );
 

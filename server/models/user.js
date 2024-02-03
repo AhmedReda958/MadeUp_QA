@@ -12,7 +12,7 @@ const userSchema = new Schema(
       unique: [true, "Username must be unique"],
       trim: true, // Remove leading/trailing whitespaces
       match: [
-        /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+        /^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
         "Username invalid, it should contain 8-20 alphanumeric letters and be unique!",
       ],
     },
