@@ -28,7 +28,7 @@ const SendMessageFrom = ({ username }) => {
   };
 
   return (
-    <>
+    <div className="mt-5">
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
@@ -40,7 +40,7 @@ const SendMessageFrom = ({ username }) => {
           </span>
         </button>
       ) : (
-        <div className="mt-5">
+        <>
           <textarea
             name=""
             id=""
@@ -51,7 +51,7 @@ const SendMessageFrom = ({ username }) => {
 
           <button
             onClick={sendMessage}
-            className="w-full mt-2 px-8 py-4  text-center bg-alt-dark disabled:bg-alt text-lg text-white rounded-2xl"
+            className="w-full mt-3 px-8 py-3  text-center bg-alt-dark disabled:bg-alt text-lg text-white rounded-2xl"
             disabled={MsgLoading}
           >
             Send anonymously
@@ -63,9 +63,9 @@ const SendMessageFrom = ({ username }) => {
               )}
             </span>
           </button>
-        </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
 
