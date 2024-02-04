@@ -6,3 +6,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.text-maincolor {
+  @apply text-body-alt dark:text-secondary-alt;
+}
+.text-altcolor {
+  @apply text-body dark:text-secondary;
+}
+.bg-altcolor {
+  @apply bg-light-alt dark:bg-dark-alt;
+}
+.bg-maincolor {
+  @apply bg-light  dark:bg-dark;
+}

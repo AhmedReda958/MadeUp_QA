@@ -14,16 +14,19 @@ const useAxios = (
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setloading] = useState(true);
+  const [statusCode, setStatusCode] = useState(true);
 
   const fetchData = () => {
     axios[method](url, headers, JSON.parse(body))
       .then((res) => {
         setResponse(res.data);
+        setStatusCode(res.status);
         callback(res);
       })
       .catch((err) => {
         setError(err.response.data.error);
-        console.log(err.message);
+        setStatusCode(err.response.status);
+        console.error(err.message);
       })
       .finally(() => {
         setloading(false);
@@ -34,7 +37,7 @@ const useAxios = (
     fetchData();
   }, [method, url, body, headers]);
 
-  return { response, error, loading };
+  return { response, error, loading, statusCode };
 };
 
 export default useAxios;
