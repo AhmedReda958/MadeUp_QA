@@ -32,7 +32,7 @@ const SendMessageFrom = ({ username }) => {
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
-          className="w-full mt-2 py-2  text-center bg-altcolor text-alt   rounded-2xl"
+          className="w-full mt-2 py-2  text-center bg-altcolor text-alt   rounded-2xl shadow"
         >
           Send Message
           <span className="ms-3 ">
@@ -45,13 +45,13 @@ const SendMessageFrom = ({ username }) => {
             name=""
             id=""
             ref={messageRef}
-            className="w-full min-h-28 text-altcolor bg-light-alt dark:bg-dark-alt py-4 px-6 rounded-2xl "
+            className="w-full min-h-28 text-altcolor bg-light-alt dark:bg-dark-alt py-4 px-6 rounded-2xl shadow-inner"
             placeholder="Ask a question."
           ></textarea>
 
           <button
             onClick={sendMessage}
-            className="w-full mt-3 px-8 py-3  text-center bg-alt-dark disabled:bg-alt text-lg text-white rounded-2xl"
+            className="w-full mt-3 px-8 py-3  text-center bg-alt-dark disabled:bg-alt text-lg text-white rounded-2xl shadow-lg"
             disabled={MsgLoading}
           >
             Send anonymously

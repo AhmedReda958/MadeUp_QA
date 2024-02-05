@@ -4,7 +4,7 @@ const links = [
   { to: "/", icon: "fa-compass" },
   { to: "/notification", icon: "fa-bell" },
   { to: "/messages", icon: "fa-envelope" },
-  { to: "/profile", icon: "fa-user" },
+  { to: "/ahmedreda958", icon: "fa-user" },
 ];
 const iconClasses = "far";
 const activeClasses = "text-alt";

@@ -32,6 +32,10 @@ const UserProfile = () => {
               <div className=" bg-altcolor p-1 rounded-full">
                 <img
                   src={response.profilePicture || MaleProfilePic}
+                  onError={({ currentTarget }) => {
+                    currentTarget.onerror = null; // prevents looping
+                    currentTarget.src = MaleProfilePic;
+                  }}
                   alt="profile pic"
                   className=" h-24 w-24 rounded-full"
                 />
