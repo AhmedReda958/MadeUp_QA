@@ -36,12 +36,12 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // login: (state, action) => {
-    //   state.currentUser = action.payload;
-    // },
-    // logout: (state) => {
-    //   state.currentUser = null;
-    // },
+    login: (state, action) => {
+      state.isLogedin = action.payload;
+    },
+    logout: (state) => {
+      state.isLogedin = null;
+    },
   },
   extraReducers: (builder) => {
     builder

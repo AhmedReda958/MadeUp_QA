@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isDarkTheme: true,
-  isLoggedIn: false,
+  isLogedin: false,
+  isLoginOpened: false,
   user: null,
   notifications: [],
 };
@@ -15,13 +16,11 @@ const appSlice = createSlice({
     setTheme: (state) => {
       state.isDarkTheme = !state.isDarkTheme;
     },
-    userLogin: (state, action) => {
-      state.isLoggedIn = true;
-      state.user = action.payload;
+    openLoginPopup: (state) => {
+      state.isLoginOpened = true;
     },
-    logout: (state) => {
-      state.isLoggedIn = false;
-      state.user = null;
+    closeLoginPopup: (state) => {
+      state.isLoginOpened = false;
     },
     addNotification: (state, action) => {
       state.notifications.push(action.payload);
@@ -35,8 +34,8 @@ const appSlice = createSlice({
 
 export const {
   setTheme,
-  userLogin,
-  logout,
+  openLoginPopup,
+  closeLoginPopup,
   addNotification,
   clearNotifications,
 } = appSlice.actions;
