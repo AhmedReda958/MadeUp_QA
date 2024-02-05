@@ -1,4 +1,4 @@
-const HOST = process.env["HOST"] ?? "localhost",
+const HOST = process.env["HOST"] ?? "0.0.0.0",
   PORT = Number(process.env["PORT"]) || 8000;
 
 import express from "express";
