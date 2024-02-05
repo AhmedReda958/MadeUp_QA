@@ -18,7 +18,7 @@ const Toolbar = () => {
 
   return (
     <div className="bg-light dark:bg-dark-alt dark:text-white fixed bottom-0 left-0 w-full px-4 pt-4 pb-[5px] rounded-t-[30px]">
-      <div className="bg-light-alt dark:bg-dark w-full h-12 text-xl rounded-t-[20px] rounded-b-[30px] flex items-center justify-evenly">
+      <div className="bg-light-alt dark:bg-dark w-full h-12 text-xl rounded-t-[20px] rounded-b-[30px] flex items-center justify-around px-4">
         {links.map((link, index) => (
           <NavLink
             key={index}

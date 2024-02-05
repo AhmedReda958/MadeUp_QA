@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isDarkTheme: true,
-  isLogedin: false,
+  isLogedin: true,
   isLoginOpened: false,
   user: null,
   notifications: [],

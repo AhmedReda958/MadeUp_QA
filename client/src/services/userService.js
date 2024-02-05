@@ -3,7 +3,7 @@ import axios from "axios";
 
 const userService = {
   getUserProfile: async (userId) => {
-    const response = await axios.get(`/users/${userId}`);
+    const response = await axios.get(`/user/${userId}`);
     return response.data;
   },
 
