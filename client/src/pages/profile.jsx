@@ -1,11 +1,8 @@
 // UserProfile.js
 
 import useAxios from "@/utils/hooks/useAxios";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getUserProfile } from "@/redux/slices/userSlice";
-
 import MaleProfilePic from "@/assets/imgs/MaleProfilePic.png";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
 
@@ -14,28 +11,27 @@ import SendMessageFrom from "@/components/SendMessageFrom";
 const UserProfile = () => {
   const { username } = useParams();
 
-  const dispatch = useDispatch();
-  const appStore = useSelector((state) => state.app);
-  const userStore = useSelector((state) => state.user);
+  const user = useAxios({ url: `/user/${username}` });
 
-  useLayoutEffect(() => {
-    dispatch(getUserProfile(username));
-  }, []);
+  const { response, error, loading } = user;
+  useEffect(() => {
+    console.log(user.response);
+    console.log(user.error);
+    console.log(user.statusCode);
+  }, [loading]);
 
   return (
     <div>
-      {userStore.status != "loading" ? (
-        userStore.status === "failed" ? (
-          <>{userStore.error}</>
+      {!loading ? (
+        error ? (
+          error
         ) : (
           <div>
-            <h1 className="text-base  ms-2 text-end">
-              @{userStore.currentUser.username}
-            </h1>
+            <h1 className="text-base  ms-2 text-end">@{response.username}</h1>
             <div className="flex">
               <div className=" bg-altcolor p-1 rounded-full">
                 <img
-                  src={userStore.currentUser.profilePicture || MaleProfilePic}
+                  src={response.profilePicture || MaleProfilePic}
                   onError={({ currentTarget }) => {
                     currentTarget.onerror = null; // prevents looping
                     currentTarget.src = MaleProfilePic;
@@ -55,8 +51,7 @@ const UserProfile = () => {
             </div>
             <div className="ps-2 mt-1">
               <h2 className="text-altcolor font-bold text-xl flex">
-                {userStore.currentUser.fullName ||
-                  userStore.currentUser.username}
+                {response.fullName || response.username}
 
                 <span
                   style={{
@@ -76,7 +71,7 @@ const UserProfile = () => {
                 />
               </h2>
               <p className="text-body dark:text-secondary-alt text-lg ">
-                {userStore.currentUser.bio}
+                {response.bio}
               </p>
             </div>
             <SendMessageFrom username={username} />
