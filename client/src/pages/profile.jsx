@@ -3,7 +3,7 @@
 import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import MaleProfilePic from "@/assets/imgs/MaleProfilePic.png";
+import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
 
 import SendMessageFrom from "@/components/SendMessageFrom";

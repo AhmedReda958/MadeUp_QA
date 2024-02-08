@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import Toolbar from "./components/toolBar";
+import Toolbar from "./components/Toolbar";
 import { Outlet } from "react-router-dom";
 import LoginPopup from "./components/logingPopup";
 
