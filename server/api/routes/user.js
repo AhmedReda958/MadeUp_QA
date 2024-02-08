@@ -6,16 +6,16 @@ import authMiddleware from "../../middlewares/authMiddleware.js";
 import messageRoute from "./message.js";
 const router = express.Router();
 
+// TODO: handle POST for user creation (register)
+
 // get user data
 router.get("/:username", authMiddleware, async (req, res) => {
   const { username } = req.params;
   try {
     // Find the user by email or username
     let user = await User.findOne({ username: username });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
     // ? not completed
     // todo: - hide user private data
     // if user logedin
@@ -27,6 +27,7 @@ router.get("/:username", authMiddleware, async (req, res) => {
 
       return res.json(user);
     } else {
+      // TODO: hide private info
       return res.json(user);
     }
   } catch (error) {
@@ -35,6 +36,7 @@ router.get("/:username", authMiddleware, async (req, res) => {
   }
 });
 
+// TODO: Change PUT to be PATCH
 // Update user profile route
 router.put("/update/:user_id", authMiddleware, async (req, res) => {
   try {
@@ -64,6 +66,6 @@ router.put("/update/:user_id", authMiddleware, async (req, res) => {
   }
 });
 
-router.use("/:username/message", messageRoute);
+router.use(messageRoute);
 
 export default router;

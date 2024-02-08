@@ -5,6 +5,7 @@ import express from "express";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
+  // TODO: use Basic access authentication credentials (Base 64 <username|email:password>)
   const { email, password, username } = req.body;
   console.log(email, password, username);
 
@@ -14,9 +15,9 @@ router.post("/", async (req, res) => {
       $or: [{ email }, { username }],
     });
 
-    // If user not found, create a new one
+    // If user not found, create a new one, TODO: distinct registration process instead
     if (!user) {
-      // You may want to add additional validation for password strength, etc.
+      // TODO: add additional validation for password strength, etc.
       try {
         user = new User({ username, email, password });
 
