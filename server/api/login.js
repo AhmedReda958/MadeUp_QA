@@ -1,5 +1,5 @@
 const { JWT_SECRET_KEY } = process.env;
-import User from "../../database/models/user.js";
+import User from "../database/models/user.js";
 import jwt from "jsonwebtoken";
 import express from "express";
 const router = express.Router();

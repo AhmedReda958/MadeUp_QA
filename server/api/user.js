@@ -1,8 +1,8 @@
 // routes/user.js
-import User from "../../database/models/user.js";
+import User from "../database/models/user.js";
 
 import express from "express";
-import authMiddleware from "../../middlewares/authMiddleware.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 import messageRoute from "./message.js";
 const router = express.Router();
 

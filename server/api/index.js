@@ -1,6 +1,6 @@
 import { Router } from "express";
-import loginRoute from "./routes/login.js";
-import userRoute from "./routes/user.js";
+import loginRoute from "./login.js";
+import userRoute from "./user.js";
 import { isDBConnected } from "../database/connection.js";
 const router = Router();
 
