@@ -1,16 +1,10 @@
-const HOST = process.env["HOST"] ?? "0.0.0.0",
-  PORT = Number(process.env["PORT"]) || 8000;
-
 import express from "express";
+let app; export default app = express();
 
-const app = express();
+let { HOST, PORT } = process.env;
+if (!HOST) HOST = "0.0.0.0";
+PORT = Number(PORT) || 8000;
 
 app.listen(PORT, HOST, () => {
-  console.log(
-    `Listening on ${
-      HOST == "0.0.0.0" ? `HTTP port ${PORT}` : `http://${HOST}:${PORT}/`
-    }`
-  );
+  console.log(`Listening on http://${HOST == "0.0.0.0" ? "localhost" : HOST}:${PORT}/`);
 });
-
-export default app;
