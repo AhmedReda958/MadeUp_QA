@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
+import { Schema, model, models } from "mongoose";
 
-const { Schema, model, models } = mongoose;
-
-const messageSchema = new Schema({
+export default models.Message || model("Message", new Schema({
   content: {
     type: String,
     required: true,
@@ -32,7 +30,4 @@ const messageSchema = new Schema({
     type: Date,
     default: Date.now,
   }
-});
-
-const Message = models.Message || model("Message", messageSchema);
-export default Message;
+}));

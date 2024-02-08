@@ -1,7 +1,5 @@
-import mongoose from "mongoose";
+import { Schema, model, models } from "mongoose";
 import bcrypt from "bcrypt";
-
-const { Schema, model, models } = mongoose;
 
 const userSchema = new Schema(
   {
@@ -87,6 +85,7 @@ const userSchema = new Schema(
     },
   }
 );
+
 // Indexes
 userSchema.index({ username: 1, email: 1 });
 
@@ -108,6 +107,4 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = models.User || model("User", userSchema);
-
-export default User;
+export default models.User || model("User", userSchema);
