@@ -1,7 +1,6 @@
 import { Router } from "express";
 import loginRoute from "./routes/login.js";
 import userRoute from "./routes/user.js";
-import messageRoute from "./routes/message.js";
 import { isDBConnected } from "../database/connection.js";
 const router = Router();
 
@@ -16,6 +15,5 @@ router.get("/", async (_, res) => {
 // routes
 router.use("/login", loginRoute);
 router.use("/user", userRoute);
-router.use("/message", messageRoute);
 
 export default router;

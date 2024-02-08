@@ -3,6 +3,7 @@ import User from "../../database/models/user.js";
 
 import express from "express";
 import authMiddleware from "../../middlewares/authMiddleware.js";
+import messageRoute from "./message.js";
 const router = express.Router();
 
 // get user data
@@ -62,5 +63,7 @@ router.put("/update/:user_id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+router.use("/:username/message", messageRoute);
 
 export default router;

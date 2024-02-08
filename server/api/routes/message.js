@@ -4,7 +4,7 @@ import Message from "../../database/models/message.js";
 import express from "express";
 const router = express.Router();
 
-router.post("/:username/message", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { content, sender } = req.body;
 
