@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 const { JWT_SECRET_KEY } = process.env;
+import jwt from "jsonwebtoken";
 
 export default (req, res, next) => {
   req.authorized = false;

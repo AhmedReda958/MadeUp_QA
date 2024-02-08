@@ -1,3 +1,4 @@
+const { MONGODB_URI } = process.env;
 import mongoose from "mongoose";
 
 export function isDBConnected() {
@@ -11,7 +12,7 @@ export async function attemptDBConnection() {
   } else {
     try {
       console.error("Connected to the database!");
-      await mongoose.connect(process.env.MONGODB_URI, { dbName: "anon_app" });
+      await mongoose.connect(MONGODB_URI, { dbName: "anon_app" });
     } catch (error) {
       // TODO: log errors
       console.error("Failed to connected to the database.");

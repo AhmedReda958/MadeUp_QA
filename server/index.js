@@ -1,10 +1,8 @@
+import "./env.js";
 import express from "express";
 import app from "./app.js";
 import api from "./api/index.js";
 import cors from "cors";
-import dotenv from "dotenv";
-
-dotenv.config({ path: "./.env" });
 
 // Database connection
 import { attemptDBConnection } from "./database/connection.js";

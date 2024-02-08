@@ -1,6 +1,6 @@
+const { JWT_SECRET_KEY } = process.env;
 import User from "../../database/models/user.js";
 import jwt from "jsonwebtoken";
-
 import express from "express";
 const router = express.Router();
 
@@ -32,11 +32,7 @@ router.post("/", async (req, res) => {
     }
     // User is authenticated, create a JWT token
     const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET_KEY || "your-secret-key",
-      {
-        expiresIn: "30d",
-      }
+      { userId: user._id }, JWT_SECRET_KEY, { expiresIn: "30d" }
     );
 
     // For simplicity, we're just sending a success message here
