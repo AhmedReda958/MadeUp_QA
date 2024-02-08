@@ -16,6 +16,6 @@ router.get("/", async (_, res) => {
 // routes
 router.use("/login", loginRoute);
 router.use("/user", userRoute);
-router.use("/user", messageRoute);
+router.use("/message", messageRoute);
 
 export default router;
