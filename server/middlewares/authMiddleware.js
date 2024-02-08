@@ -1,28 +1,20 @@
 import jwt from "jsonwebtoken";
+const { JWT_SECRET_KEY } = process.env;
 
-const authMiddleware = (req, res, next) => {
+export default (req, res, next) => {
+  req.authorized = false;
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
+    if (!token) return next();
 
-    if (!token) {
-      //   return res.status(401).json({ message: "Unauthorized" });
-      req.authorized = false;
+    const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
+    req.userId = decodedToken.userId;
+    req.authorized = true;
 
-      next();
-    } else {
-      const decodedToken = jwt.verify(
-        token,
-        process.env.JWT_SECRET_KEY || "your-secret-key"
-      );
-      req.userId = decodedToken.userId;
-      req.authorized = true;
-
-      next();
-    }
+    next();
   } catch (error) {
+    // TODO: log errors
     console.error(error);
-    return res.status(401).json({ message: "Unauthorized" });
+    res.status(500).json({ message: "Something went wrong while authenticating." });
   }
-};
-
-export default authMiddleware;
+}
