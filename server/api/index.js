@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", async (_, res) => {
   if (isDBConnected()) {
-    res.status(200).json({ message: "Connected to Backend!" });
+    res.status(200).json({ message: "Available!" });
   } else {
     res.status(500).json({ message: "Something is wrong." });
   }
