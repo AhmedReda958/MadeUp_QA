@@ -1,5 +1,4 @@
-import connectToDB from "../../utils/database.js";
-import User from "../../models/user.js";
+import User from "../../database/models/user.js";
 import jwt from "jsonwebtoken";
 
 import express from "express";
@@ -10,7 +9,6 @@ router.post("/", async (req, res) => {
   console.log(email, password, username);
 
   try {
-    await connectToDB();
     // Find the user by email or username
     let user = await User.findOne({
       $or: [{ email }, { username }],

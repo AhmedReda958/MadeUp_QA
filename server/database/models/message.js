@@ -31,7 +31,7 @@ const messageSchema = new Schema({
   timestamp: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
 const Message = models.Message || model("Message", messageSchema);

@@ -1,7 +1,5 @@
 // routes/user.js
-
-import connectToDB from "../../utils/database.js";
-import User from "../../models/user.js";
+import User from "../../database/models/user.js";
 
 import express from "express";
 import authMiddleware from "../../middlewares/authMiddleware.js";
@@ -11,7 +9,6 @@ const router = express.Router();
 router.get("/:username", authMiddleware, async (req, res) => {
   const { username } = req.params;
   try {
-    await connectToDB();
     // Find the user by email or username
     let user = await User.findOne({ username: username });
 
@@ -41,7 +38,6 @@ router.get("/:username", authMiddleware, async (req, res) => {
 router.put("/update/:user_id", authMiddleware, async (req, res) => {
   try {
     const updatedProfile = req.body; // Assuming you send the updated profile details in the request body
-    await connectToDB();
 
     // Find the user by ID
     const user = await User.findById(req.params.user_id);

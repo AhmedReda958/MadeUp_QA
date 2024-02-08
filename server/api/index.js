@@ -2,15 +2,14 @@ import { Router } from "express";
 import loginRoute from "./routes/loginRoute.js";
 import userRoute from "./routes/userRoute.js";
 import messageRoute from "./routes/messageRoute.js";
-import connectToDB from "../utils/database.js";
+import { isDBConnected } from "../database/connection.js";
 const router = Router();
 
 router.get("/", async (_, res) => {
-  try {
-    await connectToDB();
-    res.status(201).json({ message: "Connected to Backend!" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  if (isDBConnected()) {
+    res.status(200).json({ message: "Connected to Backend!" });
+  } else {
+    res.status(500).json({ message: "Something is wrong." });
   }
 });
 

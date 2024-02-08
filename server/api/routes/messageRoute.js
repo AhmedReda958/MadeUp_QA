@@ -1,14 +1,11 @@
-import connectToDB from "../../utils/database.js";
-import User from "../../models/user.js";
-import Message from "../../models/message.js";
+import User from "../../database/models/user.js";
+import Message from "../../database/models/message.js";
 
 import express from "express";
 const router = express.Router();
 
 router.post("/:username/message", async (req, res) => {
   try {
-    await connectToDB();
-
     const { content, sender } = req.body;
 
     // Find receiver user by username

@@ -6,6 +6,10 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });
 
+// Database connection
+import { attemptDBConnection } from "./database/connection.js";
+attemptDBConnection();
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
