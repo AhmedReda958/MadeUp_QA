@@ -1,7 +1,7 @@
 import { Router } from "express";
-import loginRoute from "./routes/loginRoute.js";
-import userRoute from "./routes/userRoute.js";
-import messageRoute from "./routes/messageRoute.js";
+import loginRoute from "./routes/login.js";
+import userRoute from "./routes/user.js";
+import messageRoute from "./routes/message.js";
 import { isDBConnected } from "../database/connection.js";
 const router = Router();
 
