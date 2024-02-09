@@ -1,5 +1,5 @@
-import User from "@database/models/user.js";
-import Message from "@database/models/message.js";
+import User from "#database/models/user.js";
+import Message from "#database/models/message.js";
 
 import express from "express";
 const router = express.Router();

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import loginRoute from "./login.js";
 import userRoute from "./user.js";
-import { isDBConnected } from "@database/connection.js";
+import { isDBConnected } from "#database/connection.js";
 const router = Router();
 
 router.get("/", async (_, res) => {

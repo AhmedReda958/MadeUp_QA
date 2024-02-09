@@ -2,7 +2,7 @@ import "./env.js";
 import app from "./app.js";
 import api from "./api/index.js";
 
-import { attemptDBConnection } from "@database/connection.js";
+import { attemptDBConnection } from "#database/connection.js";
 attemptDBConnection();
 
 app.get("/", (req, res) => {
