@@ -63,7 +63,7 @@ async (req, res, next) => { try {
   if (!user) return res.status(404).json({ message: "User not found." });
 
   const message = new Message({
-    content, anonymous: typeof anonymously == 'boolean' ? anonymously : true,
+    content, anonymous: (req.userId && typeof anonymously == 'boolean') ? anonymously : true,
     sender: req.userId || null, receiver: user._id
   });
 
