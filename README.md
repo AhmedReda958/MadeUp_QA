@@ -1,5 +1,5 @@
 # anonMessages
 A mini-project.
 
-# API
+## API
 Check [postman workspace](https://www.postman.com/interstellar-firefly-815063/workspace/anon-app/overview).
