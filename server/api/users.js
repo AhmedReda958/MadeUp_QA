@@ -1,13 +1,15 @@
 import User from "#database/models/user.js";
+import { isValidObjectId } from "mongoose";
 import authMiddleware, { requiredAuthMiddleware } from "../middlewares/authorization.js";
 
 import express from "express";
 const router = express.Router();
 
-router.get("/:username", authMiddleware,
+router.get("/", authMiddleware,
 async (req, res, next) => { try {
-  const { username } = req.params;
-  let user = await User.findOne({ username: username });
+  let { userId, username } = req.query;
+  if (req.userId && !('userId' in req.query || 'username' in req.query)) userId = req.userId;
+  let user = isValidObjectId(userId) ? await User.findById(userId) : await User.findOne({ username: username });
   if (!user) return res.status(404).json({ error: "User not found" });
 
   // if (req.userId == user._id) // TODO: hide private info
