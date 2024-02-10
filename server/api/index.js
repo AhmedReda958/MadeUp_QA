@@ -1,5 +1,5 @@
 import { Router } from "express";
-import loginRoute from "./login.js";
+import signingRoute from "./signing.js";
 import userRoute from "./user.js";
 import { isDBConnected } from "#database/connection.js";
 const router = Router();
@@ -12,8 +12,7 @@ router.get("/", async (_, res) => {
   }
 });
 
-// routes
-router.use("/login", loginRoute);
+router.use(signingRoute);
 router.use("/user", userRoute);
 
 export default router;
