@@ -1,10 +1,15 @@
 import mongoose from "mongoose";
 const { Schema, model, models } = mongoose;
 
-export default models.Message || model("Message", new Schema({
+const messageSchema = new Schema({
   content: {
     type: String,
     required: true,
+  },
+  anonymous: {
+    type: Boolean,
+    required: true,
+    default: true
   },
   sender: {
     type: Schema.Types.ObjectId,
@@ -32,4 +37,6 @@ export default models.Message || model("Message", new Schema({
     type: Date,
     default: Date.now
   }
-}));
+});
+
+export default models.Message || model("Message", messageSchema);
