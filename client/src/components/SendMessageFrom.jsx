@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-const SendMessageFrom = ({ username }) => {
+const SendMessageFrom = ({ userId }) => {
   const messageRef = useRef(null);
   const [showForm, setShowForm] = useState(false);
   const [MsgLoading, setMsgLoading] = useState(false);
@@ -9,7 +9,7 @@ const SendMessageFrom = ({ username }) => {
   const sendMessage = () => {
     setMsgLoading(true);
     axios
-      .post(`/message/send/${username}`, {
+      .post(`/messages/user/${userId}`, { // TODM
         content: messageRef.current.value,
       })
       .then((res) => {

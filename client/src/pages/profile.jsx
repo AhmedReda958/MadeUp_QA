@@ -11,7 +11,7 @@ import SendMessageFrom from "@/components/SendMessageFrom";
 const UserProfile = () => {
   const { username } = useParams();
 
-  const user = useAxios({ url: `/user/${username}` });
+  const user = useAxios({ url: `/users?username=${username}` });
 
   const { response, error, loading } = user;
   useEffect(() => {
@@ -74,7 +74,7 @@ const UserProfile = () => {
                 {response.bio}
               </p>
             </div>
-            <SendMessageFrom username={username} />
+            <SendMessageFrom userId={response._id} />
             <div className="py-4 flex justify-between">
               <div className="text-altcolor font-simibold">
                 Answers 42

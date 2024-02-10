@@ -3,13 +3,13 @@ import axios from "axios";
 
 const userService = {
   getUserProfile: async (userId) => {
-    const response = await axios.get(`/user/${userId}`);
+    const response = await axios.get(`/users?userId=${userId}`);
     return response.data;
   },
 
   updateUserProfile: async (updatedData) => {
     const response = await axios.put(
-      `/users/${updatedData.userId}`,
+      `/users?userId=${updatedData.userId}`,
       updatedData
     );
     return response.data;
