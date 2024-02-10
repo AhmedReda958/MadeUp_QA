@@ -11,61 +11,49 @@ router.post("/login", async (req, res) => {
   authorization = authorization.slice((authMethod).length + 1);
   const [ emailOrUsername, password ] = Buffer.from(authorization, 'base64').toString().split(':');
 
-  try {
-    let user = await User.findOne({
-      $or: [
-        { email: emailOrUsername },
-        { username: emailOrUsername }
-      ]
-    }, { email: 1, username: 1, password: 1 });
+  let user = await User.findOne({
+    $or: [
+      { email: emailOrUsername },
+      { username: emailOrUsername }
+    ]
+  }, { email: 1, username: 1, password: 1 });
 
-    if (!(user && await user.comparePassword(password)))
-    return res.status(401).json({ found: !!user, message: "Invalid email/username or password." });
-    
-    const token = jwt.sign(
-      { userId: user._id }, JWT_SECRET_KEY, { expiresIn: SIGNING_EXPIRY }
-    );
+  if (!(user && await user.comparePassword(password)))
+  return res.status(401).json({ found: !!user, message: "Invalid email/username or password." });
+  
+  const token = jwt.sign(
+    { userId: user._id }, JWT_SECRET_KEY, { expiresIn: SIGNING_EXPIRY }
+  );
 
-    return res.status(200).json({ user, token });
-  } catch (error) {
-    // TODO: log errors
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+  return res.status(200).json({ user, token });
 });
 
 router.post("/register", async (req, res) => {
   const { email, username, password } = req.body;
 
-  try {
-    let user = await User.findOne({
-      $or: [{ email }, { username }],
-    }, { email: 1, username: 1 });
-    
-    if (user) return res.status(409).json({ message: "User exists." });
-    else {
-      // TODO: add additional validation for password strength, etc.
-      user = new User({ username, email, password });
-      await user.save();
-    }
-
-    const token = jwt.sign(
-      { userId: user._id }, JWT_SECRET_KEY, { expiresIn: SIGNING_EXPIRY }
-    );
-
-    return res.status(201).json({ 
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email
-      },
-      token
-    });
-  } catch (error) {
-    // TODO: log errors
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+  let user = await User.findOne({
+    $or: [{ email }, { username }],
+  }, { email: 1, username: 1 });
+  
+  if (user) return res.status(409).json({ message: "User exists." });
+  else {
+    // TODO: add additional validation for password strength, etc.
+    user = new User({ username, email, password });
+    await user.save();
   }
+
+  const token = jwt.sign(
+    { userId: user._id }, JWT_SECRET_KEY, { expiresIn: SIGNING_EXPIRY }
+  );
+
+  return res.status(201).json({ 
+    user: {
+      _id: user._id,
+      username: user.username,
+      email: user.email
+    },
+    token
+  });
 });
 
 export default router;
