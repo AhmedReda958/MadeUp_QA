@@ -3,7 +3,6 @@ import User from "#database/models/user.js";
 
 import express from "express";
 import authMiddleware from "../middlewares/authorization.js";
-import messageRoute from "./message.js";
 const router = express.Router();
 
 // TODO: handle POST for user creation (register)
@@ -65,7 +64,5 @@ router.put("/update/:user_id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-router.use(messageRoute);
 
 export default router;
