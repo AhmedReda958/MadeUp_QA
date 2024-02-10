@@ -18,7 +18,7 @@ async (req, res, next) => { try {
   // ? not completed
   // todo: - hide user private data
   // if user logedin
-  if (req.authorized) {
+  if (req.userId) {
     // his own profile
     if (req.userId === user._id.valueOf()) {
       return res.json(user);
@@ -45,7 +45,7 @@ async (req, res, next) => { try {
   }
 
   // if user logedin && profile owner
-  if (req.authorized && req.userId === user._id.valueOf()) {
+  if (req.userId && req.userId === user._id.valueOf()) {
     // Update user profile fields
     Object.assign(user, updatedProfile);
 
