@@ -16,6 +16,6 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error(error); // TODO: log errors
+  console.error(err); // TODO: log errors
   res.status(500).json({ message: "Internal Server Error" });
 })

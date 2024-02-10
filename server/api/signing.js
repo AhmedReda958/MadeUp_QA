@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 const router = express.Router();
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => { try {
   let authMethod = 'Basic', authorization = req.headers.authorization;
   if (!authorization.startsWith(authMethod)) return res.status(401).json({ message: "Unauthorized." });
   authorization = authorization.slice((authMethod).length + 1);
@@ -26,9 +26,9 @@ router.post("/login", async (req, res) => {
   );
 
   return res.status(200).json({ user, token });
-});
+} catch (err) { next(err); }});
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => { try {
   const { email, username, password } = req.body;
 
   let user = await User.findOne({
@@ -54,6 +54,6 @@ router.post("/register", async (req, res) => {
     },
     token
   });
-});
+} catch (err) { next(err); }});
 
 export default router;

@@ -6,7 +6,8 @@ import authMiddleware, { requiredAuthMiddleware } from "../middlewares/authoriza
 import express from "express";
 const router = express.Router();
 
-router.post("/send/:username", authMiddleware, async (req, res) => {
+router.post("/send/:username", authMiddleware,
+async (req, res, next) => { try {
   const { content, anonymously } = req.body;
 
   const receiver = await User.findOne({ username: req.params.username }, { _id: 1 });
@@ -21,9 +22,10 @@ router.post("/send/:username", authMiddleware, async (req, res) => {
   await message.save();
 
   return res.status(201).json({ message });
-});
+} catch (err) { next(err); }});
 
-router.post("/reply/:messageId", authMiddleware, requiredAuthMiddleware, async (req, res) => {
+router.post("/reply/:messageId", authMiddleware, requiredAuthMiddleware,
+async (req, res, next) => { try {
   let { messageId } = req.params;
   if (!isValidObjectId(messageId)) return res.status(404).json({ message: "Invalid message." });
   
@@ -36,6 +38,6 @@ router.post("/reply/:messageId", authMiddleware, requiredAuthMiddleware, async (
   await Message.updateOne({ _id: messageId }, { $set: { reply } });
 
   return res.status(201).json({ reply });
-});
+} catch (err) { next(err); }});
 
 export default router;

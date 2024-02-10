@@ -8,7 +8,8 @@ const router = express.Router();
 // TODO: handle POST for user creation (register)
 
 // get user data
-router.get("/:username", authMiddleware, async (req, res) => {
+router.get("/:username", authMiddleware,
+async (req, res, next) => { try {
   const { username } = req.params;
   // Find the user by email or username
   let user = await User.findOne({ username: username });
@@ -28,11 +29,12 @@ router.get("/:username", authMiddleware, async (req, res) => {
     // TODO: hide private info
     return res.json(user);
   }
-});
+} catch (err) { next(err); }});
 
 // TODO: Change PUT to be PATCH
 // Update user profile route
-router.put("/update/:user_id", authMiddleware, async (req, res) => {
+router.put("/update/:user_id", authMiddleware,
+async (req, res, next) => { try {
   const updatedProfile = req.body; // Assuming you send the updated profile details in the request body
 
   // Find the user by ID
@@ -53,6 +55,6 @@ router.put("/update/:user_id", authMiddleware, async (req, res) => {
   } else {
     return res.status(401).json({ error: "Unauthorized" });
   }
-});
+} catch (err) { next(err); }});
 
 export default router;
