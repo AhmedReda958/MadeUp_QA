@@ -9,7 +9,7 @@ const SendMessageFrom = ({ username }) => {
   const sendMessage = () => {
     setMsgLoading(true);
     axios
-      .post(`/user/${username}/message`, {
+      .post(`/message/send/${username}`, {
         content: messageRef.current.value,
       })
       .then((res) => {
