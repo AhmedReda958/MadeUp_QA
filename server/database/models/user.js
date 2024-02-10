@@ -46,12 +46,12 @@ const userSchema = new Schema(
     //       ref: "User",
     //     },
     //   ],
-    messages: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
-    ],
+    // messages: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "Message",
+    //   },
+    // ],
     createdAt: {
       type: Date,
       default: Date.now,

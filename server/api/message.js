@@ -1,33 +1,30 @@
 import User from "#database/models/user.js";
 import Message from "#database/models/message.js";
+import authMiddleware from "../middlewares/authorization.js";
 
 import express from "express";
 const router = express.Router();
 
-router.post("/:username/message", async (req, res) => {
+router.post("/:username/message", authMiddleware, async (req, res) => {
   try {
-    const { content, sender } = req.body;
+    const { content, anonymously } = req.body;
 
-    // Find receiver user by username
-    const receiver = await User.findOne({ username: req.params.username });
-    if (!receiver) return res.status(404).send("Receiver not found!");
+    const receiver = await User.findOne({ username: req.params.username }, { _id: 1 });
+    if (!receiver) return res.status(404).json({ message: "Receiver not found." });
 
-    // Create a new message
     const newMessage = new Message({
       content,
-      // If the user is logged in, use their ID as the sender
-      // is that because there could be messages from unknown senders ?
-      sender: sender ? req.user._id : null,
+      sender: (req.authorized && !anonymously) ? req.userId : null,
       receiver: receiver._id
     });
 
-    // Save the new message
     await newMessage.save();
 
-    return res.status(201).send("Message sent successfully!");
+    return res.status(201).json({ message: "Message sent successfully!" });
   } catch (error) {
+    // TODO: log errors
     console.error(error);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
