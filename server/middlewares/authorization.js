@@ -1,13 +1,14 @@
 const { JWT_SECRET_KEY } = process.env;
 import jwt from "jsonwebtoken";
 
-export default (req, res, next) => {
+export default function authMiddleware(req, res, next) {
   req.authorized = false;
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
     if (!token) return next();
 
     const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
+    // TODO: check if changed password after token iat and cancel auth
     req.userId = decodedToken.userId;
     req.authorized = true;
 
@@ -17,4 +18,9 @@ export default (req, res, next) => {
     console.error(error);
     res.status(500).json({ message: "Something went wrong while authenticating." });
   }
+}
+
+export function requiredAuthMiddleware(req, res, next) {
+  if (!req.authorized) return res.status(401).json({ message: "Unauthorized." });
+  next();
 }
