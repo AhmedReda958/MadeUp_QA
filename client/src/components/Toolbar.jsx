@@ -2,19 +2,20 @@ import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { openLoginPopup } from "@/redux/slices/appSlice";
 
-const links = [
-  { to: "/", icon: "fa-compass" },
-  { to: "/notification", icon: "fa-bell" },
-  { to: "/messages", icon: "fa-envelope" },
-  { to: "/ahmedreda958", icon: "fa-user" },
-];
 const iconClasses = "far";
 const activeClasses = "text-alt";
 const pendingClasses = "pending";
 
 const Toolbar = () => {
-  const appStore = useSelector((state) => state.app);
+  const { userInfo, logedin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  const links = [
+    { to: "/", icon: "fa-compass" },
+    { to: "/notification", icon: "fa-bell" },
+    { to: "/messages", icon: "fa-envelope" },
+    { to: `/${userInfo.username}`, icon: "fa-user" },
+  ];
 
   return (
     <div className="bg-light dark:bg-dark-alt dark:text-white fixed bottom-0 left-0 w-full px-4 pt-4 pb-[5px] rounded-t-[30px]">
@@ -24,7 +25,7 @@ const Toolbar = () => {
             key={index}
             to={link.to}
             onClick={(e) => {
-              if (!appStore.isLogedin) {
+              if (!logedin) {
                 e.preventDefault();
                 dispatch(openLoginPopup());
               }
