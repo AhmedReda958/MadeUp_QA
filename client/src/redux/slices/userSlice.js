@@ -35,14 +35,7 @@ export const updateUserProfile = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    login: (state, action) => {
-      state.isLogedin = action.payload;
-    },
-    logout: (state) => {
-      state.isLogedin = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getUserProfile.pending, (state) => {
@@ -67,5 +60,4 @@ const userSlice = createSlice({
   },
 });
 
-export const { login, logout } = userSlice.actions;
 export default userSlice.reducer;

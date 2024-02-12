@@ -5,12 +5,16 @@ import {
   closeLoginPopup,
   setTheme,
 } from "@/redux/slices/appSlice";
-import { logout } from "@/redux/slices/userSlice";
+
+import { loginUser, registerUser } from "@/redux/actions/authActions";
 
 const LoginPopup = () => {
   const dispatch = useDispatch();
   const appStore = useSelector((state) => state.app);
   const userStore = useSelector((state) => state.user);
+  const { loading, userInfo, error, success } = useSelector(
+    (state) => state.auth
+  );
 
   //   useLayoutEffect(() => {
   //     session?.user && setOpened(false);
@@ -31,7 +35,19 @@ const LoginPopup = () => {
                 <button onClick={() => dispatch(logout())}>logout</button>
               </div>
             ) : (
-              <button onClick={() => dispatch(setTheme())}>login</button>
+              <button
+                onClick={() =>
+                  dispatch(
+                    loginUser({
+                      email: "3e6test@example.com",
+                      username: "TestUsere4",
+                      password: "123456789",
+                    })
+                  )
+                }
+              >
+                login
+              </button>
             )}
           </div>
         </div>
