@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-const apiURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/";
-axios.defaults.baseURL = apiURL;
-axios.defaults.headers = {
-  "Access-Control-Allow-Origin": apiURL,
-};
+import store from "@/redux";
 
 const useAxios = (
   { url, method = "get", body = null, headers = null },

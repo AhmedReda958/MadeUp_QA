@@ -1,5 +1,6 @@
 import App from "@/App.jsx";
-import UserProfile from "@/pages/profile";
+import UserProfile from "@/pages/ProfilePage";
+import MessagesPage from "@/pages/messagesPage";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
         element: <UserProfile />,
       },
       { path: "notification", element: <div>notification</div> },
-      { path: "messages", element: <div>messages</div> },
+      { path: "messages", element: <MessagesPage /> },
     ],
   },
 ]);

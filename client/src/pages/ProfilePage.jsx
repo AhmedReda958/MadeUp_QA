@@ -14,7 +14,6 @@ const UserProfile = () => {
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
   const user = useAxios({ url: `/users?username=${username}` });
-
   const { response, error, loading } = user;
   useEffect(() => {
     console.log(user.response);
@@ -94,7 +93,7 @@ const UserProfile = () => {
                 src={EmptyContentImg}
                 alt=""
                 draggable="false"
-                className=" max-w-60 m-auto mt-6 opacity-70"
+                className=" max-w-60 m-auto mt-6 opacity-70 "
               />
               <div
                 className=" absolute left-3 top-28 text-lg font-light  text-altcolor "
