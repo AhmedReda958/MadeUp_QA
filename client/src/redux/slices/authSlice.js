@@ -20,6 +20,7 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, { payload }) => {
       state.userInfo = payload;
+      state.logedin = true;
     },
   },
   extraReducers: (builder) => {
