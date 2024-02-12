@@ -175,8 +175,11 @@ const LoginPopup = () => {
     (state) => state.auth
   );
 
+  useEffect(() => {
+    if (logedin) dispatch(closeLoginPopup());
+  }, [logedin]);
   return (
-    <>
+    <div>
       {appStore.isLoginOpened & !logedin && (
         <div className="fixed  h-full w-full z-20">
           <div
@@ -211,7 +214,7 @@ const LoginPopup = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

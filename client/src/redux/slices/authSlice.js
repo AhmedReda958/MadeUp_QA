@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUser } from "../actions/authActions";
 
+// initialize userToken from local storage
+const userToken = localStorage.getItem("userToken")
+  ? localStorage.getItem("userToken")
+  : null;
+
 const initialState = {
   loading: false,
   userInfo: {}, // for user object
-  userToken: null, // for storing the JWT
+  userToken, // for storing the JWT
   error: null,
   logedin: false, // for monitoring the registration process.
 };
@@ -12,7 +17,11 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setCredentials: (state, { payload }) => {
+      state.userInfo = payload;
+    },
+  },
   extraReducers: (builder) => {
     // register user
     builder
@@ -48,5 +57,6 @@ const authSlice = createSlice({
       });
   },
 });
+export const { setCredentials } = authSlice.actions;
 
 export default authSlice.reducer;
