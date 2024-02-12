@@ -2,6 +2,7 @@
 
 import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
@@ -10,6 +11,7 @@ import SendMessageFrom from "@/components/SendMessageFrom";
 
 const UserProfile = () => {
   const { username } = useParams();
+  const { userInfo, logedin } = useSelector((state) => state.auth);
 
   const user = useAxios({ url: `/users?username=${username}` });
 
@@ -70,11 +72,14 @@ const UserProfile = () => {
                   }}
                 />
               </h2>
-              <p className="text-body dark:text-secondary-alt text-lg ">
+              <p className="text-body dark:text-secondary-alt text-lg mt-2 mb-4">
                 {response.bio}
               </p>
             </div>
-            <SendMessageFrom userId={response._id} />
+
+            {userInfo.username != username && (
+              <SendMessageFrom userId={response._id} />
+            )}
             <div className="py-4 flex justify-between">
               <div className="text-altcolor font-simibold">
                 Answers 42
