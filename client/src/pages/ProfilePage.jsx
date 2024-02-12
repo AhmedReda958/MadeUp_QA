@@ -4,10 +4,10 @@ import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
 
 import SendMessageFrom from "@/components/SendMessageFrom";
+import ProfilePic from "@/components/ProfilePic";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -30,17 +30,8 @@ const UserProfile = () => {
           <div>
             <h1 className="text-base  ms-2 text-end">@{response.username}</h1>
             <div className="flex">
-              <div className=" bg-altcolor p-1 rounded-full">
-                <img
-                  src={response.profilePicture || MaleProfilePic}
-                  onError={({ currentTarget }) => {
-                    currentTarget.onerror = null; // prevents looping
-                    currentTarget.src = MaleProfilePic;
-                  }}
-                  alt="profile pic"
-                  className=" h-24 w-24 rounded-full"
-                />
-              </div>
+              <ProfilePic data={response} className="w-24 h-24" />
+
               <div className="text-altcolor font-bold text-center grow flex items-center justify-around">
                 <div>
                   <div>0</div> followers
@@ -53,7 +44,6 @@ const UserProfile = () => {
             <div className="ps-2 mt-1">
               <h2 className="text-altcolor font-bold text-xl flex">
                 {response.fullName || response.username}
-
                 <span
                   style={{
                     marginTop: 5,
