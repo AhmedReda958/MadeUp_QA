@@ -7,9 +7,9 @@ const router = Router();
 
 router.get("/", async (_, res) => {
   if (isDBConnected()) {
-    res.status(200).json({ message: "Available!" });
+    res.status(200).json({ code: "AVAILABLE" });
   } else {
-    res.status(500).json({ message: "Something is wrong." });
+    res.status(500).json({ code: "INTERNAL_SERVER_ERROR" });
   }
 });
 

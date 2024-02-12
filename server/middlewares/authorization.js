@@ -13,6 +13,6 @@ export default function authMiddleware(req, res, next) {
 }
 
 export function requiredAuthMiddleware(req, res, next) {
-  if (!req.userId) return res.status(401).json({ message: "Unauthorized." });
+  if (!req.userId) return res.status(401).json({ code: "UNAUTHORIZED" });
   next();
 }

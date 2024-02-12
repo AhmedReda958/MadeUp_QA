@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/login", async (req, res, next) => { try {
   let authMethod = 'Basic', authorization = req.headers.authorization;
-  if (!authorization.startsWith(authMethod)) return res.status(401).json({ message: "Unauthorized." });
+  if (!authorization.startsWith(authMethod)) return res.status(401).json({ code: "UNAUTHORIZED" });
   authorization = authorization.slice((authMethod).length + 1);
   const [ emailOrUsername, password ] = Buffer.from(authorization, 'base64').toString().split(':');
 
@@ -19,7 +19,7 @@ router.post("/login", async (req, res, next) => { try {
   }, { email: 1, username: 1, password: 1 });
 
   if (!(user && await user.comparePassword(password)))
-  return res.status(401).json({ found: !!user, message: "Invalid email/username or password." });
+  return res.status(401).json({ found: !!user, code: "INVALID" });
   
   const token = jwt.sign(
     { userId: user._id }, JWT_SECRET_KEY, { expiresIn: SIGNING_EXPIRY }
@@ -35,7 +35,7 @@ router.post("/register", async (req, res, next) => { try {
     $or: [{ email }, { username }],
   }, { email: 1, username: 1 });
   
-  if (user) return res.status(409).json({ message: "User exists." });
+  if (user) return res.status(409).json({ code: "USER_EXISTS" });
   else {
     // TODO: add additional validation for password strength, etc.
     user = new User({ username, email, password });

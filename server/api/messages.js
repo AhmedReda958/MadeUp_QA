@@ -17,20 +17,18 @@ function parseIncludeMiddleware(req, res, next) {
   next();
 }
 
-function anonymizeMessages(requestingSender, messages) {
-  return messages.map(messageStruct => {
-    let { anonymous, sender, ...message } = messageStruct.toObject();
-    if (requestingSender) message.sender = anonymous ? null : sender;
-    return message
-  });
-}
-
 // Fetch the not answered received message
 router.get('/inbox', authMiddleware, requiredAuthMiddleware, parseIncludeMiddleware,
 async (req, res, next) => { try {
-  res.status(200).json(anonymizeMessages(!!req.projection.sender, await Message.find(
-    { receiver: req.userId, 'reply.done': false }, Object.assign(req.projection, { anonymous: 1 })
-  )));
+  let message = await Message.find(
+    { receiver: req.userId, 'reply.done': false },
+    Object.assign(req.projection, { anonymous: 1 })
+  );
+
+  let response = {}
+  for (let field in req.projection) response[field] = message[field];
+  if (response.sender && message.anonymous) response.sender = null;
+  res.status(200).json(response);
 } catch (err) { next(err); }});
 
 // Fetch the sent messages
@@ -42,7 +40,7 @@ async (req, res, next) => { try {
 } catch (err) { next(err); }});
 
 router.use('/user/:userId', (req, res, next) => {
-  if (!isValidObjectId(req.params.userId)) return res.status(400).json({ message: "Invalid user id." });
+  if (!isValidObjectId(req.params.userId)) return res.status(400).json({ code: "INVALID_USER_ID" });
   next();
 })
 
@@ -50,9 +48,15 @@ router.route('/user/:userId')
 // Fetch Answered Messages
 .get(parseIncludeMiddleware,
 async (req, res, next) => { try {
-  res.status(200).json(anonymizeMessages(!!req.projection.sender, await Message.find(
-    { receiver: req.params.userId, 'reply.done': true }, Object.assign(req.projection, { anonymous: 1 })
-  )));
+  let message = await Message.find(
+    { receiver: req.params.userId, 'reply.done': true },
+    Object.assign(req.projection, { anonymous: 1 })
+  );
+
+  let response = {}
+  for (let field in req.projection) response[field] = message[field];
+  if (response.sender && message.anonymous) response.sender = null;
+  res.status(200).json(response);
 } catch (err) { next(err); }})
 // Send Message
 .post(authMiddleware,
@@ -60,7 +64,7 @@ async (req, res, next) => { try {
   const { content, anonymously } = req.body;
 
   const user = await User.findById(req.params.userId, { _id: 1 });
-  if (!user) return res.status(404).json({ message: "User not found." });
+  if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
   const message = new Message({
     content, anonymous: (req.userId && typeof anonymously == 'boolean') ? anonymously : true,
@@ -77,7 +81,7 @@ async (req, res, next) => { try {
 } catch (err) { next(err); }});
 
 router.use('/message/:messageId', (req, res, next) => {
-  if (!isValidObjectId(req.params.messageId)) return res.status(400).json({ message: "Invalid message id." });
+  if (!isValidObjectId(req.params.messageId)) return res.status(400).json({ code: "INVALID_MESSAGE_ID" });
   next();
 });
 
@@ -89,7 +93,7 @@ async (req, res, next) => { try {
     req.projection, { anonymous: 1, sender: 1, receiver: 1, 'reply.done': 1 }
   ));
   if (!message || !((req.userId == message.sender || req.userId == message.receiver) || message.reply.done))
-  return res.status(404).json({ message: "Message not found." });
+  return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
   message = message.toObject();
   if (!req.projection.sender || message.anonymous) delete message.sender; delete message.anonymous;
   if (!req.projection.receiver) delete message.receiver;
@@ -101,9 +105,9 @@ async (req, res, next) => { try {
 .post(authMiddleware, requiredAuthMiddleware,
 async (req, res, next) => { try {
   const message = await Message.findById(req.params.messageId, { receiver: 1, 'reply.done': 1 });
-  if (!message) return res.status(404).json({ message: "Message not found." });
-  if (message.receiver != req.userId) return res.status(403).json({ message: "You are not the receiver." });
-  if (message.reply.done) return res.status(409).json({ message: "This message is already replied to." });
+  if (!message) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
+  if (message.receiver != req.userId) return res.status(403).json({ code: "NOT_THE_RECEIVER" });
+  if (message.reply.done) return res.status(409).json({ code: "ALREADY_REPLIED" });
   
   const reply = { done: true, content: req.body.content, timestamp: new Date() };
   await Message.updateOne({ _id: message._id }, { $set: { reply } });
