@@ -45,6 +45,7 @@ router.get(
         Object.assign(req.projection, { anonymous: 1 })
       );
 
+      // todo: return basic user data { username , name ,id} // in future + => {hasStory , verified , online}
       let response = messages.map((message) => {
         let singleResponse = {};
         for (let field in req.projection) {

@@ -2,9 +2,45 @@ import React, { useCallback, useEffect, useState } from "react";
 import mailboxImg from "@/assets/imgs/mailbox.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ProfilePic from "@/components/ProfilePic";
+import { formatDate } from "@/utils/helpers";
 
+// todo: applay user data for messages // wait for api
 const MessageItem = ({ message }) => {
-  return <div>{message.content}</div>;
+  return (
+    <div className="flex mb-8">
+      {/* profile pic */}
+      <div className="me-2">
+        <ProfilePic data={message} className="w-14 h-14" />
+      </div>
+
+      <div className="bg-altcolor w-full  px-4 rounded-2xl ">
+        {/* header */}
+        <div className="flex justify-between pt-3 pb-1">
+          <div className="flex">
+            <h5 className="text-altcolor font-semibold">Anonymous</h5>
+            {message.anonymous && (
+              <span className="ps-1 pt-1 text-sm">@username</span>
+            )}
+          </div>
+          <div>
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </div>
+        </div>
+        {/* content */}
+        <div className="p-2 text-altcolor font-semibold" dir="rtl">
+          {message.content}
+        </div>
+        <div className="pt-2 pb-3 flex justify-between items-center">
+          <div className="text-xs">{formatDate(message.timestamp)}</div>
+          <div className="pe-2 text-primary">
+            <i class="fa-regular fa-paper-plane"></i>
+          </div>
+        </div>
+      </div>
+      {/* action */}
+    </div>
+  );
 };
 
 function MessagesPage() {
@@ -36,7 +72,7 @@ function MessagesPage() {
   return (
     <div>
       {/* header */}
-      <div className="flex justify-between items-center py-2">
+      <div className="flex justify-between items-center py-2 mb-6">
         <h3 className=" font-light text-lg">Messages</h3>
         <div className="pt-1 pe-3" onClick={() => navigate("/")}>
           <i className="fa-solid fa-arrow-right"></i>
