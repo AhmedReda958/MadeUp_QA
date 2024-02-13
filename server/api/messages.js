@@ -15,6 +15,7 @@ let allowedIncludes = [
   "reply.content",
   "reply.timestamp",
   "timestamp",
+  "_id",
 ];
 function parseIncludeMiddleware(req, res, next) {
   let { include } = req.query;
