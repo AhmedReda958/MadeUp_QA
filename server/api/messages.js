@@ -110,7 +110,7 @@ router
   // Send Message
   .post(authMiddleware, async (req, res, next) => {
     try {
-      const { content, anonymously } = req.body;
+      const { content, anonymously } = req.body; // TODO: validate
 
       const user = await User.findById(req.params.userId, { _id: 1 });
       if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });

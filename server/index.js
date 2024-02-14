@@ -6,7 +6,7 @@ import { attemptDBConnection } from "#database/connection.js";
 attemptDBConnection();
 
 app.get("/", (req, res) => {
-  res.send("Backend is alive!");
+  res.status(200).json({ code: "ALIVE" });
 });
 
 app.use("/api", api);

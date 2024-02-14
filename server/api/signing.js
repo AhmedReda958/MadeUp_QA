@@ -29,7 +29,7 @@ router.post("/login", async (req, res, next) => { try {
 } catch (err) { next(err); }});
 
 router.post("/register", async (req, res, next) => { try {
-  const { email, username, password } = req.body;
+  const { email, username, password } = req.body; // TODO: validate, RegEx
 
   let user = await User.findOne({
     $or: [{ email }, { username }],
