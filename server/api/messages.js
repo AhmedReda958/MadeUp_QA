@@ -8,6 +8,8 @@ import authMiddleware, {
 import express from "express";
 const router = express.Router();
 
+// TODO: pagination
+
 let allowedIncludes = [
   "content",
   "sender",
@@ -15,21 +17,51 @@ let allowedIncludes = [
   "reply.content",
   "reply.timestamp",
   "timestamp",
-];
-function parseIncludeMiddleware(req, res, next) {
-  let { include } = req.query;
-  let includes =
-    "include" in req.query
-      ? Array.isArray(include)
-        ? include
-        : [include]
-      : [];
+], reachableUserIncludes = [
+  "sender",
+  "receiver"
+]
+
+function arrayIfElement(input) {
+  return Array.isArray(input) ? input : [input];
+}
+
+function parseQueryMessageTenor(req, res, next) {
+  let { include, detailUser } = req.query;
+  let includes = "include" in req.query ? arrayIfElement(include) : [],
+  detailUsers = "detailUser" in req.query ? arrayIfElement(detailUser) : [];
+
   req.projection = Object.fromEntries(
-    includes
-      .filter((include) => allowedIncludes.includes(include))
-      .map((include) => [include, 1])
+    [ '_id',
+      ...includes
+        .filter((include) => allowedIncludes.includes(include))
+    ].map((include) => [include, 1])
   );
+
+  req.detailUsers = detailUsers.filter((include) => reachableUserIncludes.includes(include));
+  for (let detailUser of req.detailUsers)
+    if (!req.projection[detailUser]) req.projection[detailUser] = 1;
+
   next();
+}
+
+async function detailMessageUsers(detailUsers, message) {
+  if (message.anonymous) {
+    detailUsers = detailUsers.slice();
+    detailUsers.splice(detailUsers.indexOf("sender"), 1);
+  }
+
+  let users = await User.find({ _id: { $in: detailUsers.map(detailUser => message[detailUser]) } }, {
+    _id: 1, username: 1, fullName: 1
+    // TODO: add those later on
+    // "hasStory", "verified", "online"
+  });
+
+  for (let detailUser of detailUsers) {
+    message[detailUser] = users.find(user =>
+      user._id.toString() == message[detailUser]
+    ) || message[detailUser];
+  }
 }
 
 // Fetch the not answered received message
@@ -37,20 +69,22 @@ router.get(
   "/inbox",
   authMiddleware,
   requiredAuthMiddleware,
-  parseIncludeMiddleware,
+  parseQueryMessageTenor,
   async (req, res, next) => {
     try {
       let messages = await Message.find(
         { receiver: req.userId, "reply.done": false },
-        Object.assign(req.projection, { anonymous: 1 })
+        Object.assign({}, req.projection, { anonymous: 1 })
       );
 
-      // todo: return basic user data { username , name ,id} // in future + => {hasStory , verified , online}
+      if (req.detailUsers.length > 0)
+        for (let message of messages)
+          await detailMessageUsers(req.detailUsers, message);
+
       let response = messages.map((message) => {
         let singleResponse = {};
-        for (let field in req.projection) {
+        for (let field in req.projection)
           singleResponse[field] = message[field];
-        }
         if (singleResponse.sender && message.anonymous)
           singleResponse.sender = null;
         return singleResponse;
@@ -68,13 +102,14 @@ router.get(
   "/sent",
   authMiddleware,
   requiredAuthMiddleware,
-  parseIncludeMiddleware,
+  parseQueryMessageTenor,
   async (req, res, next) => {
     try {
-      let messages = await Message.find(
-        { sender: req.userId },
-        Object.assign(req.projection, { _id: 1 })
-      );
+      let messages = await Message.find({ sender: req.userId }, req.projection);
+      
+      if (req.detailUsers.length > 0)
+        for (let message of messages)
+          await detailMessageUsers(req.detailUsers, message);
 
       res.status(200).json(messages);
     } catch (err) {
@@ -92,16 +127,25 @@ router.use("/user/:userId", (req, res, next) => {
 router
   .route("/user/:userId")
   // Fetch Answered Messages
-  .get(parseIncludeMiddleware, async (req, res, next) => {
+  .get(parseQueryMessageTenor, async (req, res, next) => {
     try {
-      let message = await Message.find(
+      let messages = await Message.find(
         { receiver: req.params.userId, "reply.done": true },
-        Object.assign(req.projection, { anonymous: 1 })
+        Object.assign({}, req.projection, { anonymous: 1 })
       );
 
-      let response = {};
-      for (let field in req.projection) response[field] = message[field];
-      if (response.sender && message.anonymous) response.sender = null;
+      if (req.detailUsers.length > 0)
+      for (let message of messages)
+        await detailMessageUsers(req.detailUsers, message);
+
+      let response = messages.map((message) => {
+        let singleResponse = {};
+        for (let field in req.projection)
+          singleResponse[field] = message[field];
+        if (singleResponse.sender && message.anonymous)
+          singleResponse.sender = null;
+        return singleResponse;
+      });
       res.status(200).json(response);
     } catch (err) {
       next(err);
@@ -146,11 +190,11 @@ router.use("/message/:messageId", (req, res, next) => {
 router
   .route("/message/:messageId")
   // Fetch a message
-  .get(authMiddleware, parseIncludeMiddleware, async (req, res, next) => {
+  .get(authMiddleware, parseQueryMessageTenor, async (req, res, next) => {
     try {
       let message = await Message.findById(
         req.params.messageId,
-        Object.assign(req.projection, {
+        Object.assign({}, req.projection, {
           anonymous: 1,
           sender: 1,
           receiver: 1,
@@ -164,8 +208,11 @@ router
           req.userId == message.receiver ||
           message.reply.done
         )
-      )
-        return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
+      ) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
+
+      if (req.detailUsers.length > 0)
+        await detailMessageUsers(req.detailUsers, message);
+
       message = message.toObject();
       if (!req.projection.sender || message.anonymous) delete message.sender;
       delete message.anonymous;
