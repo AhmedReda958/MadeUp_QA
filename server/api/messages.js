@@ -1,3 +1,4 @@
+import { CommonError } from "#middlewares/errors-handler.js";
 import User from "#database/models/user.js";
 import Message from "#database/models/message.js";
 import { isValidObjectId } from "mongoose";
@@ -10,111 +11,32 @@ const router = express.Router();
 
 // TODO: pagination
 
-let allowedIncludes = [
-  "content",
-  "sender",
-  "receiver",
-  "reply.content",
-  "reply.timestamp",
-  "timestamp",
-], reachableUserIncludes = [
-  "sender",
-  "receiver"
-]
-
-function arrayIfElement(input) {
-  return Array.isArray(input) ? input : [input];
-}
-
-function parseQueryMessageTenor(req, res, next) {
-  let { include, detailUser } = req.query;
-  let includes = "include" in req.query ? arrayIfElement(include) : [],
-  detailUsers = "detailUser" in req.query ? arrayIfElement(detailUser) : [];
-
-  req.projection = Object.fromEntries(
-    [ '_id',
-      ...includes
-        .filter((include) => allowedIncludes.includes(include))
-    ].map((include) => [include, 1])
-  );
-
-  req.detailUsers = detailUsers.filter((include) => reachableUserIncludes.includes(include));
-  for (let detailUser of req.detailUsers)
-    if (!req.projection[detailUser]) req.projection[detailUser] = 1;
-
-  next();
-}
-
-async function detailMessageUsers(detailUsers, message) {
-  if (message.anonymous) {
-    detailUsers = detailUsers.slice();
-    detailUsers.splice(detailUsers.indexOf("sender"), 1);
-  }
-
-  let users = await User.find({ _id: { $in: detailUsers.map(detailUser => message[detailUser]) } }, {
-    _id: 1, username: 1, fullName: 1
-    // TODO: add those later on
-    // "hasStory", "verified", "online"
-  });
-
-  for (let detailUser of detailUsers) {
-    message[detailUser] = users.find(user =>
-      user._id.toString() == message[detailUser]
-    ) || message[detailUser];
-  }
-}
+router.use(authMiddleware);
 
 // Fetch the not answered received message
 router.get(
   "/inbox",
-  authMiddleware,
   requiredAuthMiddleware,
-  parseQueryMessageTenor,
-  async (req, res, next) => {
-    try {
-      let messages = await Message.find(
-        { receiver: req.userId, "reply.done": false },
-        Object.assign({}, req.projection, { anonymous: 1 })
-      );
-
-      if (req.detailUsers.length > 0)
-        for (let message of messages)
-          await detailMessageUsers(req.detailUsers, message);
-
-      let response = messages.map((message) => {
-        let singleResponse = {};
-        for (let field in req.projection)
-          singleResponse[field] = message[field];
-        if (singleResponse.sender && message.anonymous)
-          singleResponse.sender = null;
-        return singleResponse;
-      });
-
-      res.status(200).json(response);
-    } catch (err) {
-      next(err);
-    }
+  (req, res, next) => {
+    Message.userInbox(req.userId, {
+      include: req.query.include,
+      detailUser: req.query.detailUser
+    }).then(userInbox => res.status(200).json(userInbox))
+    .catch(next); 
   }
 );
 
 // Fetch the sent messages
 router.get(
   "/sent",
-  authMiddleware,
   requiredAuthMiddleware,
-  parseQueryMessageTenor,
-  async (req, res, next) => {
-    try {
-      let messages = await Message.find({ sender: req.userId }, req.projection);
-      
-      if (req.detailUsers.length > 0)
-        for (let message of messages)
-          await detailMessageUsers(req.detailUsers, message);
-
-      res.status(200).json(messages);
-    } catch (err) {
-      next(err);
-    }
+  (req, res, next) => {
+    Message.sentByUser(req.userId, {
+      include: req.query.include,
+      allow: ["anonymous"],
+      detailUser: req.query.detailUser
+    }).then(sentByUser => res.status(200).json(sentByUser))
+    .catch(next);
   }
 );
 
@@ -127,59 +49,44 @@ router.use("/user/:targetId", (req, res, next) => {
 router
   .route("/user/:targetId")
   // Fetch Answered Messages
-  .get(parseQueryMessageTenor, async (req, res, next) => {
-    try {
-      let { userId } = req, { targetId } = req.params;
-      let messages = await Message.find(
-        Object.assign(
-          { receiver: targetId, "reply.done": true },
-          userId == targetId ? {} : { "reply.private": false }
-        ),
-        Object.assign({}, req.projection, { anonymous: 1 })
-      );
-
-      if (req.detailUsers.length > 0)
-      for (let message of messages)
-        await detailMessageUsers(req.detailUsers, message);
-
-      let response = messages.map((message) => {
-        let singleResponse = {};
-        for (let field in req.projection)
-          singleResponse[field] = message[field];
-        if (singleResponse.sender && message.anonymous)
-          singleResponse.sender = null;
-        return singleResponse;
-      });
-      res.status(200).json(response);
-    } catch (err) {
-      next(err);
-    }
+  .get((req, res, next) => {
+    Message.answeredByUser(
+      req.params.targetId,
+      req.userId != req.params.targetId,
+      {
+        include: req.query.include,
+        detailUser: req.query.detailUser
+      }
+    ).then(answeredByUser => res.status(200).json(answeredByUser))
+    .catch(next);
   })
   // Send Message
-  .post(authMiddleware, async (req, res, next) => {
+  .post(async (req, res, next) => {
     try {
-      const { content, anonymously } = req.body; // TODO: validate
-
       const user = await User.findById(req.params.targetId, { _id: 1 });
       if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
+      const { content, anonymously } = req.body;
       const message = new Message({
         content,
-        anonymous:
-          req.userId && typeof anonymously == "boolean" ? anonymously : true,
+        anonymous: req.userId ? anonymously : true,
         sender: req.userId || null,
         receiver: user._id,
       });
 
-      await message.save();
+      try { await message.save(); } catch (err) {
+        throw new CommonError("SEND_MESSAGE", err);
+      }
 
-      return res.status(201).json({
-        _id: message._id,
-        content: message.content,
-        sender: message.sender,
-        receiver: message.receiver,
-        timestamp: message.timestamp,
-      });
+      return res.status(201).json(Object.fromEntries(
+        [
+          "_id",
+          "content",
+          "sender",
+          "receiver",
+          "timestamp"
+        ].map(field => [field, message[field]])
+      ))
     } catch (err) {
       next(err);
     }
@@ -194,66 +101,38 @@ router.use("/message/:messageId", (req, res, next) => {
 router
   .route("/message/:messageId")
   // Fetch a message
-  .get(authMiddleware, parseQueryMessageTenor, async (req, res, next) => {
-    try {
-      let message = await Message.findById(
-        req.params.messageId,
-        Object.assign({}, req.projection, {
-          anonymous: 1,
-          sender: 1,
-          receiver: 1,
-          "reply.done": 1,
-        })
-      );
-      if (
-        !message ||
-        !(
-          req.userId == message.sender ||
-          req.userId == message.receiver ||
-          (
-            !message.reply.private &&
-            message.reply.done
-          )
-        )
-      ) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
-
-      if (req.detailUsers.length > 0)
-        await detailMessageUsers(req.detailUsers, message);
-
-      message = message.toObject();
-      if (!req.projection.sender || message.anonymous) delete message.sender;
-      delete message.anonymous;
-      if (!req.projection.receiver) delete message.receiver;
-      delete message.reply.done;
-      if (Object.keys(message.reply).length == 0) delete message.reply;
-
-      res.status(200).json(message);
-    } catch (err) {
-      next(err);
-    }
+  .get((req, res, next) => {
+    Message.fetch(req.params.messageId, req.userId, {
+      include: req.query.include,
+      detailUser: req.query.detailUser
+    }).then(message => res.status(200).json(message))
+    .catch(next);
   })
   // Reply to a message
-  .post(authMiddleware, requiredAuthMiddleware, async (req, res, next) => {
+  .post(requiredAuthMiddleware, async (req, res, next) => {
     try {
-      const message = await Message.findById(req.params.messageId, {
-        receiver: 1,
-        "reply.done": 1,
-      });
+      const message = await Message.findById(
+        req.params.messageId, { receiver: 1, "reply.content": 1, }
+      );
       if (!message) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
       if (message.receiver != req.userId)
         return res.status(403).json({ code: "NOT_THE_RECEIVER" });
-      if (message.reply.done)
+      if (message.reply.content != null)
         return res.status(409).json({ code: "ALREADY_REPLIED" });
 
-      const reply = {
-        done: true,
-        private: typeof req.body.private == 'boolean' ? req.body.private : false,
-        content: req.body.content,
-        timestamp: new Date(),
-      };
-      await Message.updateOne({ _id: message._id }, { $set: { reply } });
+      let { privately, content } = req.body;
+      const reply = { content };
+      if (!(typeof content == "string" && content.length > 0))
+        return res.status(400).json({ code: "INVALID_CONTENT" });
+      if ("privately" in req.body) reply.private = privately;
+      reply.timestamp = new Date();
 
-      delete reply.done;
+      try {
+        await Message.updateOne({ _id: message._id }, { $set: { reply } });
+      } catch (err) {
+        throw new CommonError("REPLY_MESSAGE", err);
+      }
+
       return res.status(201).json(reply);
     } catch (err) {
       next(err);
