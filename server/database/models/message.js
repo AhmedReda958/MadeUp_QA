@@ -13,12 +13,14 @@ const messageSchema = new Schema({
   },
   sender: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    index: { name: "sent" }
   },
   receiver: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
+    index: { name: "inbox" }
   },
   reply: {
     done: {
