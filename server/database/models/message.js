@@ -26,6 +26,11 @@ const messageSchema = new Schema({
       required: true,
       default: false
     },
+    private: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
     content: {
       type: String
     },

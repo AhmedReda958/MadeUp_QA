@@ -118,19 +118,23 @@ router.get(
   }
 );
 
-router.use("/user/:userId", (req, res, next) => {
-  if (!isValidObjectId(req.params.userId))
+router.use("/user/:targetId", (req, res, next) => {
+  if (!isValidObjectId(req.params.targetId))
     return res.status(400).json({ code: "INVALID_USER_ID" });
   next();
 });
 
 router
-  .route("/user/:userId")
+  .route("/user/:targetId")
   // Fetch Answered Messages
   .get(parseQueryMessageTenor, async (req, res, next) => {
     try {
+      let { userId } = req, { targetId } = req.params;
       let messages = await Message.find(
-        { receiver: req.params.userId, "reply.done": true },
+        Object.assign(
+          { receiver: targetId, "reply.done": true },
+          userId == targetId ? {} : { "reply.private": false }
+        ),
         Object.assign({}, req.projection, { anonymous: 1 })
       );
 
@@ -156,7 +160,7 @@ router
     try {
       const { content, anonymously } = req.body; // TODO: validate
 
-      const user = await User.findById(req.params.userId, { _id: 1 });
+      const user = await User.findById(req.params.targetId, { _id: 1 });
       if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
       const message = new Message({
@@ -206,7 +210,10 @@ router
         !(
           req.userId == message.sender ||
           req.userId == message.receiver ||
-          message.reply.done
+          (
+            !message.reply.private &&
+            message.reply.done
+          )
         )
       ) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
 
@@ -240,6 +247,7 @@ router
 
       const reply = {
         done: true,
+        private: typeof req.body.private == 'boolean' ? req.body.private : false,
         content: req.body.content,
         timestamp: new Date(),
       };
