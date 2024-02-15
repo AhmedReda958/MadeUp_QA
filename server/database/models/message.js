@@ -58,7 +58,7 @@ function arrayOfStrings(input) {
   return Array.isArray(input) ? input : typeof input == "string" ? [input] : [];
 }
 
-let allowedIncludes = [
+let defaultAllow = [
   "content",
   "sender",
   "receiver",
@@ -66,11 +66,11 @@ let allowedIncludes = [
   "reply.timestamp",
   "timestamp",
 ];
-function parseProjection(includes, allowedInAddition = []) {
-  let allowedFields = [ ...allowedIncludes, ...allowedInAddition ];
+function parseProjection({ include, allowOnly, allow = [] }) {
+  let allowedFields = allowOnly ? allowOnly : [ ...defaultAllow, ...allow ];
   return Object.fromEntries(
     [ '_id',
-      ...arrayOfStrings(includes)
+      ...arrayOfStrings(include)
         .filter((field) => allowedFields.includes(field))
     ].map((field) => [field, 1])
   );
@@ -140,7 +140,7 @@ messageSchema.statics.userInbox = (userId, projectOptions) => {
     stages.hideSenderIfAnonymous
   ];
 
-  let project = parseProjection(projectOptions.includes, projectOptions.allow);
+  let project = parseProjection(projectOptions);
   addDetailUsersStage(pipeline, projectOptions.detailUser).forEach(user => project[user] = 1);
   pipeline.push({ $project: project });
   
@@ -152,7 +152,7 @@ messageSchema.statics.sentByUser = (userId, projectOptions) => {
     { $match: { sender: new ObjectId(userId) } }
   ];
 
-  let project = parseProjection(projectOptions.includes, projectOptions.allow);
+  let project = parseProjection(projectOptions);
   addDetailUsersStage(pipeline, projectOptions.detailUser).forEach(user => project[user] = 1);
   pipeline.push({ $project: project });
 
@@ -172,7 +172,7 @@ messageSchema.statics.answeredByUser = (userId, publicOnly, projectOptions) => {
     }
   ];
 
-  let project = parseProjection(projectOptions.includes, projectOptions.allow);
+  let project = parseProjection(projectOptions);
   addDetailUsersStage(pipeline, projectOptions.detailUser).forEach(user => project[user] = 1);
   pipeline.push({ $project: project });
 
@@ -197,7 +197,7 @@ messageSchema.statics.fetch = async (messageId, requester, projectOptions) => {
     stages.hideSenderIfAnonymous
   ];
 
-  let project = parseProjection(projectOptions.includes, projectOptions.allow);
+  let project = parseProjection(projectOptions);
   addDetailUsersStage(pipeline, projectOptions.detailUser).forEach(user => project[user] = 1);
   pipeline.push({ $project: project });
 
