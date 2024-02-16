@@ -1,7 +1,7 @@
 import "./env.js";
 import app from "./app.js";
 import api from "./api/index.js";
-import errorsHandler from "./middlewares/errors-handler.js";
+import errorsHandler from "#middlewares/errors-handler.js";
 
 import { attemptDBConnection } from "#database/connection.js";
 attemptDBConnection();

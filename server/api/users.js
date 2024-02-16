@@ -1,6 +1,6 @@
 import User from "#database/models/user.js";
 import { isValidObjectId } from "mongoose";
-import authMiddleware, { requiredAuthMiddleware } from "../middlewares/authorization.js";
+import authMiddleware, { requiredAuthMiddleware } from "#middlewares/authorization.js";
 
 import express from "express";
 const router = express.Router();
