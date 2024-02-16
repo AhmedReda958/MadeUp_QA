@@ -118,7 +118,7 @@ function addDetailUsersStage(pipeline, users) {
             }
           }
         },
-        null
+        `$${user}`
       ]
     }
   });
