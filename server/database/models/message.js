@@ -1,6 +1,7 @@
 import { CommonError } from "#middlewares/errors-handler.js";
 import mongoose, { isValidObjectId } from "mongoose";
 const { Schema, model, models, Types: { ObjectId } } = mongoose;
+import globalStages from "#database/stages.js";
 
 const messageSchema = new Schema({
   content: {
@@ -129,7 +130,7 @@ messageStages.internalUsers = users => {
   return [{ $lookup: lookup }, { $set: set }];
 }
 
-messageSchema.statics.userInbox = (userId, { users, includes, allow, only }) => {
+messageSchema.statics.userInbox = (userId, pagination, { users, includes, allow, only }) => {
   users = parseInternalUsers(users);
   return this.aggregate([
     {
@@ -138,18 +139,20 @@ messageSchema.statics.userInbox = (userId, { users, includes, allow, only }) => 
         "reply.content": null
       }
     },
+    ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) }
   ]);
 }
 
-messageSchema.statics.sentByUser = (userId, { users, includes, allow, only }) => {
+messageSchema.statics.sentByUser = (userId, pagination, { users, includes, allow, only }) => {
   users = parseInternalUsers(users);
   let project = parseIncludesIntoProject(includes, allow, only, users);
 
   let pipeline = [
     { $match: { sender: new ObjectId(userId) } },
+    ...globalStages.pagination(pagination),
     ...messageStages.internalUsers(users),
     { $project: project }
   ];
@@ -160,7 +163,7 @@ messageSchema.statics.sentByUser = (userId, { users, includes, allow, only }) =>
   return this.aggregate(pipeline);
 }
 
-messageSchema.statics.answeredByUser = (userId, publicOnly, { users, includes, allow, only }) => {
+messageSchema.statics.answeredByUser = (userId, pagination, publicOnly, { users, includes, allow, only }) => {
   users = parseInternalUsers(users);
   return this.aggregate([
     {
@@ -169,6 +172,7 @@ messageSchema.statics.answeredByUser = (userId, publicOnly, { users, includes, a
         publicOnly ? { "reply.private": false } : {}
       )
     },
+    ...globalStages.pagination(pagination),
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) }
   ]);

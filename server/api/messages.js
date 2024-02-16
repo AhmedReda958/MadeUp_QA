@@ -4,12 +4,11 @@ import Message from "#database/models/message.js";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,
-} from "../middlewares/authorization.js";
+} from "#middlewares/authorization.js";
+import paginationMiddleware from "#middlewares/pagination.js";
 
 import express from "express";
 const router = express.Router();
-
-// TODO: pagination
 
 router.use(authMiddleware);
 
@@ -17,8 +16,9 @@ router.use(authMiddleware);
 router.get(
   "/inbox",
   requiredAuthMiddleware,
+  paginationMiddleware,
   (req, res, next) => {
-    Message.userInbox(req.userId, {
+    Message.userInbox(req.userId, req.pagination, {
       includes: req.query.include,
       users: req.query.user
     }).then(userInbox => res.status(200).json(userInbox))
@@ -30,8 +30,9 @@ router.get(
 router.get(
   "/sent",
   requiredAuthMiddleware,
+  paginationMiddleware,
   (req, res, next) => {
-    Message.sentByUser(req.userId, {
+    Message.sentByUser(req.userId, req.pagination, {
       includes: req.query.include,
       allow: ["anonymous"],
       users: req.query.user
@@ -49,9 +50,10 @@ router.use("/user/:targetId", (req, res, next) => {
 router
   .route("/user/:targetId")
   // Fetch Answered Messages
-  .get((req, res, next) => {
+  .get(paginationMiddleware, (req, res, next) => {
     Message.answeredByUser(
       req.params.targetId,
+      req.pagination,
       req.userId != req.params.targetId,
       {
         includes: req.query.include,
