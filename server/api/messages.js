@@ -19,8 +19,8 @@ router.get(
   requiredAuthMiddleware,
   (req, res, next) => {
     Message.userInbox(req.userId, {
-      include: req.query.include,
-      detailUser: req.query.detailUser
+      includes: req.query.include,
+      users: req.query.user
     }).then(userInbox => res.status(200).json(userInbox))
     .catch(next); 
   }
@@ -32,9 +32,9 @@ router.get(
   requiredAuthMiddleware,
   (req, res, next) => {
     Message.sentByUser(req.userId, {
-      include: req.query.include,
+      includes: req.query.include,
       allow: ["anonymous"],
-      detailUser: req.query.detailUser
+      users: req.query.user
     }).then(sentByUser => res.status(200).json(sentByUser))
     .catch(next);
   }
@@ -54,8 +54,8 @@ router
       req.params.targetId,
       req.userId != req.params.targetId,
       {
-        include: req.query.include,
-        detailUser: req.query.detailUser
+        includes: req.query.include,
+        users: req.query.user
       }
     ).then(answeredByUser => res.status(200).json(answeredByUser))
     .catch(next);
@@ -103,8 +103,8 @@ router
   // Fetch a message
   .get((req, res, next) => {
     Message.fetch(req.params.messageId, req.userId, {
-      include: req.query.include,
-      detailUser: req.query.detailUser
+      includes: req.query.include,
+      users: req.query.user
     }).then(message => res.status(200).json(message))
     .catch(next);
   })
