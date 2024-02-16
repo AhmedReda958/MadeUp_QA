@@ -67,7 +67,7 @@ let defaultAllow = [
   "reply.timestamp",
   "timestamp",
 ];
-function parseIncludesIntoProject(includes, allow, only, force) {
+function parseIncludesIntoProject(includes, allow = [], only, force) {
   let allowedFields = only ? allow : [ ...defaultAllow, ...allow ];
   let project = Object.fromEntries(
     [ '_id',
@@ -130,7 +130,7 @@ messageStages.internalUsers = users => {
   return [{ $lookup: lookup }, { $set: set }];
 }
 
-messageSchema.statics.userInbox = (userId, pagination, { users, includes, allow, only }) => {
+messageSchema.statics.userInbox = function(userId, pagination, { users, includes, allow, only }) {
   users = parseInternalUsers(users);
   return this.aggregate([
     {
@@ -146,7 +146,7 @@ messageSchema.statics.userInbox = (userId, pagination, { users, includes, allow,
   ]);
 }
 
-messageSchema.statics.sentByUser = (userId, pagination, { users, includes, allow, only }) => {
+messageSchema.statics.sentByUser = function(userId, pagination, { users, includes, allow, only }) {
   users = parseInternalUsers(users);
   let project = parseIncludesIntoProject(includes, allow, only, users);
 
@@ -163,7 +163,7 @@ messageSchema.statics.sentByUser = (userId, pagination, { users, includes, allow
   return this.aggregate(pipeline);
 }
 
-messageSchema.statics.answeredByUser = (userId, pagination, publicOnly, { users, includes, allow, only }) => {
+messageSchema.statics.answeredByUser = function(userId, pagination, publicOnly, { users, includes, allow, only }) {
   users = parseInternalUsers(users);
   return this.aggregate([
     {
@@ -178,7 +178,7 @@ messageSchema.statics.answeredByUser = (userId, pagination, publicOnly, { users,
   ]);
 }
 
-messageSchema.statics.fetch = async (messageId, requester, { users, includes, allow, only }) => {
+messageSchema.statics.fetch = async function(messageId, requester, { users, includes, allow, only }) {
   requester = isValidObjectId(requester)
   ? new ObjectId(requester) : `${requester}`;
   
