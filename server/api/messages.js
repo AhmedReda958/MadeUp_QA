@@ -12,6 +12,32 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
+router.use(
+  [
+    "/message/:messageId",
+    "/likes/message/:messageId"
+  ],
+  (req, res, next) => {
+    let { messageId } = req.params;
+    if (('messageId' in req.params) && !isValidObjectId(messageId))
+      return res.status(400).json({ code: "INVALID_MESSAGE_ID" });
+    next();
+  }
+);
+
+router.use(
+  [
+    "/user/:targetUserId",
+    "/likes/user/:targetUserId"
+  ],
+  (req, res, next) => {
+    let { targetUserId } = req.params;
+    if (('targetUserId' in req.params) && !isValidObjectId(targetUserId))
+      return res.status(400).json({ code: "INVALID_USER_ID" });
+    next();
+  }
+);
+
 // Fetch the not answered received message
 router.get(
   "/inbox",
@@ -41,20 +67,14 @@ router.get(
   }
 );
 
-router.use("/user/:targetId", (req, res, next) => {
-  if (!isValidObjectId(req.params.targetId))
-    return res.status(400).json({ code: "INVALID_USER_ID" });
-  next();
-});
-
 router
-  .route("/user/:targetId")
+  .route("/user/:targetUserId")
   // Fetch Answered Messages
   .get(paginationMiddleware, (req, res, next) => {
     Message.answeredByUser(
-      req.params.targetId,
+      req.params.targetUserId,
       req.pagination,
-      req.userId != req.params.targetId,
+      req.userId != req.params.targetUserId,
       {
         includes: req.query.include,
         users: req.query.user
@@ -65,7 +85,7 @@ router
   // Send Message
   .post(async (req, res, next) => {
     try {
-      const user = await User.findById(req.params.targetId, { _id: 1 });
+      const user = await User.findById(req.params.targetUserId, { _id: 1 });
       if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
       const { content, anonymously } = req.body;
@@ -93,12 +113,6 @@ router
       next(err);
     }
   });
-
-router.use("/message/:messageId", (req, res, next) => {
-  if (!isValidObjectId(req.params.messageId))
-    return res.status(400).json({ code: "INVALID_MESSAGE_ID" });
-  next();
-});
 
 router
   .route("/message/:messageId")
@@ -140,5 +154,58 @@ router
       next(err);
     }
   });
+
+router.route("/likes/message/:messageId")
+// Fetch user(s) that liked a message
+.get(paginationMiddleware, (req, res, next) => {
+  Message.likes(req.params.messageId, Object.assign(
+    req.pagination,
+    {
+      usersId: "usersId" in req.query,
+      usersBrief: "usersBrief" in req.query
+    }
+  )).then(likes => res.status(200).send(likes))
+  .catch(next);
+})
+// Like a message
+.put(requiredAuthMiddleware, (req, res, next) => {
+  Message.setLikeBy(req.params.messageId, req.userId, true)
+  .then(modified => res.status(200).send({ like: true, modified }))
+  .catch(next);
+})
+// Remove a message like
+.delete(requiredAuthMiddleware, (req, res, next) => {
+  Message.setLikeBy(req.params.messageId, req.userId, false)
+  .then(modified => res.status(200).send({ like: false, modified }))
+  .catch(next);
+});
+
+// If user liked a message
+router.get("/likes/message/:messageId/liked", (req, res, next) => {
+  let targetUserId = req.query.userId;
+  if (!isValidObjectId(targetUserId)) {
+    if (req.userId) targetUserId = req.userId;
+    else res.status(400).json({ code: "INVALID_USER_ID" });
+  }
+
+  Message.isLikedBy(req.params.messageId, targetUserId)
+  .then(liked => res.status(200).send({ liked }))
+  .catch(next);
+})
+
+
+router.route("/likes/user/:targetUserId")
+// Fetch messages that are liked by a user
+.get(paginationMiddleware, (req, res, next) => {
+  Message.likedBy(
+    req.params.targetUserId,
+    req.pagination,
+    {
+      includes: req.query.include,
+      users: req.query.user
+    }
+  ).then(likedByUser => res.status(200).json(likedByUser))
+  .catch(next);
+});;
 
 export default router;
