@@ -1,5 +1,6 @@
 const { JWT_SECRET_KEY } = process.env;
 const SIGNING_EXPIRY = '30d'; // TODO: configure
+import { CommonError } from "#middlewares/errors-handler.js";
 import User from "#database/models/user.js";
 import jwt from "jsonwebtoken";
 import express from "express";
@@ -9,17 +10,19 @@ router.post("/login", async (req, res, next) => { try {
   let authMethod = 'Basic', authorization = req.headers.authorization;
   if (!authorization.startsWith(authMethod)) return res.status(401).json({ code: "UNAUTHORIZED" });
   authorization = authorization.slice((authMethod).length + 1);
-  const [ emailOrUsername, password ] = Buffer.from(authorization, 'base64').toString().split(':');
+  const [ identifier, password ] = Buffer.from(authorization, 'base64').toString().split(':');
 
   let user = await User.findOne({
     $or: [
-      { email: emailOrUsername },
-      { username: emailOrUsername }
+      "email", "username",
+      // TODO: add later on
+      // "phoneNumber"
     ]
+    .map(identifying => { return { [identifying]: identifier }; })
   }, { email: 1, username: 1, password: 1 });
 
   if (!(user && await user.comparePassword(password)))
-  return res.status(401).json({ found: !!user, code: "INVALID" });
+  return res.status(401).json({ code: "INVALID", found: !!user });
   
   const token = jwt.sign(
     { userId: user._id }, JWT_SECRET_KEY, { expiresIn: SIGNING_EXPIRY }
@@ -30,16 +33,9 @@ router.post("/login", async (req, res, next) => { try {
 
 router.post("/register", async (req, res, next) => { try {
   const { email, username, password } = req.body;
-
-  let user = await User.findOne({
-    $or: [{ email }, { username }],
-  }, { email: 1, username: 1 });
-  
-  if (user) return res.status(409).json({ code: "USER_EXISTS" });
-  else {
-    // TODO: add additional validation for password strength, etc.
-    user = new User({ username, email, password });
-    await user.save();
+  let user = new User({ username, email, password });
+  try { await user.save(); } catch (err) {
+    throw new CommonError("REGISTER_USER", err);
   }
 
   const token = jwt.sign(
