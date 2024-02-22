@@ -77,7 +77,7 @@ function MessagesPage() {
   }, []);
 
   return (
-    <div>
+    <div className="pb-20">
       {/* header */}
       <div className="flex justify-between items-center py-2 mb-6">
         <h3 className=" font-light text-lg">Messages</h3>
