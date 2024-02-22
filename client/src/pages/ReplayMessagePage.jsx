@@ -5,6 +5,7 @@ import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import Page from "@/components/ui/Page";
 
 function ReplayMessagePage() {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ function ReplayMessagePage() {
 
   // todo:hide query from user browser
   const id = searchParams.get("id");
+
+  if (!id) navigate("/messages");
 
   const messageData = useAxios({
     url: `/messages/message/${id}`,
@@ -55,21 +58,17 @@ function ReplayMessagePage() {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center py-2 mb-6">
-        <h3 className=" font-light text-lg">Replay</h3>
-        <div className="pt-1 pe-3" onClick={() => navigate(-1)}>
-          <i className="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-
+    <Page title={"Replay"} loading={messageData.loading}>
       {!messageData.loading ? (
         <div className="px-4">
-          <div className="flex mb-8 ">
+          <div className="flex mb-8 post_after after:mt-8">
             {/* profile pic */}
-            <div className="me-4">
+            <Link
+              to={message.sender.username && "/" + message.sender.username}
+              className="me-4"
+            >
               <ProfilePic data={message} className="w-14 h-14" />
-            </div>
+            </Link>
 
             <div className=" w-full min-h-40">
               {/* header */}
@@ -135,7 +134,7 @@ function ReplayMessagePage() {
       ) : (
         <LoadingSpinner />
       )}
-    </div>
+    </Page>
   );
 }
 

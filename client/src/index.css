@@ -31,3 +31,11 @@
 .bg-maincolor {
   @apply bg-light  dark:bg-dark;
 }
+
+/* todo: sperate into multi files */
+.post_after {
+  @apply relative z-[1];
+}
+.post_after::after {
+  @apply absolute flex w-[2px] h-full top-0 bg-body-alt z-[-1] ms-7 mt-9;
+}

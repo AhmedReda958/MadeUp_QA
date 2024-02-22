@@ -15,7 +15,7 @@ const MessageItem = ({ message }) => {
         <ProfilePic data={message} className="w-14 h-14" />
       </div>
 
-      <div className="bg-altcolor w-full  px-4 rounded-2xl ">
+      <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md">
         {/* header */}
         <div className="flex justify-between pt-3 pb-1">
           <div className="flex">
@@ -50,7 +50,6 @@ const MessageItem = ({ message }) => {
 };
 
 function MessagesPage() {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
   const [messagesData, setMessagesData] = useState({});
@@ -94,11 +93,11 @@ function MessagesPage() {
         <div>
           <img
             src={mailboxImg}
-            className=" max-w-60 m-auto mt-20 opacity-70 "
+            className="max-w-60 m-auto mt-20 opacity-70 "
             alt=""
             draggable="false"
           />
-          <div className="pt-12 ps-3 text">
+          <div className="pt-12 ps-3 text m-auto">
             <p className="text-xl text-altcolor">There's no new messages</p>
             <p className="pt-1 text-sm font-light">
               Share your profile link to get more messages.
