@@ -10,6 +10,7 @@ function ProfilePic({ data, className = "", story = false }) {
     >
       <img
         src={data.profilePicture || MaleProfilePic}
+        draggable="false"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null; // prevents looping
           currentTarget.src = MaleProfilePic;

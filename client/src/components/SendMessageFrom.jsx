@@ -9,7 +9,8 @@ const SendMessageFrom = ({ userId }) => {
   const sendMessage = () => {
     setMsgLoading(true);
     axios
-      .post(`/messages/user/${userId}`, { // TODM
+      .post(`/messages/user/${userId}`, {
+        // TODM
         content: messageRef.current.value,
       })
       .then((res) => {

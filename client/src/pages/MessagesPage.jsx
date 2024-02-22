@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import mailboxImg from "@/assets/imgs/mailbox.svg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfilePic from "@/components/ProfilePic";
 import { formatDate } from "@/utils/helpers";
@@ -33,9 +33,9 @@ const MessageItem = ({ message }) => {
         </div>
         <div className="pt-2 pb-3 flex justify-between items-center">
           <div className="text-xs">{formatDate(message.timestamp)}</div>
-          <div className="pe-2 text-primary">
+          <Link to={"replay?id=" + message._id} className="pe-2 text-primary">
             <i class="fa-regular fa-paper-plane"></i>
-          </div>
+          </Link>
         </div>
       </div>
       {/* action */}
@@ -52,7 +52,14 @@ function MessagesPage() {
   const getMessages = useCallback(() => {
     setLoading(true);
     axios
-      .get(`/messages/inbox?include=content&include=sender&include=timestamp`)
+      .get(`/messages/inbox`, {
+        params: {
+          include: ["content", "timestamp"],
+          user: "sender",
+          page: 1,
+          limit: 100,
+        },
+      })
       .then((res) => {
         setMessagesData(res.data);
         console.log(res.data);

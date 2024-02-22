@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import store from "@/redux";
 
 const useAxios = (
   { url, method = "get", body = null, headers = null },
@@ -30,7 +29,7 @@ const useAxios = (
 
   useEffect(() => {
     fetchData();
-  }, [method, url, body, headers]);
+  }, [method, url, body, JSON.stringify(headers)]);
 
   return { response, error, loading, statusCode };
 };
