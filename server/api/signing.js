@@ -1,6 +1,6 @@
 const { JWT_SECRET_KEY } = process.env;
 const SIGNING_EXPIRY = '30d'; // TODO: configure
-import { CommonError } from "#middlewares/errors-handler.js";
+import UnhandledError from "#errors/unhandled.js";
 import User from "#database/models/user.js";
 import jwt from "jsonwebtoken";
 import express from "express";
@@ -35,7 +35,9 @@ router.post("/register", async (req, res, next) => { try {
   const { email, username, password } = req.body;
   let user = new User({ username, email, password });
   try { await user.save(); } catch (err) {
-    throw new CommonError("REGISTER_USER", err);
+    if (err.code == 11000)
+      return res.status(409).json({ code: "USER_EXISTS", user: err.keyValue });
+    throw new UnhandledError("REGISTER_USER", err);
   }
 
   const token = jwt.sign(

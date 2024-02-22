@@ -12,7 +12,8 @@
   "license": "ISC",
   "imports": {
     "#middlewares/*": "./middlewares/*",
-    "#database/*": "./database/*"
+    "#database/*": "./database/*",
+    "#errors/*": "./errors/*"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
