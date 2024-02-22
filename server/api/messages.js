@@ -13,26 +13,20 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.use(
-  [
-    "/message/:messageId",
-    "/likes/message/:messageId"
-  ],
+  ["/message/:messageId", "/likes/message/:messageId"],
   (req, res, next) => {
     let { messageId } = req.params;
-    if (('messageId' in req.params) && !isValidObjectId(messageId))
+    if ("messageId" in req.params && !isValidObjectId(messageId))
       return res.status(400).json({ code: "INVALID_MESSAGE_ID" });
     next();
   }
 );
 
 router.use(
-  [
-    "/user/:targetUserId",
-    "/likes/user/:targetUserId"
-  ],
+  ["/user/:targetUserId", "/likes/user/:targetUserId"],
   (req, res, next) => {
     let { targetUserId } = req.params;
-    if (('targetUserId' in req.params) && !isValidObjectId(targetUserId))
+    if ("targetUserId" in req.params && !isValidObjectId(targetUserId))
       return res.status(400).json({ code: "INVALID_USER_ID" });
     next();
   }
@@ -46,9 +40,10 @@ router.get(
   (req, res, next) => {
     Message.userInbox(req.userId, req.pagination, {
       includes: req.query.include,
-      users: req.query.user
-    }).then(userInbox => res.status(200).json(userInbox))
-    .catch(next); 
+      users: req.query.user,
+    })
+      .then((userInbox) => res.status(200).json(userInbox))
+      .catch(next);
   }
 );
 
@@ -61,9 +56,10 @@ router.get(
     Message.sentByUser(req.userId, req.pagination, {
       includes: req.query.include,
       allow: ["anonymous"],
-      users: req.query.user
-    }).then(sentByUser => res.status(200).json(sentByUser))
-    .catch(next);
+      users: req.query.user,
+    })
+      .then((sentByUser) => res.status(200).json(sentByUser))
+      .catch(next);
   }
 );
 
@@ -77,10 +73,11 @@ router
       req.userId != req.params.targetUserId,
       {
         includes: req.query.include,
-        users: req.query.user
+        users: req.query.user,
       }
-    ).then(answeredByUser => res.status(200).json(answeredByUser))
-    .catch(next);
+    )
+      .then((answeredByUser) => res.status(200).json(answeredByUser))
+      .catch(next);
   })
   // Send Message
   .post(async (req, res, next) => {
@@ -100,15 +97,15 @@ router
         throw new UnhandledError("SEND_MESSAGE", err);
       }
 
-      return res.status(201).json(Object.fromEntries(
-        [
-          "_id",
-          "content",
-          "sender",
-          "receiver",
-          "timestamp"
-        ].map(field => [field, message[field]])
-      ))
+      return res
+        .status(201)
+        .json(
+          Object.fromEntries(
+            ["_id", "content", "sender", "receiver", "timestamp"].map(
+              (field) => [field, message[field]]
+            )
+          )
+        );
     } catch (err) {
       next(err);
     }
@@ -129,9 +126,10 @@ router
   // Reply to a message
   .post(requiredAuthMiddleware, async (req, res, next) => {
     try {
-      const message = await Message.findById(
-        req.params.messageId, { receiver: 1, "reply.content": 1, }
-      );
+      const message = await Message.findById(req.params.messageId, {
+        receiver: 1,
+        "reply.content": 1,
+      });
       if (!message) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
       if (message.receiver != req.userId)
         return res.status(403).json({ code: "NOT_THE_RECEIVER" });
@@ -204,19 +202,16 @@ router.get("/likes/message/:messageId/liked", (req, res, next) => {
   .catch(next);
 })
 
-
-router.route("/likes/user/:targetUserId")
-// Fetch messages that are liked by a user
-.get(paginationMiddleware, (req, res, next) => {
-  Message.likedBy(
-    req.params.targetUserId,
-    req.pagination,
-    {
+router
+  .route("/likes/user/:targetUserId")
+  // Fetch messages that are liked by a user
+  .get(paginationMiddleware, (req, res, next) => {
+    Message.likedBy(req.params.targetUserId, req.pagination, {
       includes: req.query.include,
-      users: req.query.user
-    }
-  ).then(likedByUser => res.status(200).json(likedByUser))
-  .catch(next);
-});;
+      users: req.query.user,
+    })
+      .then((likedByUser) => res.status(200).json(likedByUser))
+      .catch(next);
+  });
 
 export default router;

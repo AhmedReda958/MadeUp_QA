@@ -6,7 +6,7 @@ export const authApi = createApi({
     baseUrl: import.meta.env.VITE_API_URL || "http://localhost:8000/api/",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.userToken;
-      if (token) {
+      if (typeof token != null) {
         headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;

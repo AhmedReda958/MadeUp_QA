@@ -1,5 +1,8 @@
 import App from "@/App.jsx";
+import HomePage from "@/pages/HomePage";
+import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
+import ReplayMessagePage from "@/pages/ReplayMessagePage";
 import MessagesPage from "@/pages/messagesPage";
 import { createBrowserRouter } from "react-router-dom";
 
@@ -11,14 +14,15 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>home</div>,
+        element: <HomePage />,
       },
       {
         path: ":username",
         element: <UserProfile />,
       },
-      { path: "notification", element: <div>notification</div> },
+      { path: "notification", element: <NotificationPage /> },
       { path: "messages", element: <MessagesPage /> },
+      { path: "messages/replay", element: <ReplayMessagePage /> },
     ],
   },
 ]);

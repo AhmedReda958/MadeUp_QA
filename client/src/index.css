@@ -7,6 +7,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: 0; /* Firefox */
+  }
+}
+
 .text-maincolor {
   @apply text-body-alt dark:text-secondary-alt;
 }
@@ -18,4 +30,12 @@
 }
 .bg-maincolor {
   @apply bg-light  dark:bg-dark;
+}
+
+/* todo: sperate into multi files */
+.post_after {
+  @apply relative z-[1];
+}
+.post_after::after {
+  @apply absolute flex w-[2px] h-full top-0 bg-body-alt z-[-1] ms-7 mt-9;
 }
