@@ -1,7 +1,7 @@
 const { HOST, PORT } = process.env;
 import express from "express";
 import cors from "cors";
-let app; export default app = express();
+let app = express();
 
 app.use(express.json());
 
@@ -29,3 +29,5 @@ app.use(cors());
 app.listen(PORT, HOST, () => {
   console.log(`Listening on http://${HOST == "0.0.0.0" ? "localhost" : HOST}:${PORT}/`);
 });
+
+export default app;

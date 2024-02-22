@@ -1,8 +1,8 @@
 import { Router } from "express";
-import signingRoute from "./signing.js";
-import usersRoute from "./users.js";
-import messagesRoute from "./messages.js";
-import { isDBConnected } from "#database/connection.js";
+import signingRoute from "./signing.mjs";
+import usersRoute from "./users.mjs";
+import messagesRoute from "./messages.mjs";
+import { isDBConnected } from "#database/connection.mjs";
 const router = Router();
 
 router.get("/", async (_, res) => {

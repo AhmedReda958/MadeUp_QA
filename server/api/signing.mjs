@@ -1,7 +1,7 @@
 const { JWT_SECRET_KEY } = process.env;
 const SIGNING_EXPIRY = '30d'; // TODO: configure
-import UnhandledError from "#errors/unhandled.js";
-import User from "#database/models/user.js";
+import UnhandledError from "#errors/unhandled.mjs";
+import User from "#database/models/user.mjs";
 import jwt from "jsonwebtoken";
 import express from "express";
 const router = express.Router();

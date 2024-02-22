@@ -1,6 +1,6 @@
 import mongoose, { isValidObjectId } from "mongoose";
 const { Schema, model, models, Types: { ObjectId } } = mongoose;
-import globalStages from "#database/stages.js";
+import globalStages from "#database/stages.mjs";
 
 const messageSchema = new Schema({
   content: {

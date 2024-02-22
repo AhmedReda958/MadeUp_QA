@@ -1,11 +1,11 @@
-import UnhandledError from "#errors/unhandled.js";
-import User from "#database/models/user.js";
-import Message from "#database/models/message.js";
+import UnhandledError from "#errors/unhandled.mjs";
+import User from "#database/models/user.mjs";
+import Message from "#database/models/message.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,
-} from "#middlewares/authorization.js";
-import paginationMiddleware from "#middlewares/pagination.js";
+} from "#middlewares/authorization.mjs";
+import paginationMiddleware from "#middlewares/pagination.mjs";
 
 import express from "express";
 const router = express.Router();

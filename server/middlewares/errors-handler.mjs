@@ -1,4 +1,4 @@
-import UnhandledError from "#errors/unhandled.js";
+import UnhandledError from "#errors/unhandled.mjs";
 
 export default function errorsHandler(err, req, res, next) {
   let inLogError = {};
