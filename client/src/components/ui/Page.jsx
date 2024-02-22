@@ -20,11 +20,11 @@ const Header = ({ title }) => {
 
 const Page = ({ title, children, loading = false }) => {
   return (
-    <>
+    <div className="pb-20">
       <Header title={title} />
 
       {!loading ? children : <LoadingSpinner />}
-    </>
+    </div>
   );
 };
 

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfilePic from "@/components/ProfilePic";
 import { formatDate } from "@/utils/helpers";
+import Page from "@/components/ui/Page";
 
 // todo: applay user data for messages // wait for api
 const MessageItem = ({ message }) => {
@@ -82,46 +83,30 @@ function MessagesPage() {
   }, []);
 
   return (
-    <div className="pb-20">
-      {/* header */}
-      <div className="flex justify-between items-center py-2 mb-6">
-        <h3 className=" font-light text-lg">Messages</h3>
-        <div className="pt-1 pe-3" onClick={() => navigate("/")}>
-          <i className="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-      {/* messages */}
-      {loading ? (
-        <div className="text-2xl text-center mt-10">
-          <i className="fa fa-spinner fa-spin-pulse "></i>
-        </div>
+    <Page title={"Messages"} loading={loading}>
+      {messagesData.length > 0 ? (
+        <>
+          {messagesData.map((message) => (
+            <MessageItem key={message.id} message={message} />
+          ))}
+        </>
       ) : (
         <div>
-          {messagesData.length > 0 ? (
-            <>
-              {messagesData.map((message) => (
-                <MessageItem key={message.id} message={message} />
-              ))}
-            </>
-          ) : (
-            <div>
-              <img
-                src={mailboxImg}
-                className=" max-w-60 m-auto mt-20 opacity-70 "
-                alt=""
-                draggable="false"
-              />
-              <div className="pt-12 ps-3 text">
-                <p className="text-xl text-altcolor">There's no new messages</p>
-                <p className="pt-1 text-sm font-light">
-                  Share your profile link to get more messages.
-                </p>
-              </div>
-            </div>
-          )}
+          <img
+            src={mailboxImg}
+            className=" max-w-60 m-auto mt-20 opacity-70 "
+            alt=""
+            draggable="false"
+          />
+          <div className="pt-12 ps-3 text">
+            <p className="text-xl text-altcolor">There's no new messages</p>
+            <p className="pt-1 text-sm font-light">
+              Share your profile link to get more messages.
+            </p>
+          </div>
         </div>
       )}
-    </div>
+    </Page>
   );
 }
 
