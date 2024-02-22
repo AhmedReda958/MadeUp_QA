@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
-const Header = ({ title }) => {
+const Header = ({ title, children }) => {
   return (
     <div className="flex justify-between items-center py-2 mb-6 mt-3">
       <div className="flex items-center ">
@@ -11,21 +11,27 @@ const Header = ({ title }) => {
         </h2>
       </div>
       {/* back link */}
-      <Link to="../" className="pt-1 pe-3 cursor-pointer">
-        <i className="fa-solid fa-arrow-left"></i>
-      </Link>
+
+      {children ? (
+        children
+      ) : (
+        <Link to="../" className="pt-1 pe-3 cursor-pointer">
+          <i className="fa-solid fa-arrow-left"></i>
+        </Link>
+      )}
     </div>
   );
 };
 
-const Page = ({ title, children, loading = false }) => {
+const Page = ({ title, children, loading = false, header = true }) => {
   return (
     <div className="pb-20">
-      <Header title={title} />
+      {header && <Header title={title} />}
 
       {!loading ? children : <LoadingSpinner />}
     </div>
   );
 };
 
+Page.Header = Header;
 export default Page;

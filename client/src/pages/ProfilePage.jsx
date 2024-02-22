@@ -8,6 +8,7 @@ import EmptyContentImg from "@/assets/imgs/taken.svg";
 
 import SendMessageFrom from "@/components/SendMessageFrom";
 import ProfilePic from "@/components/ProfilePic";
+import Page from "@/components/ui/Page";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -22,13 +23,17 @@ const UserProfile = () => {
   }, [loading]);
 
   return (
-    <div>
+    <Page header={false}>
       {!loading ? (
         error ? (
           error
         ) : (
-          <div>
-            <h1 className="text-base  ms-2 text-end">@{response.username}</h1>
+          <>
+            <Page.Header title={!loading && "@" + userInfo.username}>
+              <div className="p-3 text-lg cursor-pointer text-primary dark:text-white ">
+                <i className="fa fa-user-plus"></i>
+              </div>
+            </Page.Header>
             <div className="flex">
               <ProfilePic data={response} className="w-24 h-24" />
 
@@ -92,14 +97,14 @@ const UserProfile = () => {
                 No content found
               </div>
             </div>
-          </div>
+          </>
         )
       ) : (
         <div className="text-2xl text-center">
           <i className="fa fa-spinner fa-spin-pulse"></i>
         </div>
       )}
-    </div>
+    </Page>
   );
 };
 
