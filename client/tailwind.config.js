@@ -6,8 +6,9 @@ module.exports = {
     extend: {
       colors: {
         // main colors
-        primary: { light: "#67e8f9", DEFAULT: "#06b6d4", dark: "#0e7490" },
+        primary: { light: "#370aff", DEFAULT: "#3011BC", dark: "#270e95" },
         alt: { light: "#fde68a", DEFAULT: "#fbbf24", dark: "#d97706" },
+        gred: { light: "#A50AFF", DEFAULT: "#7E11BC", dark: "#640e95" },
         // for fonts
         body: { alt: "#888888", DEFAULT: "#111111" },
         secondary: { alt: "#878792", DEFAULT: "#ffffff" },

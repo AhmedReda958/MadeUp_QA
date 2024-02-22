@@ -1,10 +1,10 @@
 import React from "react";
 import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 
-function ProfilePic({ data, className = "", story = false }) {
+function ProfilePic({ data, className = "", story = false, border = true }) {
   return (
     <div
-      className={`p-1 rounded-full ${className} ${
+      className={`rounded-full ${border && "p-1"} ${className} ${
         story ? " bg-green-400" : "bg-altcolor"
       }`}
     >

@@ -18,9 +18,14 @@ const MessageItem = ({ message }) => {
         {/* header */}
         <div className="flex justify-between pt-3 pb-1">
           <div className="flex">
-            <h5 className="text-altcolor font-semibold">Anonymous</h5>
-            {message.anonymous && (
-              <span className="ps-1 pt-1 text-sm">@username</span>
+            <h5 className="text-altcolor font-semibold">
+              {" "}
+              {message.sender.fullName ? message.sender.fullName : "Anonymous"}
+            </h5>
+            {message.sender.username && (
+              <span className="ps-1 pt-1 text-sm">
+                @{message.sender.username}
+              </span>
             )}
           </div>
           <div>
