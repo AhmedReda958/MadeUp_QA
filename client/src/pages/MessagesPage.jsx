@@ -34,7 +34,10 @@ const MessageItem = ({ message }) => {
           </div>
         </div>
         {/* content */}
-        <div className="p-2 text-altcolor font-semibold" dir="rtl">
+        <div
+          className="p-2 text-altcolor font-semibold font-body-play"
+          dir="rtl"
+        >
           {message.content}
         </div>
         <div className="pt-2 pb-3 flex justify-between items-center">

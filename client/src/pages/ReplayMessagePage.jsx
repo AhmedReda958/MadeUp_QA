@@ -91,7 +91,10 @@ function ReplayMessagePage() {
                 </div>
               </div>
               {/* content */}
-              <div className="p-2 text-altcolor font-semibold" dir="rtl">
+              <div
+                className="p-2 text-altcolor font-body-play font-semibold"
+                dir="rtl"
+              >
                 {message.content}
               </div>
             </div>
@@ -110,7 +113,7 @@ function ReplayMessagePage() {
               </div>
               <textarea
                 type="text"
-                className="resize-none overflow-hidden bg-inherit w-full focus:outline-none dark:placeholder-body-alt placeholder-body"
+                className="font-body-play resize-none overflow-hidden bg-inherit w-full focus:outline-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt"
                 onChange={handleReplayChange}
                 placeholder="Type your replay"
               />

@@ -22,7 +22,7 @@ function App() {
   }, [data, dispatch]);
   return (
     <div className={app.isDarkTheme ? "dark" : "light"}>
-      <div className=" min-h-screen min-w-screen no-scrollbar bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
+      <div className="font-body min-h-screen min-w-screen no-scrollbar bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
         <main className="container w-full mx-auto p-4 px-5 md-7 overflow-y-auto">
           <Outlet />
         </main>

@@ -5,8 +5,10 @@ const Header = ({ title, children }) => {
   return (
     <div className="flex justify-between items-center py-2 mb-6 mt-3">
       <div className="flex items-center ">
-        <img src="/logo.png" alt="logo" className="w-10" draggable="false" />
-        <h2 className="ms-5 border-s-2 border-body-alt ps-4 text-xl">
+        <h1 className="font-bold text-2xl font-logo text-black dark:text-white ps-1">
+          MadeUp
+        </h1>
+        <h2 className="ms-5 border-s-2 border-body-alt ps-3 text-lg ">
           {title}
         </h2>
       </div>

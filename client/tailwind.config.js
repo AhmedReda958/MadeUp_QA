@@ -28,6 +28,12 @@ module.exports = {
           "0 45px 65px rgba(0, 0, 0, 0.3)",
         ],
       },
+      fontFamily: {
+        display: ["'Rubik Variable'", "sans-serif"],
+        body: ["'Cairo Variable'", "sans-serif"],
+        "body-play": ["'Cairo Play Variable'", "sans-serif"],
+        logo: ["'Rubik Doodle Shadow'", "system-ui"],
+      },
     },
   },
   plugins: [],
