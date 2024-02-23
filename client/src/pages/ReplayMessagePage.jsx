@@ -64,7 +64,7 @@ function ReplayMessagePage() {
           <div className="flex mb-8 post_after after:mt-8">
             {/* profile pic */}
             <Link
-              to={message.sender.username && "/" + message.sender.username}
+              to={message.sender && "/" + message.sender.username}
               className="me-4"
             >
               <ProfilePic data={message} className="w-14 h-14" />
@@ -75,11 +75,9 @@ function ReplayMessagePage() {
               <div className="flex justify-between items-center pb-2">
                 <div className="flex items-baseline">
                   <h5 className="text-altcolor font-semibold text-xl">
-                    {message.sender.fullName
-                      ? message.sender.fullName
-                      : "Anonymous"}
+                    {message.sender ? message.sender.fullName : "Anonymous"}
                   </h5>
-                  {message.sender.username && (
+                  {message.sender && (
                     <span className="ps-2 pt-1 text-sm">
                       @{message.sender.username}
                     </span>
@@ -108,7 +106,7 @@ function ReplayMessagePage() {
               <div className="flex items-baseline pb-2">
                 Replying to
                 <span className="text-primary ps-2">
-                  @{message.sender.username}
+                  {message.sender ? `@${message.sender.username}` : "Anonymous"}
                 </span>
               </div>
               <textarea

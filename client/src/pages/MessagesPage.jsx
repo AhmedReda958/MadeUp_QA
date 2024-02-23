@@ -21,9 +21,9 @@ const MessageItem = ({ message }) => {
           <div className="flex">
             <h5 className="text-altcolor font-semibold">
               {" "}
-              {message.sender.fullName ? message.sender.fullName : "Anonymous"}
+              {message.sender ? message.sender.fullName : "Anonymous"}
             </h5>
-            {message.sender.username && (
+            {message.sender && (
               <span className="ps-1 pt-1 text-sm">
                 @{message.sender.username}
               </span>
