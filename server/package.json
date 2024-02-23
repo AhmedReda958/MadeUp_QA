@@ -11,9 +11,10 @@
   "author": "",
   "license": "ISC",
   "imports": {
+    "#lib/*": "./lib/*",
+    "#errors/*": "./errors/*",
     "#middlewares/*": "./middlewares/*",
-    "#database/*": "./database/*",
-    "#errors/*": "./errors/*"
+    "#database/*": "./database/*"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
