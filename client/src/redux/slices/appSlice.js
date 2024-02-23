@@ -1,10 +1,12 @@
 // slices/appSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
+const isDarkTheme = localStorage.getItem("darkMode")
+  ? localStorage.getItem("darkMode")
+  : false;
+
 const initialState = {
-  isDarkTheme: false,
-  isLoginOpened: false,
-  user: null,
+  isDarkTheme,
   notifications: [],
 };
 
@@ -14,6 +16,7 @@ const appSlice = createSlice({
   reducers: {
     setTheme: (state) => {
       state.isDarkTheme = !state.isDarkTheme;
+      localStorage.setItem("darkMode", state.isDarkTheme);
     },
     openLoginPopup: (state) => {
       state.isLoginOpened = true;

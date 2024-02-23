@@ -1,6 +1,7 @@
 import ProfilePic from "@/components/ProfilePic";
 import Modal from "@/components/ui/Modal";
 import Page from "@/components/ui/Page";
+import { setTheme } from "@/redux/slices/appSlice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -10,6 +11,8 @@ function HomePage() {
 
   const app = useSelector((state) => state.app);
   const user = useSelector((state) => state.auth.userInfo);
+
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -27,9 +30,21 @@ function HomePage() {
         </Page.Header>
         <Modal opened={openSettigs} close={() => setOpenSettings(false)}>
           <div className=" grid grid-cols-2 gap-8 gap-x-12 text-white *:w-24 *:h-24 *:rounded-xl *:bg-dark *:dark:bg-dark-alt ">
-            <div className="hover:opacity-80 p-3 pt-4  flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt">
-              <i className="fa fa-moon text-3xl"></i>
-              <span className="text-sm pt-2">Dark</span>
+            <div
+              className="hover:opacity-80 p-3 pt-4  flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt"
+              onClick={() => dispatch(setTheme())}
+            >
+              {app.isDarkTheme ? (
+                <>
+                  <i className="fa fa-sun text-3xl"></i>
+                  <span className="text-sm pt-2">Light</span>{" "}
+                </>
+              ) : (
+                <>
+                  <i className="fa fa-moon text-3xl"></i>
+                  <span className="text-sm pt-2">Dark</span>{" "}
+                </>
+              )}
             </div>
             <div className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt">
               <i className="fa-solid fa-arrow-right-from-bracket text-3xl"></i>
