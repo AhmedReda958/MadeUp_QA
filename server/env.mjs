@@ -7,7 +7,6 @@ env.NODE_ENV = (env.NODE_ENV ?? 'production').toLowerCase();
 console.log(`Working in ${env.NODE_ENV} mode.`);
 
 function isNonEmptyString(input) { return typeof(input) == 'string' && input.length > 0 }
-env.PORT = Number(env.PORT);
 let portsRange = new IntegerRange(0, Math.pow(2,16), 1, false, false);
 
 switch(env.NODE_ENV) {
@@ -19,7 +18,7 @@ switch(env.NODE_ENV) {
   default:
     if (!isNonEmptyString(env.MONGODB_URI)) throw new Error("Invalid MongoDB URI.");
     if (!isNonEmptyString(env.HOST)) throw new Error("Invalid host address.");
-    if (!portsRange.includes(env.PORT)) throw new Error("Invalid port.");
+    if (!portsRange.includes(Number(env.PORT))) throw new Error("Invalid port.");
     if (!isNonEmptyString(env.JWT_SECRET_KEY)) throw new Error("Invalid JWT secret key.");
 }
 
