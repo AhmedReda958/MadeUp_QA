@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { openLoginPopup } from "@/redux/slices/appSlice";
 
 const iconClasses = "far";
-const activeClasses = "text-primary-light ";
+const activeClasses = "text-primary";
 const pendingClasses = "pending";
 
 const Toolbar = () => {

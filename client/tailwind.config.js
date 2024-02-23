@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         // main colors
-        primary: { light: "#370aff", DEFAULT: "#3011BC", dark: "#270e95" },
+        primary: { light: "#93c5fd", DEFAULT: "#3b82f6", dark: "#1d4ed8" },
         alt: { light: "#fde68a", DEFAULT: "#fbbf24", dark: "#d97706" },
         gred: { light: "#A50AFF", DEFAULT: "#7E11BC", dark: "#640e95" },
         // for fonts
