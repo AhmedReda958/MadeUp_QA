@@ -73,7 +73,7 @@ function HomePage() {
           </div>
         </Modal>
         <button
-          className="text-2xl button-lg absolute right-10 bottom-28"
+          className="text-2xl button-lg absolute right-10 bottom-28 z-10"
           onClick={() => setOpenSettings(true)}
         >
           <i className="fa fa-bars"></i>

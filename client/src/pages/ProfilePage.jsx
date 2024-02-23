@@ -9,6 +9,87 @@ import EmptyContentImg from "@/assets/imgs/taken.svg";
 import SendMessageFrom from "@/components/SendMessageFrom";
 import ProfilePic from "@/components/ProfilePic";
 import Page from "@/components/ui/Page";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import MessageItem from "@/components/MessageItem";
+
+const EmptyPage = () => {
+  return (
+    <div className=" relative">
+      <img
+        src={EmptyContentImg}
+        alt=""
+        draggable="false"
+        className=" max-w-60 m-auto mt-6 opacity-70 "
+      />
+      <div
+        className=" absolute left-3 top-28 text-lg font-light  text-altcolor "
+        style={{ transform: "rotate(-90deg) translateY(-72px)" }}
+      >
+        No content found
+      </div>
+    </div>
+  );
+};
+
+const ProfileMessages = ({ userId }) => {
+  const messagesData = useAxios({
+    url: `messages/user/${userId}`,
+    headers: {
+      params: {
+        page: 1,
+        limit: 10,
+        user: ["sender", "receiver"],
+        include: [
+          "content",
+          "sender",
+          "receiver",
+          "reply.content",
+          "reply.timestamp",
+          "timestamp",
+        ],
+      },
+    },
+  });
+
+  const { loading, error, response } = messagesData;
+
+  return (
+    <div>
+      {!loading ? (
+        error ? (
+          error
+        ) : response.length > 0 ? (
+          <>
+            <div className="py-4 flex justify-between">
+              <div className="text-altcolor font-simibold">
+                Answers {response.length}
+                <div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
+              </div>
+              <div>Likes 0</div>
+              <div>Score 0</div>
+            </div>
+            {response.map((message) => (
+              <MessageItem key={message._id} message={message} />
+            ))}
+          </>
+        ) : (
+          <EmptyPage />
+        )
+      ) : (
+        <>
+          <div className="py-4 flex justify-between">
+            <div className="text-altcolor font-simibold">
+              Answers 0<div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
+            </div>
+            <div>Likes 0</div>
+            <div>Score 0</div>
+          </div>
+          <LoadingSpinner />
+        </>
+      )}
+    </div>
+  );
+};
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -32,7 +113,7 @@ const UserProfile = () => {
           </>
         ) : (
           <>
-            <Page.Header title={response.username}>
+            <Page.Header title={"@" + response.username}>
               <div className="p-3 text-lg cursor-pointer text-primary dark:text-white ">
                 <i className="fa fa-user-plus"></i>
               </div>
@@ -77,29 +158,8 @@ const UserProfile = () => {
             {userInfo.username != username && (
               <SendMessageFrom userId={response._id} />
             )}
-            <div className="py-4 flex justify-between">
-              <div className="text-altcolor font-simibold">
-                Answers 42
-                <div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
-              </div>
-              <div>Likes 53</div>
-              <div>Score 182</div>
-            </div>
 
-            <div className=" relative">
-              <img
-                src={EmptyContentImg}
-                alt=""
-                draggable="false"
-                className=" max-w-60 m-auto mt-6 opacity-70 "
-              />
-              <div
-                className=" absolute left-3 top-28 text-lg font-light  text-altcolor "
-                style={{ transform: "rotate(-90deg) translateY(-72px)" }}
-              >
-                No content found
-              </div>
-            </div>
+            <ProfileMessages userId={userInfo._id} />
           </>
         )
       ) : (

@@ -101,7 +101,7 @@ function MessagesPage() {
             alt=""
             draggable="false"
           />
-          <div className="pt-12 ps-3 text m-auto w-70">
+          <div className="pt-12 ps-3 text m-auto w-80">
             <p className="text-xl text-altcolor">There's no new messages</p>
             <p className="pt-1 text-sm font-light">
               Share your profile link to get more messages.
