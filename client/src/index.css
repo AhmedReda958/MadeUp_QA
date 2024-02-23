@@ -39,6 +39,9 @@ h5,
 h6 {
   @apply font-display;
 }
+.button {
+  @apply px-3 py-1 rounded-md font-display cursor-pointer;
+}
 
 /* todo: sperate into multi files */
 .post_after {

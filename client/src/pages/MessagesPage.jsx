@@ -9,7 +9,7 @@ import Page from "@/components/ui/Page";
 // todo: applay user data for messages // wait for api
 const MessageItem = ({ message }) => {
   return (
-    <div className="flex mb-8">
+    <Link to={"replay?id=" + message._id} className="flex mb-8">
       {/* profile pic */}
       <div className="me-2">
         <ProfilePic data={message} className="w-14 h-14" />
@@ -42,13 +42,17 @@ const MessageItem = ({ message }) => {
         </div>
         <div className="pt-2 pb-3 flex justify-between items-center">
           <div className="text-xs">{formatDate(message.timestamp)}</div>
-          <Link to={"replay?id=" + message._id} className="pe-2 text-primary">
-            <i class="fa-regular fa-paper-plane"></i>
+          <Link
+            to={"replay?id=" + message._id}
+            className="button text-white bg-primary hover:bg-primary-dark text-sm "
+          >
+            Replay
+            <i class="fa fa-share ps-2 "></i>
           </Link>
         </div>
       </div>
       {/* action */}
-    </div>
+    </Link>
   );
 };
 
@@ -100,7 +104,7 @@ function MessagesPage() {
             alt=""
             draggable="false"
           />
-          <div className="pt-12 ps-3 text m-auto">
+          <div className="pt-12 ps-3 text m-auto w-70">
             <p className="text-xl text-altcolor">There's no new messages</p>
             <p className="pt-1 text-sm font-light">
               Share your profile link to get more messages.
