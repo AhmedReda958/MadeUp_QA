@@ -1,3 +1,4 @@
+import DatabaseError from "#errors/database.mjs";
 const { MONGODB_URI } = process.env;
 import mongoose from "mongoose";
 
@@ -15,8 +16,7 @@ export async function attemptDBConnection() {
       await mongoose.connect(MONGODB_URI, { dbName: "anon_app" });
     } catch (error) {
       // TODO: log errors
-      console.error("Failed to connected to the database.");
-      console.error(error);
+      console.error(new DatabaseError("CONNECT", error));
     }
   }
 }

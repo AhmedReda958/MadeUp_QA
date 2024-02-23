@@ -1,9 +1,9 @@
-import "./env.js";
-import app from "./app.js";
-import api from "./api/index.js";
-import errorsHandler from "#middlewares/errors-handler.js";
+import "./env.mjs";
+import app from "./app.mjs";
+import api from "./api/index.mjs";
+import errorsHandler from "#middlewares/errors-handler.mjs";
 
-import { attemptDBConnection } from "#database/connection.js";
+import { attemptDBConnection } from "#database/connection.mjs";
 attemptDBConnection();
 
 app.get("/", (req, res) => {

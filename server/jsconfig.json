@@ -2,8 +2,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "#middlewares/*": ["middlewares/*"],
-      "#database/*": ["database/*"]
+      "#lib/*": ["./lib/*"],
+      "#errors/*": ["./errors/*"],
+      "#middlewares/*": ["./middlewares/*"],
+      "#database/*": ["./database/*"]
     }
   }
 }

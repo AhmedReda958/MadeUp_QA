@@ -1,7 +1,6 @@
-import { CommonError } from "#middlewares/errors-handler.js";
 import mongoose, { isValidObjectId } from "mongoose";
 const { Schema, model, models, Types: { ObjectId } } = mongoose;
-import globalStages from "#database/stages.js";
+import globalStages from "#database/stages.mjs";
 
 const messageSchema = new Schema({
   content: {
@@ -184,11 +183,10 @@ messageSchema.statics.answeredByUser = function(userId, pagination, publicOnly, 
   ]);
 }
 
-messageSchema.statics.fetch = async function(messageId, requester, { users, includes, allow, only }) {
+messageSchema.statics.fetch = function(messageId, requester, { users, includes, allow, only }) {
   requester = isValidObjectId(requester)
   ? new ObjectId(requester) : `${requester}`;
-  
-  let message = (await this.aggregate([
+  return this.aggregate([
     {
       $match: {
         _id: new ObjectId(messageId),
@@ -202,13 +200,10 @@ messageSchema.statics.fetch = async function(messageId, requester, { users, incl
     messageStages.hideSenderIfAnonymous,
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) }
-  ])).at(0);
-
-  if (!message) throw new CommonError("FETCH_MESSAGE", { code: "MESSAGE_NOT_FOUND" }, 404);
-  return message;
+  ]).exec().then(docs => docs.at(0));
 }
 
-messageSchema.statics.likes = async function(messageId, { usersId, usersBrief, page, limit }) {
+messageSchema.statics.likes = function(messageId, { usersId, usersBrief, page, limit }) {
   let pipeline = [
     { $match: { _id: new ObjectId(messageId) } },
     {
@@ -286,22 +281,23 @@ messageSchema.statics.likes = async function(messageId, { usersId, usersBrief, p
       }
     }
   );
-  let likes = (await this.aggregate(pipeline)).at(0);
-  if (!likes) throw new CommonError("FETCH_MESSAGE_LIKES", { code: "MESSAGE_NOT_FOUND" }, 404);
-  return likes;
+  return this.aggregate(pipeline).exec().then(docs => docs.at(0));
 }
 
-messageSchema.statics.setLikeBy = async function(messageId, userId, status) {
-  let update = await this.updateOne(
+messageSchema.statics.setLikeBy = function(messageId, userId, status) {
+  return this.updateOne(
     { _id: messageId },
     { [status ? "$addToSet" : "$pull"]: { likes: userId } }
-  );
-  if (update.matchedCount == 0) throw new CommonError("LIKE_MESSAGE", { code: "MESSAGE_NOT_FOUND" }, 404);
-  return update.modifiedCount > 0;
+  ).exec().then(update => {
+    return {
+      found: update.matchedCount > 0,
+      updated: update.modifiedCount > 0
+    }
+  })
 }
 
-messageSchema.statics.isLikedBy = async function(messageId, userId) {
-  let pipeline = [
+messageSchema.statics.isLikedBy = function(messageId, userId) {
+  return this.aggregate([
     { $match: { _id: new ObjectId(messageId) } },
     {
       $project: {
@@ -314,20 +310,17 @@ messageSchema.statics.isLikedBy = async function(messageId, userId) {
         }
       }
     }
-  ];
-  let message = (await this.aggregate(pipeline)).at(0);
-  if (!message) throw new CommonError("FETCH_MESSAGE_LIKE", { code: "MESSAGE_NOT_FOUND" }, 404);
-  return message.liked;
+  ]).exec().then(docs => docs.at(0)?.liked);
 }
 
-messageSchema.statics.likedBy = async function(userId, pagination, { users, includes, allow, only }) {
+messageSchema.statics.likedBy = function(userId, pagination, { users, includes, allow, only }) {
   users = parseInternalUsers(users);
-  return await this.aggregate([
+  return this.aggregate([
     { $match: { likes: new ObjectId(userId) } },
     ...globalStages.pagination(pagination),
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) }
-  ]);
+  ]).exec();
 }
 
 export default models.Message || model("Message", messageSchema);
