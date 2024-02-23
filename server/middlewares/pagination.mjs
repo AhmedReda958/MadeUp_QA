@@ -16,7 +16,7 @@ export default function paginationMiddleware(req, res, next) {
   for(let inputName in inputs) {
     let input = inputs[inputName];
     let value = inputName in req.query ? Number(req.query[inputName]) : input.default;
-    if (!input.range.includes(value)) 
+    if (input.range.includes(value)) 
       req.pagination[inputName] = value;
     else
       issues[inputName] = "Not in range.";
