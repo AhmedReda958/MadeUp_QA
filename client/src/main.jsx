@@ -9,6 +9,15 @@ import { RouterProvider } from "react-router-dom";
 import router from "@/router";
 import store from "@/redux/index.js";
 
+// fonts:
+// Supports weights 200-900
+import "@fontsource-variable/cairo";
+// Supports weights 300-900
+import "@fontsource-variable/rubik";
+//only 400
+import "@fontsource-variable/cairo-play";
+import "@fontsource/rubik-doodle-shadow";
+
 // axios config
 const apiURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/";
 axios.defaults.baseURL = apiURL;

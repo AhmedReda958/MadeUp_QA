@@ -31,6 +31,14 @@
 .bg-maincolor {
   @apply bg-light  dark:bg-dark;
 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-display;
+}
 
 /* todo: sperate into multi files */
 .post_after {
