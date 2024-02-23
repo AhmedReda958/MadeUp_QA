@@ -26,10 +26,13 @@ const UserProfile = () => {
     <Page header={false}>
       {!loading ? (
         error ? (
-          error
+          <>
+            <Page.Header title={"User"} />
+            {error}
+          </>
         ) : (
           <>
-            <Page.Header title={!loading && "@" + userInfo.username}>
+            <Page.Header title={response.username}>
               <div className="p-3 text-lg cursor-pointer text-primary dark:text-white ">
                 <i className="fa fa-user-plus"></i>
               </div>

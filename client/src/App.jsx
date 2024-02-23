@@ -23,7 +23,7 @@ function App() {
   return (
     <div className={app.isDarkTheme ? "dark" : "light"}>
       <div className="font-body min-h-screen min-w-screen no-scrollbar bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
-        <main className=" container w-full max-w-[768px] mx-auto p-4 px-5 md-7 overflow-y-auto">
+        <main className=" container w-full max-w-[768px] mx-auto p-4 px-5 md-7 overflow-y-auto scroll-smooth">
           <Outlet />
         </main>
         <Toolbar />

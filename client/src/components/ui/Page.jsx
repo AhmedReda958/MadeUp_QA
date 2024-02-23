@@ -17,7 +17,10 @@ const Header = ({ title, children }) => {
       {children ? (
         children
       ) : (
-        <Link to={-1} className="pt-1 pe-3 cursor-pointer">
+        <Link
+          to={-1}
+          className="pt-1 pe-3 cursor-pointer transition-all hover:text-primary duration-100 ease-in-out"
+        >
           <i className="fa-solid fa-arrow-left"></i>
         </Link>
       )}

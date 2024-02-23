@@ -15,7 +15,7 @@ const MessageItem = ({ message }) => {
         <ProfilePic data={message} className="w-14 h-14" />
       </div>
 
-      <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md">
+      <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md hover:shadow-lg">
         {/* header */}
         <div className="flex justify-between pt-3 pb-1">
           <div className="flex">
@@ -42,10 +42,7 @@ const MessageItem = ({ message }) => {
         </div>
         <div className="pt-2 pb-3 flex justify-between items-center">
           <div className="text-xs">{formatDate(message.timestamp)}</div>
-          <Link
-            to={"replay?id=" + message._id}
-            className="button text-white bg-primary hover:bg-primary-dark text-sm "
-          >
+          <Link to={"replay?id=" + message._id} className="button-lg ">
             Replay
             <i class="fa fa-share ps-2 "></i>
           </Link>

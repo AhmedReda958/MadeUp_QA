@@ -60,7 +60,7 @@ function ReplayMessagePage() {
   return (
     <Page title={"Replay"} loading={messageData.loading}>
       {!messageData.loading ? (
-        <div className="px-4">
+        <div className="px-4 h-full">
           <div className="flex mb-8 post_after after:mt-8">
             {/* profile pic */}
             <Link
@@ -99,7 +99,7 @@ function ReplayMessagePage() {
           </div>
           {/* replay */}
           <div className="flex">
-            <div className="me-4">
+            <div className="me-4 drop-shadow-2xl">
               <ProfilePic data={message} className="w-14 h-14" />
             </div>
             <div className="w-full">
@@ -111,7 +111,7 @@ function ReplayMessagePage() {
               </div>
               <textarea
                 type="text"
-                className="font-body-play resize-none overflow-hidden bg-inherit w-full focus:outline-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt"
+                className="font-body-play resize-none overflow-hidden bg-inherit w-full focus:outline-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
                 onChange={handleReplayChange}
                 placeholder="Type your replay"
               />
@@ -121,11 +121,11 @@ function ReplayMessagePage() {
           {/*
            //todo: move this section to toolbar
            */}
-          <div>
+          <div className="">
             <button
-              className="mt-10 ps-4 pe-4 py-2 rounded-xl rounded-br-3xl float-end  bg-primary text-white "
+              className="drop-shadow-xl mt-10  float-end button-lg"
               onClick={() => sendReplay()}
-              disabled={replayLoading}
+              disabled={replayLoading || replayText.length < 6}
             >
               Replay
               <i class="ps-2 fa-solid fa-paper-plane"></i>
