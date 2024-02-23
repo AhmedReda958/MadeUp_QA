@@ -22,6 +22,11 @@ const authSlice = createSlice({
       state.userInfo = payload;
       state.logedin = true;
     },
+    logout: (state) => {
+      state.userInfo = {};
+      state.logedin = false;
+      localStorage.clear();
+    },
   },
   extraReducers: (builder) => {
     // register user
@@ -58,6 +63,6 @@ const authSlice = createSlice({
       });
   },
 });
-export const { setCredentials } = authSlice.actions;
+export const { setCredentials, logout } = authSlice.actions;
 
 export default authSlice.reducer;
