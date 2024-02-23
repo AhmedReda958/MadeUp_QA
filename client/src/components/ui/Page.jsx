@@ -28,11 +28,16 @@ const Header = ({ title, children }) => {
   );
 };
 
-const Page = ({ title, children, loading = false, header = true }) => {
+const Page = ({
+  title,
+  children,
+  className,
+  loading = false,
+  header = true,
+}) => {
   return (
-    <div className="pb-20">
+    <div className={`pb-20 ${className}`}>
       {header && <Header title={title} />}
-
       {!loading ? children : <LoadingSpinner />}
     </div>
   );

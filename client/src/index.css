@@ -40,10 +40,10 @@ h6 {
   @apply font-display;
 }
 .button {
-  @apply px-3 py-1 rounded-md bg-primary hover:bg-primary-dark disabled:bg-primary-light font-display  cursor-pointer transition-colors duration-75;
+  @apply px-3 py-1 rounded-md bg-primary text-white hover:bg-primary-dark disabled:bg-primary-light font-display  cursor-pointer transition-colors duration-75;
 }
 .button-lg {
-  @apply px-4 py-2 rounded-xl rounded-br-3xl  bg-primary hover:bg-primary-dark disabled:bg-primary-light text-white  font-display cursor-pointer transition-colors duration-75;
+  @apply px-4 py-2 rounded-xl rounded-br-3xl bg-primary hover:bg-primary-dark disabled:bg-primary-light text-white  font-display cursor-pointer transition-colors duration-75;
 }
 
 /* todo: sperate into multi files */
