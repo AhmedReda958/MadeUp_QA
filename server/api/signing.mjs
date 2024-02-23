@@ -1,6 +1,6 @@
 const { JWT_SECRET_KEY } = process.env;
 const SIGNING_EXPIRY = '30d'; // TODO: configure
-import UnhandledError from "#errors/unhandled.mjs";
+import DatabaseError from "#errors/database.mjs";
 import User from "#database/models/user.mjs";
 import jwt from "jsonwebtoken";
 import express from "express";
@@ -37,7 +37,7 @@ router.post("/register", async (req, res, next) => { try {
   try { await user.save(); } catch (err) {
     if (err.code == 11000)
       return res.status(409).json({ code: "USER_EXISTS", user: err.keyValue });
-    throw new UnhandledError("REGISTER_USER", err);
+    throw new DatabaseError("SAVE_NEW_USER", err);
   }
 
   const token = jwt.sign(

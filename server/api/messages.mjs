@@ -1,4 +1,4 @@
-import UnhandledError from "#errors/unhandled.mjs";
+import DatabaseError from "#errors/database.mjs";
 import User from "#database/models/user.mjs";
 import Message from "#database/models/message.mjs";
 import { isValidObjectId } from "mongoose";
@@ -94,7 +94,7 @@ router
       });
 
       try { await message.save(); } catch (err) {
-        throw new UnhandledError("SEND_MESSAGE", err);
+        throw new DatabaseError("SAVE_MESSAGE", err);
       }
 
       return res
@@ -146,7 +146,7 @@ router
       try {
         await Message.updateOne({ _id: message._id }, { $set: { reply } });
       } catch (err) {
-        throw new UnhandledError("REPLY_MESSAGE", err);
+        throw new DatabaseError("UPDATE_MESSAGE_REPLY", err);
       }
 
       return res.status(201).json(reply);
