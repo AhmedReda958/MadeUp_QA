@@ -5,6 +5,7 @@ import LoginPopup from "./components/logingPopup";
 import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
+import AlertDialog from "./components/ui/AlertDialog";
 
 function App() {
   const app = useSelector((state) => state.app);
@@ -28,6 +29,7 @@ function App() {
         </main>
         <Toolbar />
         <LoginPopup IsOpened={true} />
+        <AlertDialog />
       </div>
     </div>
   );

@@ -1,11 +1,25 @@
 import { useState } from "react";
+import { Dialog } from "@headlessui/react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addAlert } from "@/redux/slices/appSlice";
 
 const SendMessageFrom = ({ userId }) => {
   const [msgAnonymously, setMsgAnonymously] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [msgContent, setMsgContent] = useState("");
   const [MsgLoading, setMsgLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const onSuccess = () => {
+    dispatch(
+      addAlert({
+        title: "Message sent successfully",
+        type: "success",
+      })
+    );
+  };
 
   const sendMessage = () => {
     setMsgLoading(true);
@@ -17,10 +31,10 @@ const SendMessageFrom = ({ userId }) => {
       .then((res) => {
         // setResponse(res.data);
         setShowForm(false);
-        alert("message sent successfully :)");
+        onSuccess();
       })
       .catch((err) => {
-        console.log(err.response.data.error);
+        console.log(err);
       })
       .finally(() => {
         setMsgLoading(false);

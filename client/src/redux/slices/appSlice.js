@@ -8,6 +8,7 @@ const isDarkTheme = localStorage.getItem("darkMode")
 const initialState = {
   isDarkTheme,
   notifications: [],
+  alerts: [],
 };
 
 const appSlice = createSlice({
@@ -25,10 +26,16 @@ const appSlice = createSlice({
       state.isLoginOpened = false;
     },
     addNotification: (state, action) => {
-      state.notifications.push(action.payload);
+      state.notifications = [...state.notifications, action.payload];
     },
     clearNotifications: (state) => {
       state.notifications = [];
+    },
+    addAlert: (state, action) => {
+      state.alerts = [...state.alerts, action.payload];
+    },
+    clearAlert: (state) => {
+      state.alerts = state.alerts.shift();
     },
     // Add more actions as needed
   },
@@ -40,5 +47,7 @@ export const {
   closeLoginPopup,
   addNotification,
   clearNotifications,
+  addAlert,
+  clearAlert,
 } = appSlice.actions;
 export default appSlice.reducer;
