@@ -3,6 +3,7 @@ const SIGNING_EXPIRY = '30d'; // TODO: configure
 import DatabaseError from "#errors/database.mjs";
 import User from "#database/models/user.mjs";
 import jwt from "jsonwebtoken";
+import { CHARSET, randomString } from "#lib/random.mjs";
 import express from "express";
 const router = express.Router();
 
@@ -33,6 +34,9 @@ router.post("/login", async (req, res, next) => { try {
 
 router.post("/register", async (req, res, next) => { try {
   const { email, username, password } = req.body;
+  if (!("username" in req.body))
+    username = email.replace(/@.+/, "").replace(/[&/\\#,+()$~%._@'":*?<>{}]/g, "") + randomString(3, CHARSET.NUMERICS);
+  
   let user = new User({ username, email, password });
   try { await user.save(); } catch (err) {
     if (err.code == 11000)
