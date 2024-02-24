@@ -6,17 +6,13 @@ export function isDBConnected() {
   return mongoose.connection.readyState == 1;
 }
 
-export async function attemptDBConnection() {
+export function attemptDBConnection() {
   mongoose.set("strictQuery");
-  if (isDBConnected()) {
-    console.log("Already connected to the database.");
-  } else {
-    try {
-      console.error("Connected to the database!");
-      await mongoose.connect(MONGODB_URI, { dbName: "anon_app" });
-    } catch (error) {
-      // TODO: log errors
-      console.error(new DatabaseError("CONNECT", error));
-    }
-  }
+  if (isDBConnected()) return console.log("Already connected to the database.");
+  mongoose.connect(MONGODB_URI, { dbName: "anon_app" }).then(() => {
+    console.error("Connected to the database!");
+  }).catch(error => {
+    // TODO: log errors
+    console.error(new DatabaseError("CONNECT", error));
+  });
 }

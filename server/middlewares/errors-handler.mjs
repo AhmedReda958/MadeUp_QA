@@ -1,3 +1,5 @@
+import { MongooseError } from "mongoose";
+import { isDBConnected } from "#database/connection.mjs";
 import { CommonError, DatabaseError } from "#errors/index.mjs";
 import generateUniqueId from "generate-unique-id";
 
@@ -18,6 +20,8 @@ export default function errorsHandler(err, req, res, next) {
         issues[issue] = errors[issue].message
       return res.status(400).json({ code: "INVALID", issues });
     }
+  } else if (err instanceof MongooseError && !isDBConnected()) {
+    return res.status(400).json({ code: "UNAVAILABLE", "database-issue": "CONNECTION_FAILURE" });
   }
 
   console.error(inLogError); // TODO: log errors
