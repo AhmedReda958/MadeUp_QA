@@ -1,7 +1,7 @@
 import { MongooseError } from "mongoose";
 import { isDBConnected } from "#database/connection.mjs";
 import { CommonError, DatabaseError } from "#errors/index.mjs";
-import { randomString } from "#lib/random.mjs";
+import { randomString } from "#utils/random.mjs";
 
 export default function errorsHandler(err, req, res, next) {
   let inLogError = { id: randomString(8) };

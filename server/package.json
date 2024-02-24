@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "imports": {
-    "#lib/*": "./lib/*",
+    "#utils/*": "./utils/*",
     "#errors/*": "./errors/*",
     "#middlewares/*": "./middlewares/*",
     "#database/*": "./database/*"

@@ -1,4 +1,4 @@
-import IntegerRange from "./lib/range.mjs";
+import IntegerRange from "./utils/range.mjs";
 import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 const { env } = process;
