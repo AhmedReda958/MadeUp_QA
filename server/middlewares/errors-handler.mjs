@@ -1,10 +1,10 @@
 import { MongooseError } from "mongoose";
 import { isDBConnected } from "#database/connection.mjs";
 import { CommonError, DatabaseError } from "#errors/index.mjs";
-import generateUniqueId from "generate-unique-id";
+import { randomString } from "#utils/random.mjs";
 
 export default function errorsHandler(err, req, res, next) {
-  let inLogError = { id: generateUniqueId({ length: 8 }) };
+  let inLogError = { id: randomString(8) };
 
   if (err instanceof CommonError) {
     Object.assign(inLogError, err)
