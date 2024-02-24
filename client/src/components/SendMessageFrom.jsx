@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 const SendMessageFrom = ({ userId }) => {
-  const messageRef = useRef(null);
+  const [msgAnonymously, setMsgAnonymously] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [msgContent, setMsgContent] = useState("");
   const [MsgLoading, setMsgLoading] = useState(false);
 
   const sendMessage = () => {
     setMsgLoading(true);
     axios
       .post(`/messages/user/${userId}`, {
-        // TODM
-        content: messageRef.current.value,
+        anonymously: msgAnonymously,
+        content: msgContent,
       })
       .then((res) => {
         // setResponse(res.data);
@@ -24,8 +25,12 @@ const SendMessageFrom = ({ userId }) => {
       .finally(() => {
         setMsgLoading(false);
       });
+  };
 
-    console.log(messageRef.current.value);
+  const handleMsgChange = (e) => {
+    e.target.style.height = "";
+    e.target.style.height = e.target.scrollHeight + "px";
+    setMsgContent(e.target.value);
   };
 
   return (
@@ -33,7 +38,7 @@ const SendMessageFrom = ({ userId }) => {
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
-          className="w-full mt-2 py-2  text-center bg-altcolor text-alt   rounded-2xl shadow"
+          className="w-full mt-2 py-3 hover:opacity-90  text-center  text-alt bg-dark-alt   rounded-2xl shadow"
         >
           Send Message
           <span className="ms-3 ">
@@ -43,20 +48,18 @@ const SendMessageFrom = ({ userId }) => {
       ) : (
         <>
           <textarea
-            name=""
-            id=""
-            ref={messageRef}
-            className="w-full min-h-28 text-altcolor bg-light-alt dark:bg-dark-alt py-4 px-6 rounded-2xl shadow-inner"
+            onChange={handleMsgChange}
+            className=" resize-none w-full min-h-28 text-altcolor bg-light-alt dark:bg-dark-alt placeholder-body-alt py-4 px-6 rounded-2xl shadow-inner shadow-gray-300 dark:shadow-none"
             placeholder="Ask a question."
           ></textarea>
 
           <button
             onClick={sendMessage}
-            className="w-full mt-3 px-8 py-3  text-center bg-alt-dark disabled:bg-alt text-lg text-white rounded-2xl shadow-lg"
-            disabled={MsgLoading}
+            className="w-full mt-3 px-8 py-3  text-center bg-gradient-to-tr from-primary-dark to-gred hover:opacity-90 disabled:opacity-80  text-lg text-white rounded-2xl group transition-all duration-200 shadow shadow-dark-alt"
+            disabled={MsgLoading || msgContent.length < 6}
           >
             Send anonymously
-            <span className=" float-end">
+            <span className=" float-end group-hover:rotate-12">
               {MsgLoading ? (
                 <i className="fa fa-spinner fa-spin-pulse"></i>
               ) : (
