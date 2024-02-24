@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Dialog } from "@headlessui/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addAlert } from "@/redux/slices/appSlice";
@@ -20,6 +19,14 @@ const SendMessageFrom = ({ userId }) => {
       })
     );
   };
+  const onFailure = () => {
+    dispatch(
+      addAlert({
+        title: "Error, Message isn't sent",
+        type: "error",
+      })
+    );
+  };
 
   const sendMessage = () => {
     setMsgLoading(true);
@@ -35,6 +42,7 @@ const SendMessageFrom = ({ userId }) => {
       })
       .catch((err) => {
         console.log(err);
+        onFailure();
       })
       .finally(() => {
         setMsgLoading(false);

@@ -4,8 +4,10 @@ import { formatDate } from "@/utils/helpers";
 import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import Page from "@/components/ui/Page";
+import { addAlert } from "@/redux/slices/appSlice";
 
 function ReplayMessagePage() {
   const navigate = useNavigate();
@@ -37,7 +39,25 @@ function ReplayMessagePage() {
     setReplayText(e.target.value);
   };
 
-  // todo addd error handler
+  const dispatch = useDispatch();
+
+  const onSuccess = () => {
+    dispatch(
+      addAlert({
+        title: "Reply sent successfully",
+        type: "success",
+      })
+    );
+  };
+  const onFailure = () => {
+    dispatch(
+      addAlert({
+        title: "Error, Reply isn't sent",
+        type: "error",
+      })
+    );
+  };
+
   const sendReplay = () => {
     setReplayLoading(true);
     axios
@@ -46,11 +66,12 @@ function ReplayMessagePage() {
         content: replayText,
       })
       .then((res) => {
-        alert("replay sent");
+        onSuccess();
         navigate(-1);
       })
       .catch((err) => {
-        alert("error: " + err.code);
+        console.log("error: " + err.code);
+        onFailure();
       })
       .finally(() => {
         setReplayLoading(false);
