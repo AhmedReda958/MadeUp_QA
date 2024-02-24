@@ -181,12 +181,12 @@ const LoginPopup = () => {
   return (
     <div>
       {appStore.isLoginOpened && !logedin && (
-        <div className="fixed  h-full w-full z-20">
+        <div className="fixed  h-full w-full z-40">
           <div
             className=" fixed h-full w-full top-0 left-0 bg-gray-800 opacity-50 "
             onClick={() => dispatch(closeLoginPopup())}
           ></div>
-          <div className="fixed bottom-0 h-4/6 w-full z-20 bg-light dark:bg-dark text-body dark:text-secondary rounded-tr-[35px] rounded-tl-[100px] pt-10 px-8">
+          <div className="fixed bottom-0 h-4/6 w-full  bg-light dark:bg-dark text-body dark:text-secondary rounded-tr-[35px] rounded-tl-[100px] pt-10 px-8">
             <h2 className=" text-xl font-bold text-center">
               {isLoginFrom ? "Login" : "Sign Up"}
             </h2>

@@ -11,7 +11,7 @@ function HomePage() {
   const [openSettigs, setOpenSettings] = useState(false);
 
   const app = useSelector((state) => state.app);
-  const user = useSelector((state) => state.auth.userInfo);
+  const auth = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -24,9 +24,16 @@ function HomePage() {
             <button className="text-xl" onClick={() => setOpenSettings(true)}>
               <i className="fa fa-bars"></i>
             </button>
-            {user.logedin && (
-              <Link to={`/${user.username}`} className="ps-4 drop-shadow-xl">
-                <ProfilePic data={user} className="h-10 w-10" border={false} />
+            {auth.logedin && (
+              <Link
+                to={`/${auth.userInfo.username}`}
+                className="ps-4 drop-shadow-xl"
+              >
+                <ProfilePic
+                  data={auth.userInfo}
+                  className="h-10 w-10"
+                  border={false}
+                />
               </Link>
             )}
           </div>

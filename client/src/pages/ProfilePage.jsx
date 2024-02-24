@@ -60,7 +60,7 @@ const ProfileMessages = ({ userId }) => {
           error
         ) : response.length > 0 ? (
           <>
-            <div className="py-4 flex justify-between">
+            <div className="p-4 flex justify-between">
               <div className="text-altcolor font-simibold">
                 Answers {response.length}
                 <div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
@@ -73,19 +73,19 @@ const ProfileMessages = ({ userId }) => {
             ))}
           </>
         ) : (
-          <EmptyPage />
+          <>
+            <div className="p-4 flex justify-between">
+              <div className="text-altcolor font-simibold">
+                Answers 0<div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
+              </div>
+              <div>Likes 0</div>
+              <div>Score 0</div>
+            </div>
+            <EmptyPage />
+          </>
         )
       ) : (
-        <>
-          <div className="py-4 flex justify-between">
-            <div className="text-altcolor font-simibold">
-              Answers 0<div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
-            </div>
-            <div>Likes 0</div>
-            <div>Score 0</div>
-          </div>
-          <LoadingSpinner />
-        </>
+        <LoadingSpinner />
       )}
     </div>
   );
@@ -114,9 +114,15 @@ const UserProfile = () => {
         ) : (
           <>
             <Page.Header title={"@" + response.username}>
-              <div className="p-3 text-lg cursor-pointer text-primary dark:text-white ">
-                <i className="fa fa-user-plus"></i>
-              </div>
+              {userInfo.username != username ? (
+                <div className="p-3 text-lg cursor-pointer text-primary dark:text-white ">
+                  <i className="fa fa-user-plus"></i>
+                </div>
+              ) : (
+                <div className="p-3 text-xl cursor-pointer ">
+                  <i className="fa fa-gear"></i>
+                </div>
+              )}
             </Page.Header>
             <div className="flex">
               <ProfilePic data={response} className="w-24 h-24" />
@@ -159,7 +165,7 @@ const UserProfile = () => {
               <SendMessageFrom userId={response._id} />
             )}
 
-            <ProfileMessages userId={userInfo._id} />
+            <ProfileMessages userId={response._id} />
           </>
         )
       ) : (
