@@ -6,6 +6,7 @@ import { logout } from "@/redux/slices/authSlice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import postsImg from "@/assets/imgs/posts.svg";
 
 function HomePage() {
   const [openSettigs, setOpenSettings] = useState(false);
@@ -79,14 +80,27 @@ function HomePage() {
             </div>
           </div>
         </Modal>
+        <div>
+          <img
+            src={postsImg}
+            className="w-[270px] m-auto mt-20 opacity-70 "
+            alt=""
+            draggable="false"
+          />
+          <div className="pt-12 ps-3 text m-auto w-80">
+            <p className="text-center">
+              You don't have any users you follow, to show messages in your
+              timeline follow some frinds to see their answers
+            </p>
+          </div>
+        </div>
         <button
-          className="text-2xl button-lg absolute right-10 bottom-28 z-10"
+          className="text-2xl button-lg absolute right-10 bottom-28 z-10 hidden"
           onClick={() => setOpenSettings(true)}
         >
           <i className="fa fa-bars"></i>
         </button>
       </Page>
-      Discovery
     </>
   );
 }
