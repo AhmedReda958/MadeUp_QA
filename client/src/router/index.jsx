@@ -3,7 +3,9 @@ import HomePage from "@/pages/HomePage";
 import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
 import ReplayMessagePage from "@/pages/ReplayMessagePage";
+import SettingsPage from "@/pages/SettingsPage";
 import MessagesPage from "@/pages/messagesPage";
+import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -20,9 +22,38 @@ const router = createBrowserRouter([
         path: ":username",
         element: <UserProfile />,
       },
-      { path: "notification", element: <NotificationPage /> },
-      { path: "messages", element: <MessagesPage /> },
-      { path: "messages/replay", element: <ReplayMessagePage /> },
+      {
+        path: "notification",
+        element: (
+          <ProtectedRoute>
+            <NotificationPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "messages",
+        element: (
+          <ProtectedRoute>
+            <MessagesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "messages/replay",
+        element: (
+          <ProtectedRoute>
+            <ReplayMessagePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

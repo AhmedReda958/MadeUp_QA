@@ -7,8 +7,6 @@ import { formatDate } from "@/utils/helpers";
 
 const MessageItem = ({ message, type = "post" }) => {
   const navigate = useNavigate();
-  console.log(message);
-
   const navigateToReplayPage = () => {
     type === "message" && navigate("replay?id=" + message._id);
   };

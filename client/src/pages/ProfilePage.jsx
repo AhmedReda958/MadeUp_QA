@@ -3,7 +3,7 @@
 import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
 
 import SendMessageFrom from "@/components/SendMessageFrom";
@@ -119,9 +119,9 @@ const UserProfile = () => {
                   <i className="fa fa-user-plus"></i>
                 </div>
               ) : (
-                <div className="p-3 text-xl cursor-pointer ">
+                <Link to="/settings" className="p-3 text-xl cursor-pointer ">
                   <i className="fa fa-gear"></i>
-                </div>
+                </Link>
               )}
             </Page.Header>
             <div className="flex">

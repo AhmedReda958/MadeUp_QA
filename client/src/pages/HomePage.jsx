@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import postsImg from "@/assets/imgs/posts.svg";
-import { Button } from "flowbite-react";
 
 function HomePage() {
   const [openSettigs, setOpenSettings] = useState(false);
@@ -71,10 +70,13 @@ function HomePage() {
               <i className="fa-solid fa-arrow-right-from-bracket text-3xl"></i>
               <span className="text-sm pt-2">Logout</span>
             </div>
-            <div className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt">
+            <Link
+              to="settings"
+              className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt"
+            >
               <i className="fa-solid fa-gear text-3xl"></i>
               <span className="text-sm pt-2">Settings</span>
-            </div>
+            </Link>
             <div className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt">
               <i className="fa-solid fa-earth-africa text-3xl"></i>
               <span className="text-sm pt-2">العربية</span>
@@ -95,9 +97,6 @@ function HomePage() {
             </p>
           </div>
         </div>
-        <Button outline color="primary">
-          hello
-        </Button>
 
         <button
           className="text-2xl button-lg absolute right-10 bottom-28 z-10 hidden"

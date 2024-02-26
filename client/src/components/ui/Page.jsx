@@ -28,13 +28,9 @@ const Header = ({ title, children }) => {
   );
 };
 
-const Page = ({
-  title,
-  children,
-  className,
-  loading = false,
-  header = true,
-}) => {
+const Page = (props) => {
+  const { title, children, className, loading = false, header = true } = props;
+
   return (
     <div className={`pb-20 ${className}`}>
       {header && <Header title={title} />}
