@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import underConstractionImg from "@/assets/imgs/underConstraction.svg";
 
 export default function AlertDialog() {
   const alerts = useSelector((state) => state.app.alerts);
@@ -11,9 +12,9 @@ export default function AlertDialog() {
     if (alerts.length > 0) {
       setAlert(alerts[alerts.length - 1]);
       setIsOpen(true);
-      setTimeout(() => {
-        setIsOpen(false);
-      }, 3000);
+      // setTimeout(() => {
+      //   setIsOpen(false);
+      // }, 3000);
     }
   }, [alerts]);
 
@@ -28,14 +29,24 @@ export default function AlertDialog() {
   const ModalIcon = () => {
     switch (alert.type) {
       case "success":
-        return <i className="fa fa-check-circle fa-2x text-green-500 me-3"></i>;
+        return (
+          <i className="fa fa-check-circle fa-2x text-green-500 me-3 mb-3"></i>
+        );
       case "error":
         return (
-          <i className="fa fa-circle-exclamation fa-2x text-red-500 me-3"></i>
+          <i className="fa fa-circle-exclamation fa-2x text-red-500 me-3 mb-3"></i>
         );
       case "warn":
         return (
-          <i className="fa fa-triangle-exclamation fa-2x text-orange-500 me-3"></i>
+          <i className="fa fa-triangle-exclamation fa-2x text-orange-500 me-3 mb-3"></i>
+        );
+      case "comingsoon":
+        return (
+          <img
+            src={underConstractionImg}
+            alt="coming soon"
+            className="w-60 mb-4"
+          />
         );
 
       default:
@@ -73,7 +84,7 @@ export default function AlertDialog() {
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900 flex items-center"
+                    className="text-lg font-medium leading-6 text-gray-900 flex items-center flex-col"
                   >
                     <ModalIcon />
                     {alert.title || ""}

@@ -1,7 +1,9 @@
 import Page from "@/components/ui/Page";
 import React from "react";
 import ProfilePic from "@/components/ProfilePic";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addAlert } from "@/redux/slices/appSlice";
+
 import {
   InboxArrowDownIcon,
   AdjustmentsHorizontalIcon,
@@ -47,7 +49,15 @@ const settingsList = [
 
 const SettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const dispatch = useDispatch();
 
+  const commingSoonAlert = () =>
+    dispatch(
+      addAlert({
+        title: "Coming soon!",
+        type: "comingsoon",
+      })
+    );
   return (
     <Page title={"Settings"} className="z-50">
       <div className="flex items-center flex-col">
@@ -61,13 +71,14 @@ const SettingsPage = () => {
           <div
             key={index}
             className="flex items-center  ps-2 pe-4 py-3 mb-3 rounded-xl bg-altcolor shadow cursor-pointer  hover:opacity-90 "
+            onClick={commingSoonAlert}
           >
             <div className="px-2 me-1 *:w-8 *:h-8 text-altcolor">
               {item.icon}
             </div>
             <div className="w-full flex justify-between items-center">
               <div>
-                <h4 className="text-altcolor">{item.title}</h4>
+                <h4 className="text-altcolor text-sm">{item.title}</h4>
                 <p className="text-sm">{item.desc}</p>
               </div>
               <ChevronRightIcon className="w-4 h-4" />
