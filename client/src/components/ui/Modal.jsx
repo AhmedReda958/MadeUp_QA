@@ -12,7 +12,7 @@ const Modal = ({ children, opened, close }) => {
       "
         onClick={() => close()}
       ></div>
-      <div className="min-w-1/4 max-w-90 absolute top-1/4 left-1/2 -translate-x-1/2 p-6">
+      <div className=" w-64 absolute top-1/4 left-1/2 -translate-x-1/2 p-6">
         {children}
       </div>
     </div>

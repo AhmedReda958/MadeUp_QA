@@ -5,53 +5,7 @@ import axios from "axios";
 import ProfilePic from "@/components/ProfilePic";
 import { formatDate } from "@/utils/helpers";
 import Page from "@/components/ui/Page";
-
-// todo: applay user data for messages // wait for api
-const MessageItem = ({ message }) => {
-  return (
-    <Link to={"replay?id=" + message._id} className="flex mb-8">
-      {/* profile pic */}
-      <div className="me-2">
-        <ProfilePic data={message} className="w-14 h-14" />
-      </div>
-
-      <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md hover:shadow-lg">
-        {/* header */}
-        <div className="flex justify-between pt-3 pb-1">
-          <div className="flex">
-            <h5 className="text-altcolor font-semibold">
-              {" "}
-              {message.sender ? message.sender.fullName : "Anonymous"}
-            </h5>
-            {message.sender && (
-              <span className="ps-1 pt-1 text-sm">
-                @{message.sender.username}
-              </span>
-            )}
-          </div>
-          <div>
-            <i class="fa-solid fa-ellipsis-vertical"></i>
-          </div>
-        </div>
-        {/* content */}
-        <div
-          className="p-2 text-altcolor font-semibold font-body-play"
-          dir="rtl"
-        >
-          {message.content}
-        </div>
-        <div className="pt-2 pb-3 flex justify-between items-center">
-          <div className="text-xs">{formatDate(message.timestamp)}</div>
-          <Link to={"replay?id=" + message._id} className="button-lg ">
-            Replay
-            <i class="fa fa-share ps-2 "></i>
-          </Link>
-        </div>
-      </div>
-      {/* action */}
-    </Link>
-  );
-};
+import MessageItem from "@/components/MessageItem";
 
 function MessagesPage() {
   const [loading, setLoading] = useState(false);
@@ -90,7 +44,7 @@ function MessagesPage() {
       {messagesData.length > 0 ? (
         <>
           {messagesData.map((message) => (
-            <MessageItem key={message.id} message={message} />
+            <MessageItem key={message.id} message={message} type="message" />
           ))}
         </>
       ) : (

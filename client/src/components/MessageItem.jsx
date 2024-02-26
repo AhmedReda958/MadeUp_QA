@@ -3,8 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
 import { formatDate } from "@/utils/helpers";
 
+// allowed types => [message , post]
+
 const MessageItem = ({ message, type = "post" }) => {
   const navigate = useNavigate();
+  console.log(message);
 
   const navigateToReplayPage = () => {
     type === "message" && navigate("replay?id=" + message._id);
@@ -13,11 +16,11 @@ const MessageItem = ({ message, type = "post" }) => {
     <div onClick={navigateToReplayPage} className="pt-5">
       {/* message */}
       <div
-        className={`flex mb-8 ${type === "post" && "post_after after:ms-8"}`}
+        className={`flex mb-2 ${type === "post" && "post_after after:ms-7"}`}
       >
         {/* profile pic */}
-        <div className="me-2">
-          <ProfilePic data={message.sender} className="w-14 h-14" />
+        <div className="me-1">
+          <ProfilePic data={message} className="w-14 h-14" />
         </div>
 
         <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md ">
@@ -58,11 +61,11 @@ const MessageItem = ({ message, type = "post" }) => {
       </div>
       {/* replay */}
       {type === "post" && (
-        <div className="flex">
-          <div className="me-4 drop-shadow-2xl">
+        <div className="flex mt-4">
+          <div className="me-3 drop-shadow-2xl">
             <ProfilePic data={message.receiver} className="w-14 h-14" />
           </div>
-          <div className="w-full pb-8 border-b border-gray-300 dark:border-dark-alt">
+          <div className="w-full pb-6 border-b border-gray-300 dark:border-dark-alt">
             <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md ">
               {/* header */}
               <div className="flex justify-between pt-3 pb-1">
