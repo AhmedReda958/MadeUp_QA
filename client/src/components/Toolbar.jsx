@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { openLoginPopup } from "@/redux/slices/appSlice";
+import { useEffect } from "react";
 
 const iconClasses = "far";
 const activeClasses = "text-primary";
@@ -10,12 +11,17 @@ const Toolbar = () => {
   const { userInfo, logedin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  let username = userInfo.username;
   const links = [
     { to: "/", icon: "fa-compass" },
     { to: "/notification", icon: "fa-bell" },
     { to: "/messages", icon: "fa-envelope" },
-    { to: `/${userInfo.username}`, icon: "fa-user" },
+    { to: `/${username}`, icon: "fa-user" },
   ];
+
+  useEffect(() => {
+    username = userInfo.username;
+  }, [logedin]);
 
   return (
     <div className=" fixed z-30 bottom-0 left-0 w-full pt-4 px-6 pb-5 drop-shadow-4xl ">
