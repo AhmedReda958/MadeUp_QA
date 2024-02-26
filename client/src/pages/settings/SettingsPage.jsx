@@ -3,6 +3,7 @@ import React from "react";
 import ProfilePic from "@/components/ProfilePic";
 import { useSelector, useDispatch } from "react-redux";
 import { addAlert } from "@/redux/slices/appSlice";
+import { useNavigate } from "react-router-dom";
 
 import {
   InboxArrowDownIcon,
@@ -16,6 +17,12 @@ import {
 
 const settingsList = [
   {
+    title: "Personal information",
+    desc: "your name, user name and bio",
+    icon: <UserIcon />,
+    link: "info",
+  },
+  {
     title: "Genral",
     desc: "Account and posting details",
     icon: <AdjustmentsHorizontalIcon />,
@@ -25,11 +32,7 @@ const settingsList = [
     desc: "Manage your security",
     icon: <ShieldCheckIcon />,
   },
-  {
-    title: "Personal information",
-    desc: "your name, user name and bio",
-    icon: <UserIcon />,
-  },
+
   {
     title: "Login Information",
     desc: "E-mail, phone and password",
@@ -50,6 +53,7 @@ const settingsList = [
 const SettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const commingSoonAlert = () =>
     dispatch(
@@ -58,6 +62,10 @@ const SettingsPage = () => {
         type: "comingsoon",
       })
     );
+
+  const redirectToLink = (link = null) => {
+    link ? navigate(link) : commingSoonAlert();
+  };
   return (
     <Page title={"Settings"} className="z-50">
       <div className="flex items-center flex-col">
@@ -71,7 +79,7 @@ const SettingsPage = () => {
           <div
             key={index}
             className="flex items-center  ps-2 pe-4 py-3 mb-3 rounded-xl bg-altcolor shadow cursor-pointer  hover:opacity-90 "
-            onClick={commingSoonAlert}
+            onClick={() => redirectToLink(item.link)}
           >
             <div className="px-2 me-1 *:w-8 *:h-8 text-altcolor">
               {item.icon}

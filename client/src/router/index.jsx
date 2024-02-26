@@ -3,10 +3,11 @@ import HomePage from "@/pages/HomePage";
 import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
 import ReplayMessagePage from "@/pages/ReplayMessagePage";
-import SettingsPage from "@/pages/SettingsPage";
+import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messagesPage";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
+import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <SettingsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "settings/info",
+        element: (
+          <ProtectedRoute>
+            <PersonalInfoSettingsPage />
           </ProtectedRoute>
         ),
       },

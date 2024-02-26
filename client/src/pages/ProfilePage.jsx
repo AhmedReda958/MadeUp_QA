@@ -119,7 +119,10 @@ const UserProfile = () => {
                   <i className="fa fa-user-plus"></i>
                 </div>
               ) : (
-                <Link to="/settings" className="p-3 text-xl cursor-pointer ">
+                <Link
+                  to="/settings"
+                  className="w-10 h-10 flex items-center justify-center rounded-full rounded-tr text-lg cursor-pointer text-white bg-primary"
+                >
                   <i className="fa fa-gear"></i>
                 </Link>
               )}
