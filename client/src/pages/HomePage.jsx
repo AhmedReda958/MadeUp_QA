@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import postsImg from "@/assets/imgs/posts.svg";
+import { Button } from "flowbite-react";
 
 function HomePage() {
   const [openSettigs, setOpenSettings] = useState(false);
@@ -94,6 +95,10 @@ function HomePage() {
             </p>
           </div>
         </div>
+        <Button outline color="primary">
+          hello
+        </Button>
+
         <button
           className="text-2xl button-lg absolute right-10 bottom-28 z-10 hidden"
           onClick={() => setOpenSettings(true)}

@@ -3,11 +3,15 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import axios from "axios";
 
-import "./index.css";
+//style
+import "./styles/index.css";
+import customTheme from "./styles/themeConfige.js";
 
 import { RouterProvider } from "react-router-dom";
 import router from "@/router";
 import store from "@/redux/index.js";
+
+import { Flowbite, Button } from "flowbite-react";
 
 // fonts:
 // Supports weights 200-900
@@ -29,7 +33,9 @@ axios.defaults.headers = {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <Flowbite theme={{ theme: customTheme }}>
+        <RouterProvider router={router} />
+      </Flowbite>
     </Provider>
   </React.StrictMode>
 );
