@@ -12,8 +12,8 @@ export const registerUser = createAsyncThunk(
       return data;
     } catch (error) {
       // return custom error message from backend if present
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
+      if (error.response && error.response.data.code) {
+        return rejectWithValue(error.response.data.code);
       } else {
         return rejectWithValue(error.message);
       }
@@ -31,8 +31,9 @@ export const loginUser = createAsyncThunk(
       return data;
     } catch (error) {
       // return custom error message from backend if present
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
+      console.log(error);
+      if (error.response && error.response.data.code) {
+        return rejectWithValue(error.response.data.code);
       } else {
         return rejectWithValue(error.message);
       }

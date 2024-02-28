@@ -8,6 +8,7 @@ import MessagesPage from "@/pages/messagesPage";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
+import LoginPage from "@/pages/auth/LoginPage";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +66,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  { path: "/login", element: <LoginPage /> },
 ]);
 
 export default router;

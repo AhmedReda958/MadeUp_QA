@@ -19,6 +19,7 @@ const FormTextInput = ({ label, ...props }) => {
       <TextInput
         {...field}
         {...props}
+        className=" flex-row-reverse"
         color={meta.touched && meta.error ? "failure" : null}
         helperText={
           meta.touched && meta.error ? <span>{meta.error}</span> : null

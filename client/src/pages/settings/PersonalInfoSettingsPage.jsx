@@ -1,7 +1,7 @@
 import Page from "@/components/ui/Page";
 import React, { useState } from "react";
 import profileInfoImg from "@/assets/imgs/bio.svg";
-import { Button, Checkbox, Label, TextInput, Textarea } from "flowbite-react";
+import { Button } from "flowbite-react";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Form, Formik } from "formik";

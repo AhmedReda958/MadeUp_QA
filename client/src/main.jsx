@@ -11,7 +11,8 @@ import { RouterProvider } from "react-router-dom";
 import router from "@/router";
 import store from "@/redux/index.js";
 
-import { Flowbite, Button } from "flowbite-react";
+import { Flowbite } from "flowbite-react";
+import AlertDialog from "./components/ui/AlertDialog";
 
 // fonts:
 // Supports weights 200-900
@@ -35,6 +36,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <Flowbite theme={{ theme: customTheme }}>
         <RouterProvider router={router} />
+        <AlertDialog />
       </Flowbite>
     </Provider>
   </React.StrictMode>
