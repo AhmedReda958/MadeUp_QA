@@ -6,9 +6,13 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PersonalInfoSettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
+
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object({
     username: Yup.string()
@@ -24,6 +28,17 @@ const PersonalInfoSettingsPage = () => {
       .min(3, "Must be 3 characters or more")
       .required(),
   });
+
+  const submitData = (values, { setSubmitting }) => {
+    axios
+      .patch("users", values)
+      .then((res) => alert("updated"))
+      .catch((error) => console.log(error))
+      .finally(() => {
+        setSubmitting(false);
+        navigate(`/${userInfo.username}`);
+      });
+  };
 
   return (
     <Page title="Profile Info">
@@ -42,9 +57,7 @@ const PersonalInfoSettingsPage = () => {
           bio: userInfo.bio,
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
-          alert(JSON.stringify(values, null, 2));
-        }}
+        onSubmit={submitData}
       >
         {(formik) => (
           <form
