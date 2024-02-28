@@ -7,14 +7,22 @@ import { Form, Formik } from "formik";
 import { FormTextInput } from "@/components/ui/FormElements";
 import { Button } from "flowbite-react";
 import useAlert from "@/utils/hooks/useAlert";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
   const app = useSelector((state) => state.app);
+
+  const navigate = useNavigate();
   const Alert = useAlert();
 
-  const { logedin, loading, error } = useSelector((state) => state.auth);
+  const { logedin, loading, error, userToken } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (userToken) navigate("/");
+  }, []);
 
   useEffect(() => {
     if (error) Alert({ type: "error", title: "Wrong username or password" });
@@ -53,7 +61,7 @@ const LoginPage = () => {
               </div>
               <Button
                 type="submit"
-                color="primary"
+                color="dark"
                 disabled={loading}
                 className="w-full mt-5"
                 size={"lg"}
