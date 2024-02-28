@@ -10,6 +10,7 @@ import { loginUser, registerUser } from "@/redux/actions/authActions";
 import { determineLoginType } from "@/utils/helpers";
 import { Form, Formik } from "formik";
 import { FormTextInput, FormTextarea } from "@/components/ui/FormElements";
+import * as Yup from "yup";
 import { Button } from "flowbite-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
@@ -24,6 +25,30 @@ const RegisterFrom = () => {
   const submitData = (values, { setSubmitting }) => {
     dispatch(registerUser(values));
   };
+
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .max(20, "Must be 20 characters or less")
+      .min(3, "Must be 3 characters or more")
+      .required(),
+    email: Yup.string().email("Invalid email").required("Required"),
+    fullName: Yup.string()
+      .max(30, "Must be 30 characters or less")
+      .min(3, "Must be 3 characters or more")
+      .required("Full name is a required field"),
+    bio: Yup.string()
+      .max(150, "Must be 150 characters or less")
+      .min(3, "Must be 3 characters or more")
+      .required(),
+    password: Yup.string()
+      .required("No password provided.")
+      .min(8, "Password is too short - should be 8 chars minimum.")
+      .max(24, "Password is too long - should be 24 chars or less."),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords dosen't match")
+      .required("Required"),
+  });
+
   return (
     <Formik
       initialValues={{
@@ -33,6 +58,7 @@ const RegisterFrom = () => {
         bio: "",
         password: "",
       }}
+      validationSchema={validationSchema}
       onSubmit={submitData}
     >
       <Form className="  mt-10 text-body">
@@ -134,7 +160,7 @@ const RegisterFrom = () => {
             </div>
             <div className="mb-5">
               <FormTextInput
-                name="password"
+                name="confirmPassword"
                 type="password"
                 icon={LockClosedIcon}
                 placeholder="Confirm password"
