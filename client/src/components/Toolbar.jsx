@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { openLoginPopup } from "@/redux/slices/appSlice";
+import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
 const iconClasses = "far";
@@ -9,7 +8,6 @@ const pendingClasses = "pending";
 
 const Toolbar = () => {
   const { userInfo, logedin } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
 
   let username = userInfo.username;
   const links = [
@@ -29,13 +27,7 @@ const Toolbar = () => {
         {links.map((link, index) => (
           <NavLink
             key={index}
-            to={link.to}
-            onClick={(e) => {
-              if (!logedin) {
-                e.preventDefault();
-                dispatch(openLoginPopup());
-              }
-            }}
+            to={logedin || link.to === "/" ? link.to : "/login"}
             className={({ isActive, isPending }) =>
               isPending ? pendingClasses : isActive ? activeClasses : ""
             }
