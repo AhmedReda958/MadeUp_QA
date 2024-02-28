@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import useAlert from "@/utils/hooks/useAlert";
 import { Link, useNavigate } from "react-router-dom";
 import LoginFrom from "./LoginFrom";
+import RegisterFrom from "./RegisterFrom";
 
 const LoginPage = () => {
   const [isLoginFrom, setIsloginFrom] = useState(true);
@@ -32,12 +33,18 @@ const LoginPage = () => {
           <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr    to-primary  from-gred-light  via-black opacity-80 mix-blend-soft-light"></div>
           <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-black "></div>
 
-          <div className="h-full pt-60  bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
+          <div className="h-full pt-60 px-10 bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
             <h1 className=" font-logo text-white text-center text-5xl mb-10">
               MadeUp
             </h1>
 
-            {isLoginFrom ? <LoginFrom /> : null}
+            {isLoginFrom ? <LoginFrom /> : <RegisterFrom />}
+            <div
+              className=" mt-4 text-center  block text-white"
+              onClick={() => setIsloginFrom(!isLoginFrom)}
+            >
+              Create new account
+            </div>
             <div className="text-center mt-6">
               <div className="flex items-center justify-between">
                 <div className="h-[1px] w-full bg-white"></div>

@@ -22,7 +22,7 @@ const LoginFrom = () => {
       initialValues={{ username: "", password: "" }}
       onSubmit={submitData}
     >
-      <Form className=" px-10 mt-10 text-body">
+      <Form className=" mt-10 text-body">
         <div className="mb-5">
           <FormTextInput
             name="username"
@@ -49,9 +49,6 @@ const LoginFrom = () => {
           {loading && <i className="fa fa-spinner fa-spin-pulse mx-3"></i>}
           Login
         </Button>
-        <div to="/register" className=" mt-4 text-center  block text-white">
-          Create new account
-        </div>
       </Form>
     </Formik>
   );
