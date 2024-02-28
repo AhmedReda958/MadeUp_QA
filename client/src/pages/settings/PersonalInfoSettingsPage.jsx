@@ -8,11 +8,13 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useAlert from "@/utils/hooks/useAlert";
 
 const PersonalInfoSettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
 
   const navigate = useNavigate();
+  const Alert = useAlert();
 
   const validationSchema = Yup.object({
     username: Yup.string()
@@ -32,7 +34,7 @@ const PersonalInfoSettingsPage = () => {
   const submitData = (values, { setSubmitting }) => {
     axios
       .patch("users", values)
-      .then((res) => alert("updated"))
+      .then((res) => Alert({ title: "Profile updated", type: "success" }))
       .catch((error) => console.log(error))
       .finally(() => {
         setSubmitting(false);
