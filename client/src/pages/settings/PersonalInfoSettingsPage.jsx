@@ -4,11 +4,12 @@ import profileInfoImg from "@/assets/imgs/bio.svg";
 import { Button, Checkbox, Label, TextInput, Textarea } from "flowbite-react";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAlert from "@/utils/hooks/useAlert";
+import { FormTextInput, FormTextarea } from "@/components/ui/FormElements";
 
 const PersonalInfoSettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
@@ -61,105 +62,41 @@ const PersonalInfoSettingsPage = () => {
         validationSchema={validationSchema}
         onSubmit={submitData}
       >
-        {(formik) => (
-          <form
-            onSubmit={formik.handleSubmit}
-            className="mt-6 flex max-w-md m-auto flex-col gap-4"
-          >
-            <div>
-              <div className="mb-2 block">
-                <Label
-                  className=" font-display"
-                  htmlFor="username"
-                  value="Account username"
-                />
-              </div>
-              <TextInput
-                id="username"
-                name="username"
-                type="text"
-                icon={UserIcon}
-                placeholder="@Username"
-                {...formik.getFieldProps("username")}
-                color={
-                  formik.touched.username && formik.errors.username
-                    ? "failure"
-                    : null
-                }
-                helperText={
-                  formik.touched.username && formik.errors.username ? (
-                    <div>{formik.errors.username}</div>
-                  ) : null
-                }
-              />
+        <Form className="mt-6 flex max-w-md m-auto flex-col gap-4">
+          <div>
+            <FormTextInput
+              label={"Account username"}
+              name="username"
+              type="text"
+              placeholder="@Username"
+              icon={UserIcon}
+            />
+          </div>
+          <div>
+            <FormTextInput
+              label={"Profile display name"}
+              name="fullName"
+              type="text"
+              icon={UserIcon}
+              placeholder="Full name (your display name)"
+            />
+          </div>
+          <div>
+            <FormTextarea
+              label="Profile bio"
+              name="bio"
+              type="text"
+              icon={UserIcon}
+              placeholder="Your bio"
+            />
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <Button color="gray">Cancel</Button>
+              <Button color="primary" type="submit">
+                Save
+              </Button>
             </div>
-            <div>
-              <div className="mb-2 block">
-                <Label
-                  className=" font-display"
-                  htmlFor="fullname"
-                  value="Profile display name"
-                />
-              </div>
-              <TextInput
-                id="fullName"
-                name="fullName"
-                type="text"
-                icon={UserIcon}
-                placeholder="Full name (your display name)"
-                {...formik.getFieldProps("fullName")}
-                color={
-                  formik.touched.fullName && formik.errors.fullName
-                    ? "failure"
-                    : null
-                }
-                helperText={
-                  formik.touched.fullName && formik.errors.fullName ? (
-                    <div>{formik.errors.fullName}</div>
-                  ) : null
-                }
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label
-                  className=" font-display"
-                  htmlFor="bio"
-                  value="Profile bio"
-                />
-              </div>
-              <Textarea
-                id="bio"
-                name="bio"
-                type="text"
-                icon={UserIcon}
-                placeholder="Your bio"
-                className=" resize-none overflow-hidden"
-                value={formik.values.bio}
-                onBlur={formik.handleBlur}
-                onChange={(e) => {
-                  e.target.style.height = "";
-                  e.target.style.height = e.target.scrollHeight + "px";
-                  formik.handleChange(e);
-                }}
-                color={
-                  formik.touched.bio && formik.errors.bio ? "failure" : null
-                }
-                helperText={
-                  formik.touched.bio && formik.errors.bio ? (
-                    <div>{formik.errors.bio}</div>
-                  ) : null
-                }
-              />
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <Button color="gray">Cancel</Button>
-                <Button color="primary" type="submit">
-                  Save
-                </Button>
-              </div>
-            </div>
-          </form>
-        )}
+          </div>
+        </Form>
       </Formik>
     </Page>
   );
