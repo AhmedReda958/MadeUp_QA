@@ -26,6 +26,7 @@ const authSlice = createSlice({
       state.userInfo = {};
       state.logedin = false;
       localStorage.clear();
+      window.location.reload();
     },
   },
   extraReducers: (builder) => {
@@ -41,6 +42,7 @@ const authSlice = createSlice({
         localStorage.setItem("logedin", true);
         state.userInfo = payload.user;
         state.userToken = payload.token;
+        window.location.pathname = "/";
       })
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.loading = false;
@@ -56,6 +58,7 @@ const authSlice = createSlice({
         localStorage.setItem("logedin", true);
         state.userInfo = payload.user;
         state.userToken = payload.token;
+        window.location.pathname = "/";
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.loading = false;
