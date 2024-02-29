@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useState, useEffect, Fragment } from "react";
+import { Transition } from "@headlessui/react";
 
 const Header = ({ title, children }) => {
   return (
@@ -31,10 +33,22 @@ const Header = ({ title, children }) => {
 const Page = (props) => {
   const { title, children, className, loading = false, header = true } = props;
 
+  // component animations
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => setAnimate(true), []);
+
   return (
     <div className={`pb-20 ${className}`}>
       {header && <Header title={title} />}
-      {!loading ? children : <LoadingSpinner />}
+      <Transition
+        as={"div"}
+        show={animate}
+        enter="transform transition duration-[.4s] ease-out"
+        enterFrom="opacity-0 "
+        enterTo="opacity-100 "
+      >
+        {!loading ? children : <LoadingSpinner />}
+      </Transition>
     </div>
   );
 };

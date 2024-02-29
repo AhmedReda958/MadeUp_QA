@@ -5,10 +5,15 @@ import { Form, Formik } from "formik";
 import { FormTextInput } from "@/components/ui/FormElements";
 import { Button } from "flowbite-react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, Fragment, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Transition } from "@headlessui/react";
 
 const LoginFrom = () => {
+  // component animations
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => setAnimate(true), []);
+
   const { logedin, loading, error, userToken } = useSelector(
     (state) => state.auth
   );
@@ -27,34 +32,57 @@ const LoginFrom = () => {
       initialValues={{ username: "", password: "" }}
       onSubmit={submitData}
     >
-      <Form className=" mt-10 text-body">
-        <div className="mb-5">
-          <FormTextInput
-            name="username"
-            type="text"
-            icon={UserIcon}
-            placeholder="Username or Email"
-          />
-        </div>
-        <div className="mb-5">
-          <FormTextInput
-            name="password"
-            type="password"
-            icon={LockClosedIcon}
-            placeholder="Password"
-          />
-        </div>
-        <Button
-          type="submit"
-          color="dark"
-          disabled={loading}
-          className="w-full mt-5"
-          size={"lg"}
-        >
-          {loading && <i className="fa fa-spinner fa-spin-pulse mx-3"></i>}
-          Login
-        </Button>
-      </Form>
+      <Transition as={Fragment} show={animate}>
+        <Form className=" mt-10 text-body">
+          <div className="mb-5">
+            <Transition.Child
+              as={"div"}
+              enter="ease-in-out duration-[.4s]"
+              enterFrom="opacity-0 -translate-x-32"
+              enterTo="opacity-100 translate-x-0"
+            >
+              <FormTextInput
+                name="username"
+                type="text"
+                icon={UserIcon}
+                placeholder="Username or Email"
+              />
+            </Transition.Child>
+          </div>
+          <div className="mb-5">
+            <Transition.Child
+              as={"div"}
+              enter="ease-in-out duration-[.6s]"
+              enterFrom="opacity-0 -translate-x-32"
+              enterTo="opacity-100 translate-x-0"
+            >
+              <FormTextInput
+                name="password"
+                type="password"
+                icon={LockClosedIcon}
+                placeholder="Password"
+              />{" "}
+            </Transition.Child>
+          </div>
+          <Transition.Child
+            as={"div"}
+            enter="ease-in-out duration-[.4s]"
+            enterFrom="opacity-0 scale-50"
+            enterTo="opacity-100 scale-100"
+          >
+            <Button
+              type="submit"
+              color="dark"
+              disabled={loading}
+              className="w-full mt-5"
+              size={"lg"}
+            >
+              {loading && <i className="fa fa-spinner fa-spin-pulse mx-3"></i>}
+              Login
+            </Button>
+          </Transition.Child>
+        </Form>
+      </Transition>
     </Formik>
   );
 };
