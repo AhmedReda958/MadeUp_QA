@@ -33,19 +33,31 @@ const LoginPage = () => {
           <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr    to-primary  from-gred-light  via-black opacity-80 mix-blend-soft-light"></div>
           <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-black "></div>
 
-          <div className="h-full pt-60 px-10 bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
-            <h1 className=" font-logo text-white text-center text-5xl mb-10">
+          <div className="h-full  px-10 bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
+            <header className="flex justify-between items-center py-8 mb-6">
+              <h2 className="ms-5 text-2xl font-bold text-white ">
+                {isLoginFrom ? "Login" : "Sign up"}
+              </h2>
+
+              <Link
+                to="/"
+                className="pt-1 pe-3 cursor-pointer transition-all hover:text-primary duration-100 ease-in-out"
+              >
+                <i className="fa-solid fa-arrow-right"></i>
+              </Link>
+            </header>
+            <h1 className=" font-logo text-white text-center text-5xl mb-10 pt-24">
               MadeUp
             </h1>
 
             {isLoginFrom ? <LoginFrom /> : <RegisterFrom />}
             <div
-              className=" mt-4 text-center  block text-white"
+              className=" mt-4 text-center  block text-white cursor-pointer"
               onClick={() => setIsloginFrom(!isLoginFrom)}
             >
-              Create new account
+              {isLoginFrom ? "Create new account" : "Have an account?"}
             </div>
-            <div className="text-center mt-6">
+            <div className="text-center mt-10">
               <div className="flex items-center justify-between">
                 <div className="h-[1px] w-full bg-white"></div>
                 <div className=" w-80 font-display">On click sign</div>

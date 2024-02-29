@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import Toolbar from "./components/Toolbar";
 import { Outlet } from "react-router-dom";
-import LoginPopup from "./components/logingPopup";
 import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
@@ -27,7 +26,6 @@ function App() {
           <Outlet />
         </main>
         <Toolbar />
-        <LoginPopup IsOpened={true} />
       </div>
     </div>
   );
