@@ -81,7 +81,7 @@ function ReplayMessagePage() {
   return (
     <Page title={"Replay"} loading={messageData.loading}>
       {!messageData.loading ? (
-        <div className="px-4 h-full">
+        <div className=" h-full">
           <div className="flex mb-8 post_after after:mt-8">
             {/* profile pic */}
             <Link
@@ -93,19 +93,19 @@ function ReplayMessagePage() {
 
             <div className=" w-full min-h-40">
               {/* header */}
-              <div className="flex justify-between items-center pb-2">
+              <div className="pb-2">
                 <div className="flex items-baseline">
-                  <h5 className="text-altcolor font-semibold text-xl">
+                  <h5 className="text-altcolor font-semibold text-lg w-1/2 truncate ">
                     {message.sender ? message.sender.fullName : "Anonymous"}
                   </h5>
                   {message.sender && (
-                    <span className="ps-2 pt-1 text-sm">
+                    <span className="ps-2 pt-1 text-sm w-1/4 truncate">
                       @{message.sender.username}
                     </span>
                   )}
                 </div>
 
-                <div className="text-[10px] float-end">
+                <div className="text-[10px]">
                   {formatDate(message.timestamp)}
                 </div>
               </div>
@@ -132,7 +132,7 @@ function ReplayMessagePage() {
               </div>
               <textarea
                 type="text"
-                className="font-body-play resize-none overflow-hidden bg-inherit w-full focus:outline-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
+                className="font-body-play resize-none overflow-hidden bg-inherit w-full border-none focus:outline-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
                 onChange={handleReplayChange}
                 placeholder="Type your replay"
               />

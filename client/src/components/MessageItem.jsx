@@ -11,7 +11,7 @@ const MessageItem = ({ message, type = "post" }) => {
     type === "message" && navigate("replay?id=" + message._id);
   };
   return (
-    <div onClick={navigateToReplayPage} className="pt-5">
+    <div className="pt-5">
       {/* message */}
       <div
         className={`flex mb-2 ${type === "post" && "post_after after:ms-7"}`}
