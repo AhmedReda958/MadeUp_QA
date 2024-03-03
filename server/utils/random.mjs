@@ -16,5 +16,5 @@ export function randomInteger(min, max) {
 
 
 export function randomString(length, charset = NUMERICS + ALPHABETS + SMALL_ALPHABETS) {
-  return Array.from({ length }, () => charset.charAt(randomInteger(0, characters.length-1))).join('');
+  return Array.from({ length }, () => charset.charAt(randomInteger(0, charset.length-1))).join('');
 }
