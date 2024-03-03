@@ -19,8 +19,9 @@ const PersonalInfoSettingsPage = () => {
 
   const validationSchema = Yup.object({
     username: Yup.string()
-      .max(20, "Must be 20 characters or less")
+      .max(15, "Must be 15 characters or less")
       .min(3, "Must be 3 characters or more")
+      .matches(/^[A-Za-z0-9_]{3,15}$/, "Not Valid username")
       .required(),
     fullName: Yup.string()
       .max(30, "Must be 30 characters or less")

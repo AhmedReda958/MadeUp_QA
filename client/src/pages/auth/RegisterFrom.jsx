@@ -33,8 +33,9 @@ const RegisterFrom = () => {
 
   const validationSchema = Yup.object({
     username: Yup.string()
-      .max(20, "Must be 20 characters or less")
+      .max(15, "Must be 15 characters or less")
       .min(3, "Must be 3 characters or more")
+      .matches(/^[A-Za-z0-9_]{3,15}$/, "Not Valid username")
       .required(),
     email: Yup.string().email("Invalid email").required("Required"),
     fullName: Yup.string()
