@@ -4,9 +4,7 @@ import jwt from "jsonwebtoken";
 
 export default function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.replace("Bearer ", "");
-  console.log(token)
   if (!token) return next();
-  console.log(token)
 
   let decodedToken;
   try {
