@@ -5,7 +5,7 @@ import { setTheme } from "@/redux/slices/appSlice";
 import { logout } from "@/redux/slices/authSlice";
 import { useState, Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import postsImg from "@/assets/imgs/onlinefriends.svg";
 import { Transition } from "@headlessui/react";
 import SearchBar from "@/components/SearchBar";
@@ -108,6 +108,8 @@ function HomePage() {
 
   const auth = useSelector((state) => state.auth);
 
+  const navigate = useNavigate();
+
   return (
     <>
       {/* header */}
@@ -158,9 +160,13 @@ function HomePage() {
             <Tooltip content="Copied!" trigger="click">
               <span
                 className="text-primary underline text-center w-full"
-                onClick={() =>
-                  copyToClipboard(window.location.href + auth.userInfo.username)
-                }
+                onClick={() => {
+                  auth.logedin
+                    ? copyToClipboard(
+                        window.location.href + auth.userInfo.username
+                      )
+                    : navigate("/login");
+                }}
               >
                 Share your Account
               </span>
