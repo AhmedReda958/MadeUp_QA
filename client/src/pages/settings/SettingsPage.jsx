@@ -4,6 +4,8 @@ import ProfilePic from "@/components/ProfilePic";
 import { useSelector, useDispatch } from "react-redux";
 import { addAlert } from "@/redux/slices/appSlice";
 import { useNavigate } from "react-router-dom";
+import { Tooltip } from "flowbite-react";
+import { copyToClipboard, share } from "@/utils/helpers";
 
 import {
   InboxArrowDownIcon,
@@ -13,6 +15,7 @@ import {
   ArrowLeftEndOnRectangleIcon,
   ExclamationTriangleIcon,
   ChevronRightIcon,
+  ShareIcon,
 } from "@heroicons/react/24/outline";
 
 const settingsList = [
@@ -68,6 +71,18 @@ const SettingsPage = () => {
   };
   return (
     <Page title={"Settings"} className="z-50">
+      <div className="-mb-8 ">
+        <Tooltip content="Copied!" trigger="click">
+          <div
+            className=" p-4"
+            onClick={() =>
+              share(window.location.origin + "/" + userInfo.username)
+            }
+          >
+            <ShareIcon className="w-5 h-5 dark:text-primary-light text-primary" />
+          </div>
+        </Tooltip>
+      </div>
       <div className="flex items-center flex-col">
         <ProfilePic data={userInfo} className="w-24 h-24 shadow " />
         <h3 className="mt-1 text-lg text-altcolor font-bold">

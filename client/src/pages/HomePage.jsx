@@ -9,6 +9,10 @@ import { Link } from "react-router-dom";
 import postsImg from "@/assets/imgs/onlinefriends.svg";
 import { Transition } from "@headlessui/react";
 import SearchBar from "@/components/SearchBar";
+import { Tooltip } from "flowbite-react";
+import { copyToClipboard } from "@/utils/helpers";
+
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 
 const SettingsModal = ({ opened, close }) => {
   const { auth, app } = useSelector((state) => state);
@@ -110,8 +114,11 @@ function HomePage() {
       <Page header={false}>
         <Page.Header title="Discovery">
           <div className="flex ">
-            <button className="text-xl" onClick={() => setOpenSettings(true)}>
-              <i className="fa fa-bars"></i>
+            <button
+              className="text-altcolor"
+              onClick={() => setOpenSettings(true)}
+            >
+              <AdjustmentsHorizontalIcon className="w-7 h-7" />
             </button>
             {auth.logedin && (
               <Link
@@ -131,7 +138,7 @@ function HomePage() {
           opened={openSettigs}
           close={() => setOpenSettings(false)}
         />
-        <div className="my-4">
+        <div className="my-6">
           <SearchBar />
         </div>
         <div>
@@ -144,8 +151,20 @@ function HomePage() {
           <div className="pt-12 ps-3 text m-auto w-80">
             <p className="text-center">
               You don't have any users you follow, to show messages in your
-              timeline follow some frinds to see their answers
+              timeline follow some frinds to see their answers or
             </p>
+          </div>
+          <div className="flex justify-center">
+            <Tooltip content="Copied!" trigger="click">
+              <span
+                className="text-primary underline text-center w-full"
+                onClick={() =>
+                  copyToClipboard(window.location.href + auth.userInfo.username)
+                }
+              >
+                Share your Account
+              </span>
+            </Tooltip>
           </div>
         </div>
 
