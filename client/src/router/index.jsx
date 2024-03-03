@@ -9,6 +9,7 @@ import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 import LoginPage from "@/pages/auth/LoginPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
+      { path: "*", element: <NotFoundPage /> },
       {
         path: ":username",
         element: <UserProfile />,

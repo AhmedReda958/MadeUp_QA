@@ -132,7 +132,7 @@ function ReplayMessagePage() {
               </div>
               <textarea
                 type="text"
-                className="font-body-play resize-none overflow-hidden bg-inherit w-full border-none focus:outline-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
+                className="font-body-play resize-none overflow-hidden bg-inherit w-full border-none focus:outline-none foucs-shadow-none dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
                 onChange={handleReplayChange}
                 placeholder="Type your replay"
               />

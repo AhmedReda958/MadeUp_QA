@@ -43,6 +43,11 @@ const PersonalInfoSettingsPage = () => {
       });
   };
 
+  const cancelEdit = () => {
+    Alert({ title: "Changes not saved" });
+    navigate(-1);
+  };
+
   return (
     <Page title="Profile Info">
       <div className="flex justify-center">
@@ -90,7 +95,9 @@ const PersonalInfoSettingsPage = () => {
               placeholder="Your bio"
             />
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <Button color="gray">Cancel</Button>
+              <Button color="gray" onClick={cancelEdit}>
+                Cancel
+              </Button>
               <Button color="primary" type="submit">
                 Save
               </Button>

@@ -5,12 +5,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
+import notFoundImg from "@/assets/imgs/theSearch.svg";
 
 import SendMessageFrom from "@/components/SendMessageFrom";
 import ProfilePic from "@/components/ProfilePic";
 import Page from "@/components/ui/Page";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import MessageItem from "@/components/MessageItem";
+import { Button } from "flowbite-react";
 
 const EmptyPage = () => {
   return (
@@ -28,6 +30,40 @@ const EmptyPage = () => {
         No content found
       </div>
     </div>
+  );
+};
+
+const UserNotFound = () => {
+  return (
+    <>
+      <Page.Header title={"Not found"} />
+      <div>
+        <img
+          src={notFoundImg}
+          alt="user is not found"
+          draggable="false"
+          className=" max-w-60 m-auto mt-16 "
+        />
+        <div className="pt-12 ps-3 text m-auto w-80">
+          <p className="text-xl text-altcolor">This user is not exist</p>
+          {/* <p className="pt-1 text-sm font-light">
+            Try to use 
+          </p> */}
+          <div>
+            <Button
+              color="primary"
+              size={"sm"}
+              className="mt-5 float-end"
+              as={Link}
+              to={"/"}
+            >
+              Go Back
+              <i className="fa fa-arrow-right ps-2"></i>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -107,10 +143,7 @@ const UserProfile = () => {
     <Page header={false}>
       {!loading ? (
         error ? (
-          <>
-            <Page.Header title={"User"} />
-            {error}
-          </>
+          <UserNotFound />
         ) : (
           <>
             <Page.Header title={"@" + response.username}>

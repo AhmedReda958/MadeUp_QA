@@ -6,7 +6,7 @@ import { logout } from "@/redux/slices/authSlice";
 import { useState, Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import postsImg from "@/assets/imgs/posts.svg";
+import postsImg from "@/assets/imgs/onlinefriends.svg";
 import { Transition } from "@headlessui/react";
 
 const SettingsModal = ({ opened, close }) => {
@@ -133,7 +133,7 @@ function HomePage() {
         <div>
           <img
             src={postsImg}
-            className="w-[270px] m-auto mt-20 opacity-70 "
+            className="w-[270px] m-auto mt-20 opacity-90 "
             alt=""
             draggable="false"
           />
