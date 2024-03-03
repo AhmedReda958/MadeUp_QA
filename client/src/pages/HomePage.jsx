@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import postsImg from "@/assets/imgs/onlinefriends.svg";
 import { Transition } from "@headlessui/react";
+import SearchBar from "@/components/SearchBar";
 
 const SettingsModal = ({ opened, close }) => {
   const { auth, app } = useSelector((state) => state);
@@ -130,6 +131,9 @@ function HomePage() {
           opened={openSettigs}
           close={() => setOpenSettings(false)}
         />
+        <div className="my-4">
+          <SearchBar />
+        </div>
         <div>
           <img
             src={postsImg}

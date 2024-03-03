@@ -35,8 +35,7 @@ router.get("/search", async (req, res, next) => {
 
     return res.status(200).json(users);
   } catch (err) {
-    // next(err);
-    console.log(err);
+    next(err);
   }
 });
 
