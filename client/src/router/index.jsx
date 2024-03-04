@@ -4,7 +4,7 @@ import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
 import ReplayMessagePage from "@/pages/ReplayMessagePage";
 import SettingsPage from "@/pages/settings/SettingsPage";
-import MessagesPage from "@/pages/messagesPage";
+import MessagesPage from "@/pages/MessagesPage";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
