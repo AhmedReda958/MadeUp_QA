@@ -51,65 +51,71 @@ const manifest = {
   short_name: "MadeUp",
   start_url: ".",
   display: "standalone",
-  description: "",
-  lang: "en",
-  dir: "auto",
-  theme_color: "#3b82f6",
   background_color: "#ffffff",
-  orientation: "any",
+  lang: "en",
+  scope: "/",
   icons: [
     {
-      src: "/icons/manifest-icon-192.maskable.png",
+      src: "/icons/android-chrome-192x192.png",
       sizes: "192x192",
       type: "image/png",
       purpose: "any",
     },
     {
-      src: "/icons/manifest-icon-192.maskable.png",
+      src: "/icons/android-chrome-192x192.png",
       sizes: "192x192",
       type: "image/png",
       purpose: "maskable",
     },
     {
-      src: "/icons/manifest-icon-512.maskable.png",
+      src: "/icons/android-chrome-512x512.png",
       sizes: "512x512",
       type: "image/png",
       purpose: "any",
     },
     {
-      src: "/icons/manifest-icon-512.maskable.png",
+      src: "/icons/android-chrome-512x512.png",
       sizes: "512x512",
       type: "image/png",
       purpose: "maskable",
     },
   ],
-  screenshots: [
-    {
-      src: "https://www.pwabuilder.com/assets/screenshots/screen1.png",
-      sizes: "2880x1800",
-      type: "image/png",
-      description: "A screenshot of the home page",
-    },
-  ],
-  related_applications: [
-    {
-      platform: "windows",
-      url: " The URL to your app in that app store",
-    },
-  ],
-  prefer_related_applications: false,
+  theme_color: "#3b82f6",
+  id: "/",
+  description: "Send and anwser Anonymous messages",
+  dir: "auto",
+  orientation: "portrait-primary",
+  categories: ["entertainment", "social"],
   shortcuts: [
-    {
-      name: "MadeUp",
-      url: "/login",
-      description: "",
-    },
+    { name: "Home", url: "/", description: "" },
+    { name: "Messages", url: "/messages", description: "" },
   ],
 };
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), VitePWA(manifestForPlugIn)],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest,
+      workbox: {
+        globPatterns: [
+          "assets/*",
+          "img/*",
+          "icons/*",
+          "assets/*",
+          // add HTML and other resources for the root directory
+          "*.{svg,png,jpg,jpeg}",
+          "*.html",
+          "manifest.webmanifest",
+        ],
+      },
+      devOptions: {
+        enabled: true,
+      },
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
