@@ -37,7 +37,7 @@ const manifest = {
       purpose: "maskable",
     },
   ],
-  theme_color: "#3b82f6",
+  theme_color: "#000007",
   id: "/",
   description: "Send and anwser Anonymous messages",
   dir: "auto",
