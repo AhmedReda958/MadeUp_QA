@@ -7,13 +7,15 @@ import { setCredentials } from "./redux/slices/authSlice";
 
 function App() {
   const app = useSelector((state) => state.app);
-  const auth = useSelector((state) => state.auth);
+  const logedin = useSelector((state) => state.auth.logedin);
   const dispatch = useDispatch();
   // automatically authenticate user if token is found
-  const autoAuth = useGetUserDetailsQuery("userDetails", {
-    // perform a refetch every 15mins
-    pollingInterval: 900000,
-  });
+  const autoAuth =
+    logedin &
+    useGetUserDetailsQuery("userDetails", {
+      // perform a refetch every 15mins
+      pollingInterval: 900000,
+    });
   const { data, isFetching } = autoAuth;
 
   useEffect(() => {
