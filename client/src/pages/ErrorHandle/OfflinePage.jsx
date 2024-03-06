@@ -5,10 +5,10 @@ import { Button } from "flowbite-react";
 
 const OfflinePage = () => {
   return (
-    <Page title={"Not Found"} className="px-5 max-w-[768px] mx-auto">
+    <Page title={"Offline"} className="px-5 max-w-[768px] mx-auto">
       <img
         src={serverDownImg}
-        alt="user is not found"
+        alt="your Offline"
         draggable="false"
         className=" max-w-80 m-auto mt-28 "
       />
