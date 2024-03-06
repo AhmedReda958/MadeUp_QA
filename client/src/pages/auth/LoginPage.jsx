@@ -25,7 +25,7 @@ const LoginPage = () => {
   );
 
   useEffect(() => {
-    if (userToken) navigate("/");
+    if (userToken && logedin) navigate("/");
   }, []);
 
   useEffect(() => {
