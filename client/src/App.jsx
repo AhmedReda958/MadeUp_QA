@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
+import { checkInternetConnection } from "./utils/handleConnection";
 
 function App() {
   const app = useSelector((state) => state.app);
@@ -21,6 +22,10 @@ function App() {
   useEffect(() => {
     if (data) dispatch(setCredentials(data));
   }, [data, dispatch]);
+
+  useEffect(() => {
+    checkInternetConnection();
+  }, []);
   return (
     <div className={app.isDarkTheme ? "dark" : "light"}>
       <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">

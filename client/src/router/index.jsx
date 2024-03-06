@@ -9,13 +9,14 @@ import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 import LoginPage from "@/pages/auth/LoginPage";
-import { NotFoundPage } from "@/pages/NotFoundPage";
+import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
+import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    // errorElement: <div>User not found :|</div>,
+    errorElement: import.meta.env.MODE === "production" && <OfflinePage />,
     children: [
       {
         index: true,
