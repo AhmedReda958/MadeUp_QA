@@ -28,7 +28,7 @@ const MessageMenu = ({ type, message }) => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+          <Menu.Items className="absolute z-30 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="p-1">
               {type == "post" && msgOwner === userInfo.username && (
                 <>
@@ -107,7 +107,7 @@ const MessageItem = ({ message, type = "post" }) => {
     type === "message" && navigate("replay?id=" + message._id);
   };
   return (
-    <div className="pt-5">
+    <div className="pt-5 ">
       {/* message */}
       <div
         className={`flex mb-2 ${type === "post" && "post_after after:ms-7"}`}
@@ -156,7 +156,7 @@ const MessageItem = ({ message, type = "post" }) => {
       {/* replay */}
       {type === "post" && (
         <div className="flex mt-4">
-          <div className="me-3 drop-shadow-2xl">
+          <div className="me-3 ">
             <ProfilePic data={message.receiver} className="w-14 h-14" />
           </div>
           <div className="w-full pb-6 border-b border-gray-300 dark:border-dark-alt">

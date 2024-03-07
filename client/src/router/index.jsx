@@ -2,15 +2,16 @@ import App from "@/App.jsx";
 import HomePage from "@/pages/HomePage";
 import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
-import ReplayMessagePage from "@/pages/ReplayMessagePage";
+import ReplayMessagePage from "@/pages/messages/ReplayMessagePage";
 import SettingsPage from "@/pages/settings/SettingsPage";
-import MessagesPage from "@/pages/MessagesPage";
+import MessagesPage from "@/pages/messages/MessagesPage";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
 import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
+import ShowMessagePage from "@/pages/messages/ShowMessagePage";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
             <ReplayMessagePage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "message/:id",
+        element: <ShowMessagePage />,
       },
       {
         path: "settings",
