@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ProfilePic from "./ProfilePic";
 import { formatDate } from "@/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
@@ -8,6 +9,10 @@ import useAlert from "@/utils/hooks/useAlert";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
+  const userInfo = useSelector((state) => state.auth.userInfo);
+  const receiver = message.receiver;
+  const msgOwner = receiver?.username;
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button>
@@ -25,41 +30,44 @@ const MessageMenu = ({ type, message }) => {
         >
           <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="p-1">
-              {type == "post" && (
-                <Menu.Item>
-                  <button
-                    onClick={() =>
-                      Alert({ title: "Coming soon!", type: "comingsoon" })
-                    }
-                    className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                  >
-                    <i className="fa fa-share text-primary pe-3"></i>
-                    Share your answer
-                  </button>
-                </Menu.Item>
+              {type == "post" && msgOwner === userInfo.username && (
+                <>
+                  <Menu.Item>
+                    <button
+                      onClick={() =>
+                        Alert({ title: "Coming soon!", type: "comingsoon" })
+                      }
+                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                    >
+                      <i className="fa fa-share text-primary pe-3"></i>
+                      Share your answer
+                    </button>
+                  </Menu.Item>
+
+                  <Menu.Item>
+                    <button
+                      onClick={() =>
+                        Alert({ title: "Coming soon!", type: "comingsoon" })
+                      }
+                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                    >
+                      <i className="fa fa-thumbtack text-gray-500 pe-3"></i>
+                      Pin in your Profile
+                    </button>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <button
+                      onClick={() =>
+                        Alert({ title: "Coming soon!", type: "comingsoon" })
+                      }
+                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                    >
+                      <i className="fa fa-eye-slash text-gray-500 pe-3"></i>
+                      Hide from Profile
+                    </button>
+                  </Menu.Item>
+                </>
               )}
-              <Menu.Item>
-                <button
-                  onClick={() =>
-                    Alert({ title: "Coming soon!", type: "comingsoon" })
-                  }
-                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                >
-                  <i className="fa fa-thumbtack text-gray-500 pe-3"></i>
-                  Pin in your Profile
-                </button>
-              </Menu.Item>
-              <Menu.Item>
-                <button
-                  onClick={() =>
-                    Alert({ title: "Coming soon!", type: "comingsoon" })
-                  }
-                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                >
-                  <i className="fa fa-eye-slash text-gray-500 pe-3"></i>
-                  Hide from Profile
-                </button>
-              </Menu.Item>
               <Menu.Item>
                 <button
                   onClick={() =>
@@ -71,17 +79,19 @@ const MessageMenu = ({ type, message }) => {
                   Report
                 </button>
               </Menu.Item>
-              <Menu.Item>
-                <button
-                  onClick={() =>
-                    Alert({ title: "Coming soon!", type: "comingsoon" })
-                  }
-                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                >
-                  <i className="fa fa-trash text-red-500 pe-3"></i>
-                  Delete message
-                </button>
-              </Menu.Item>
+              {(type === "message") | (msgOwner === userInfo.username) ? (
+                <Menu.Item>
+                  <button
+                    onClick={() =>
+                      Alert({ title: "Coming soon!", type: "comingsoon" })
+                    }
+                    className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                  >
+                    <i className="fa fa-trash text-red-500 pe-3"></i>
+                    Delete message
+                  </button>
+                </Menu.Item>
+              ) : null}
             </div>
           </Menu.Items>
         </Transition>
@@ -165,7 +175,7 @@ const MessageItem = ({ message, type = "post" }) => {
                   )}
                 </div>
                 <div>
-                  <MessageMenu type={type} />
+                  <MessageMenu type={type} message={message} />
                 </div>
               </div>
               <div className="flex items-baseline text-sm">
