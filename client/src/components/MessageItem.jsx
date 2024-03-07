@@ -1,10 +1,96 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
 import { formatDate } from "@/utils/helpers";
+import { Menu, Transition } from "@headlessui/react";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import useAlert from "@/utils/hooks/useAlert";
+
+const MessageMenu = ({ type, message }) => {
+  const Alert = useAlert();
+  return (
+    <Menu as="div" className="relative inline-block text-left">
+      <Menu.Button>
+        <EllipsisVerticalIcon className="w-6 h-6" />
+      </Menu.Button>
+      <div>
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+            <div className="p-1">
+              {type == "post" && (
+                <Menu.Item>
+                  <button
+                    onClick={() =>
+                      Alert({ title: "Coming soon!", type: "comingsoon" })
+                    }
+                    className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                  >
+                    <i className="fa fa-share text-primary pe-3"></i>
+                    Share your answer
+                  </button>
+                </Menu.Item>
+              )}
+              <Menu.Item>
+                <button
+                  onClick={() =>
+                    Alert({ title: "Coming soon!", type: "comingsoon" })
+                  }
+                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                >
+                  <i className="fa fa-thumbtack text-gray-500 pe-3"></i>
+                  Pin in your Profile
+                </button>
+              </Menu.Item>
+              <Menu.Item>
+                <button
+                  onClick={() =>
+                    Alert({ title: "Coming soon!", type: "comingsoon" })
+                  }
+                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                >
+                  <i className="fa fa-eye-slash text-gray-500 pe-3"></i>
+                  Hide from Profile
+                </button>
+              </Menu.Item>
+              <Menu.Item>
+                <button
+                  onClick={() =>
+                    Alert({ title: "Coming soon!", type: "comingsoon" })
+                  }
+                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                >
+                  <i className="fa fa-flag text-gray-500 pe-3"></i>
+                  Report
+                </button>
+              </Menu.Item>
+              <Menu.Item>
+                <button
+                  onClick={() =>
+                    Alert({ title: "Coming soon!", type: "comingsoon" })
+                  }
+                  className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                >
+                  <i className="fa fa-trash text-red-500 pe-3"></i>
+                  Delete message
+                </button>
+              </Menu.Item>
+            </div>
+          </Menu.Items>
+        </Transition>
+      </div>
+    </Menu>
+  );
+};
 
 // allowed types => [message , post]
-
 const MessageItem = ({ message, type = "post" }) => {
   const navigate = useNavigate();
   const navigateToReplayPage = () => {
@@ -36,7 +122,7 @@ const MessageItem = ({ message, type = "post" }) => {
               )}
             </div>
             <div>
-              <i class="fa-solid fa-ellipsis-vertical"></i>
+              <MessageMenu type={type} message={message} />
             </div>
           </div>
           {/* content */}
@@ -79,7 +165,7 @@ const MessageItem = ({ message, type = "post" }) => {
                   )}
                 </div>
                 <div>
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                  <MessageMenu type={type} />
                 </div>
               </div>
               <div className="flex items-baseline text-sm">
