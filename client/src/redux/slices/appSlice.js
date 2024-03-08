@@ -9,6 +9,7 @@ const initialState = {
   isDarkTheme,
   notifications: [],
   alerts: [],
+  share: null,
 };
 
 const appSlice = createSlice({
@@ -18,12 +19,6 @@ const appSlice = createSlice({
     setTheme: (state) => {
       state.isDarkTheme = !state.isDarkTheme;
       localStorage.setItem("darkMode", state.isDarkTheme);
-    },
-    openLoginPopup: (state) => {
-      state.isLoginOpened = true;
-    },
-    closeLoginPopup: (state) => {
-      state.isLoginOpened = false;
     },
     addNotification: (state, action) => {
       state.notifications = [...state.notifications, action.payload];
@@ -37,17 +32,20 @@ const appSlice = createSlice({
     clearAlert: (state) => {
       state.alerts = state.alerts.shift();
     },
+    share: (state, action) => {
+      state.share = action.payload;
+    },
     // Add more actions as needed
   },
 });
 
 export const {
   setTheme,
-  openLoginPopup,
-  closeLoginPopup,
   addNotification,
   clearNotifications,
   addAlert,
   clearAlert,
+  share,
+  closeShareDialog,
 } = appSlice.actions;
 export default appSlice.reducer;

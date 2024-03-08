@@ -21,8 +21,7 @@ const OfflinePage = () => {
         <Button
           color="dark"
           className=" m-auto mt-10 w-full"
-          as={Link}
-          to={"/"}
+          onClick={() => location.reload()}
         >
           Retry
           <i className="fa fa-refresh ps-2"></i>

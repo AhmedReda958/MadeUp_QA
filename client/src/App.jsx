@@ -5,6 +5,7 @@ import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
 import { checkInternetConnection } from "./utils/handleConnection";
+import ShareDialog from "./components/ui/ShareDialog";
 
 function App() {
   const app = useSelector((state) => state.app);
@@ -33,6 +34,7 @@ function App() {
           <Outlet />
         </main>
         <Toolbar />
+        <ShareDialog />
       </div>
     </div>
   );

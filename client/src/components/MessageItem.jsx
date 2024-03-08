@@ -1,15 +1,18 @@
 import React, { Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ProfilePic from "./ProfilePic";
 import { formatDate } from "@/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
+import { share } from "@/redux/slices/appSlice";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const dispatch = useDispatch();
+
   const receiver = message.receiver;
   const msgOwner = receiver?.username;
 
@@ -35,7 +38,12 @@ const MessageMenu = ({ type, message }) => {
                   <Menu.Item>
                     <button
                       onClick={() =>
-                        Alert({ title: "Coming soon!", type: "comingsoon" })
+                        dispatch(
+                          share({
+                            text: message.content,
+                            url: "/message/" + message._id,
+                          })
+                        )
                       }
                       className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                     >
