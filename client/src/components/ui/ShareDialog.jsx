@@ -1,6 +1,7 @@
 import { useState, Fragment, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSelector, useDispatch } from "react-redux";
+import { Tooltip } from "flowbite-react";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -68,19 +69,21 @@ function ShareDialog() {
                   >
                     Share via
                   </Dialog.Title>
-                  <div
-                    className="flex mt-4 justify-between"
-                    onClick={() =>
-                      copyToClipboard(share?.text + "\n" + share?.url)
-                    }
-                  >
-                    <div className="text-center text-xs">
-                      <div className="w-11 h-11 p-2 border rounded-full">
-                        <LinkIcon className="w-6 h-6" />
-                      </div>
-                      <span>Copy</span>
-                    </div>
 
+                  <div className="flex mt-4 justify-between">
+                    <Tooltip content="Copied!" trigger="click">
+                      <div
+                        className="text-center text-xs"
+                        onClick={() =>
+                          copyToClipboard(share?.text + "\n" + share?.url)
+                        }
+                      >
+                        <div className="w-11 h-11 p-2 border rounded-full">
+                          <LinkIcon className="w-6 h-6" />
+                        </div>
+                        <span>Copy</span>
+                      </div>
+                    </Tooltip>
                     <div className="text-center text-xs">
                       <div>
                         <TwitterShareButton
