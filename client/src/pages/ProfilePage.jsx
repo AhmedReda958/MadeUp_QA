@@ -133,11 +133,6 @@ const UserProfile = () => {
 
   const user = useAxios({ url: `/users?username=${username}` });
   const { response, error, loading } = user;
-  useEffect(() => {
-    console.log(user.response);
-    console.log(user.error);
-    console.log(user.statusCode);
-  }, [loading]);
 
   return (
     <Page header={false}>

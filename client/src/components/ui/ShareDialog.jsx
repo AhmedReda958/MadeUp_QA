@@ -15,11 +15,14 @@ import {
   XIcon,
 } from "react-share";
 import { LinkIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
-import { copyToClipboard, share } from "@/utils/helpers";
+import { copyToClipboard, share as shareFunction } from "@/utils/helpers";
 
 function ShareDialog() {
   const [opened, setOpened] = useState(false);
   const share = useSelector((state) => state.app.share);
+
+  const shareText = share?.text ? share.text : "";
+  const shareUrl = share?.url ? share.url : "";
 
   function closeModal() {
     setOpened(false);
@@ -32,7 +35,6 @@ function ShareDialog() {
   useEffect(() => {
     if (share) {
       openModal();
-      console.log(share);
     }
   }, [share]);
   return (
@@ -75,7 +77,7 @@ function ShareDialog() {
                       <div
                         className="text-center text-xs"
                         onClick={() =>
-                          copyToClipboard(share?.text + "\n" + share?.url)
+                          copyToClipboard(shareText + "\n" + shareUrl)
                         }
                       >
                         <div className="w-11 h-11 p-2 border rounded-full">
@@ -86,10 +88,7 @@ function ShareDialog() {
                     </Tooltip>
                     <div className="text-center text-xs">
                       <div>
-                        <TwitterShareButton
-                          url={share?.url}
-                          title={share?.text}
-                        >
+                        <TwitterShareButton url={shareUrl} title={shareText}>
                           <XIcon size={40} round />
                         </TwitterShareButton>
                       </div>
@@ -97,10 +96,7 @@ function ShareDialog() {
                     </div>
                     <div className="text-center text-xs">
                       <div>
-                        <FacebookShareButton
-                          url={share?.url}
-                          title={share?.text}
-                        >
+                        <FacebookShareButton url={shareUrl} title={shareText}>
                           <FacebookIcon size={40} round />
                         </FacebookShareButton>
                       </div>
@@ -108,10 +104,7 @@ function ShareDialog() {
                     </div>
                     <div className="text-center text-xs">
                       <div>
-                        <TelegramShareButton
-                          url={share?.url}
-                          title={share?.text}
-                        >
+                        <TelegramShareButton url={shareUrl} title={shareText}>
                           <TelegramIcon size={40} round />
                         </TelegramShareButton>
                       </div>
@@ -119,10 +112,7 @@ function ShareDialog() {
                     </div>
                     <div className="text-center text-xs">
                       <div>
-                        <WhatsappShareButton
-                          url={share?.url}
-                          title={share?.text}
-                        >
+                        <WhatsappShareButton url={shareUrl} title={shareText}>
                           <WhatsappIcon size={40} round />
                         </WhatsappShareButton>
                       </div>
@@ -132,10 +122,7 @@ function ShareDialog() {
                   <div className="flex mt-4 justify-start gap-4">
                     <div className="text-center text-xs">
                       <div>
-                        <LinkedinShareButton
-                          url={share?.url}
-                          title={share?.text}
-                        >
+                        <LinkedinShareButton url={shareUrl} title={shareText}>
                           <LinkedinIcon size={40} round />
                         </LinkedinShareButton>
                       </div>
@@ -143,7 +130,9 @@ function ShareDialog() {
                     </div>
                     <div
                       className="text-center text-xs"
-                      onClick={() => share(share?.url, "MadeUp", share?.text)}
+                      onClick={() =>
+                        shareFunction(shareUrl, "MadeUp", shareText)
+                      }
                     >
                       <div className="w-11 h-11 p-2 border rounded-full bg-maincolor">
                         <EllipsisHorizontalIcon className="w-6 h-6" />

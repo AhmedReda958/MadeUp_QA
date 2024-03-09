@@ -2,10 +2,8 @@ import Page from "@/components/ui/Page";
 import React from "react";
 import ProfilePic from "@/components/ProfilePic";
 import { useSelector, useDispatch } from "react-redux";
-import { addAlert } from "@/redux/slices/appSlice";
+import { addAlert, share } from "@/redux/slices/appSlice";
 import { useNavigate } from "react-router-dom";
-import { Tooltip } from "flowbite-react";
-import { copyToClipboard, share } from "@/utils/helpers";
 
 import {
   InboxArrowDownIcon,
@@ -72,16 +70,18 @@ const SettingsPage = () => {
   return (
     <Page title={"Settings"} className="z-50">
       <div className="-mb-8 ">
-        <Tooltip content="Copied!" trigger="click">
-          <div
-            className=" p-4"
-            onClick={() =>
-              share(window.location.origin + "/" + userInfo.username)
-            }
-          >
-            <ShareIcon className="w-5 h-5 dark:text-primary-light text-primary" />
-          </div>
-        </Tooltip>
+        <div
+          className="w-16 p-4"
+          onClick={() =>
+            dispatch(
+              share({
+                url: window.location.origin + "/" + userInfo.username,
+              })
+            )
+          }
+        >
+          <ShareIcon className="w-5 h-5 dark:text-primary-light text-primary" />
+        </div>
       </div>
       <div className="flex items-center flex-col">
         <ProfilePic data={userInfo} className="w-24 h-24 shadow " />

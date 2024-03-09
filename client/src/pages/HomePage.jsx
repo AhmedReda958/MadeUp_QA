@@ -1,7 +1,7 @@
 import ProfilePic from "@/components/ProfilePic";
 import Modal from "@/components/ui/Modal";
 import Page from "@/components/ui/Page";
-import { setTheme } from "@/redux/slices/appSlice";
+import { setTheme, share } from "@/redux/slices/appSlice";
 import { logout } from "@/redux/slices/authSlice";
 import { useState, Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,8 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 import postsImg from "@/assets/imgs/onlinefriends.svg";
 import { Transition } from "@headlessui/react";
 import SearchBar from "@/components/SearchBar";
-import { Tooltip } from "flowbite-react";
-import { copyToClipboard } from "@/utils/helpers";
 
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 
@@ -105,7 +103,7 @@ const SettingsModal = ({ opened, close }) => {
 
 function HomePage() {
   const [openSettigs, setOpenSettings] = useState(false);
-
+  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
@@ -157,20 +155,21 @@ function HomePage() {
             </p>
           </div>
           <div className="flex justify-center">
-            <Tooltip content="Copied!" trigger="click">
-              <span
-                className="text-primary underline text-center w-full"
-                onClick={() => {
-                  auth.logedin
-                    ? copyToClipboard(
-                        window.location.href + auth.userInfo.username
-                      )
-                    : navigate("/login");
-                }}
-              >
-                Share your Account
-              </span>
-            </Tooltip>
+            <span
+              className="text-primary underline text-center w-full"
+              onClick={() => {
+                auth.logedin
+                  ? dispatch(
+                      share({
+                        url:
+                          window.location.origin + "/" + auth.userInfo.username,
+                      })
+                    )
+                  : navigate("/login");
+              }}
+            >
+              Share your Account
+            </span>
           </div>
         </div>
 
