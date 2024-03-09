@@ -40,8 +40,9 @@ const MessageMenu = ({ type, message }) => {
                       onClick={() =>
                         dispatch(
                           share({
-                            text: message.content,
-                            url: "/message/" + message._id,
+                            text:
+                              message.content + "➡️" + message?.reply.content,
+                            url: location.origin + "/message/" + message._id,
                           })
                         )
                       }
