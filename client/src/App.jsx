@@ -18,11 +18,11 @@ function App() {
       // perform a refetch every 15mins
       pollingInterval: 900000,
     });
-  const { data, isFetching } = autoAuth;
+  // const { data, isFetching } = autoAuth;
 
   useEffect(() => {
-    if (data) dispatch(setCredentials(data));
-  }, [data, dispatch]);
+    if (autoAuth?.data) dispatch(setCredentials(autoAuth.data));
+  }, [autoAuth?.data, dispatch]);
 
   useEffect(() => {
     checkInternetConnection();
