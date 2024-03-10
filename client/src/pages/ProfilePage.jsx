@@ -229,9 +229,7 @@ const UserProfile = () => {
           </>
         )
       ) : (
-        <div className="text-2xl text-center">
-          <i className="fa fa-spinner fa-spin-pulse"></i>
-        </div>
+        <LoadingSpinner />
       )}
     </Page>
   );
