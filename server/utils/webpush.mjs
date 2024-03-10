@@ -1,7 +1,10 @@
 import webpush from "web-push";
 
-webpush.setVapidDetails("mailto:TODO", "PUBLIC_KEY", "PRIVATE_KEY") // TODO: env
-
+webpush.setVapidDetails(
+  `mailto:<${process.env.PUSH_MAIL}>`,
+  process.env.PUSH_PUBLIC_KEY,
+  process.env.PUSH_PRIVATE_KEY
+);
 let subscriptions = {}; // TODO: enhance storing
 
 export function subscribeUser(id, subscription) {
