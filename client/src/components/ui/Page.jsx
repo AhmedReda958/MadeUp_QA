@@ -5,7 +5,7 @@ import { Transition } from "@headlessui/react";
 
 const Header = ({ title, children }) => {
   return (
-    <div className="flex justify-between items-center h-12 py-2 mb-6 mt-3">
+    <div className="flex justify-between items-center h-12 py-2 mb-3 ">
       <div className="flex items-center ">
         <h1 className="font-bold text-2xl font-logo text-black dark:text-white ps-1">
           MadeUp

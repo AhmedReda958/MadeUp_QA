@@ -17,7 +17,7 @@ const MessageMenu = ({ type, message }) => {
   const msgOwner = receiver?.username;
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative inline-block text-left w-6 h-6">
       <Menu.Button>
         <EllipsisVerticalIcon className="w-6 h-6" />
       </Menu.Button>
@@ -122,24 +122,28 @@ const MessageItem = ({ message, type = "post" }) => {
         className={`flex mb-2 ${type === "post" && "post_after after:ms-7"}`}
       >
         {/* profile pic */}
-        <div className="me-1">
-          <ProfilePic data={message} className="w-14 h-14" />
+        <div className="me-1 cursor-pointer">
+          <Link to={message.sender && "/" + message.sender.username}>
+            <ProfilePic data={message} className="w-14 h-14" />
+          </Link>
         </div>
 
         <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md ">
           {/* header */}
-          <div className="flex justify-between pt-3 pb-1">
-            <div className="flex">
-              <h5 className="text-altcolor font-semibold">
-                {" "}
-                {message.sender ? message.sender.fullName : "Anonymous"}
-              </h5>
-              {message.sender && (
-                <span className="ps-1 pt-1 text-sm">
-                  @{message.sender.username}
-                </span>
-              )}
-            </div>
+          <div className="flex justify-between pt-3 pb-1 cursor-pointer">
+            <Link to={message.sender && "/" + message.sender.username}>
+              <div className="flex">
+                <h5 className="text-altcolor font-semibold">
+                  {" "}
+                  {message.sender ? message.sender.fullName : "Anonymous"}
+                </h5>
+                {message.sender && (
+                  <span className="ps-1 pt-1 text-sm">
+                    @{message.sender.username}
+                  </span>
+                )}
+              </div>
+            </Link>
             <div>
               <MessageMenu type={type} message={message} />
             </div>
@@ -165,29 +169,35 @@ const MessageItem = ({ message, type = "post" }) => {
       {/* replay */}
       {type === "post" && (
         <div className="flex mt-4">
-          <div className="me-3 ">
-            <ProfilePic data={message.receiver} className="w-14 h-14" />
+          <div className="me-3 cursor-pointer">
+            <Link to={message.receiver && "/" + message.receiver.username}>
+              <ProfilePic data={message.receiver} className="w-14 h-14" />
+            </Link>
           </div>
           <div className="w-full pb-6 border-b border-gray-300 dark:border-dark-alt">
             <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md ">
               {/* header */}
-              <div className="flex justify-between pt-3 pb-1">
-                <div className="flex">
-                  <h5 className="text-altcolor font-semibold">
-                    {" "}
-                    {message.receiver ? message.receiver.fullName : "Anonymous"}
-                  </h5>
-                  {message.receiver && (
-                    <span className="ps-1 pt-1 text-sm">
-                      @{message.receiver.username}
-                    </span>
-                  )}
-                </div>
+              <div className="flex justify-between pt-3 pb-1 cursor-pointer">
+                <Link to={message.receiver && "/" + message.receiver.username}>
+                  <div className="flex">
+                    <h5 className="text-altcolor font-semibold">
+                      {" "}
+                      {message.receiver
+                        ? message.receiver.fullName
+                        : "Anonymous"}
+                    </h5>
+                    {message.receiver && (
+                      <span className="ps-1 pt-1 text-sm">
+                        @{message.receiver.username}
+                      </span>
+                    )}
+                  </div>
+                </Link>
                 <div>
                   <MessageMenu type={type} message={message} />
                 </div>
               </div>
-              <div className="flex items-baseline text-sm">
+              <div className="flex items-baseline text-sm leading-3 -mt-1">
                 Replying to
                 <span className="text-primary ps-2">
                   {message.sender ? `@${message.sender.username}` : "Anonymous"}

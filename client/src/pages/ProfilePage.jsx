@@ -96,7 +96,7 @@ const ProfileMessages = ({ userId }) => {
           error
         ) : response.length > 0 ? (
           <>
-            <div className="p-4 flex justify-between">
+            <div className="p-2 flex justify-between">
               <div className="text-altcolor font-simibold">
                 Answers {response.length}
                 <div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
@@ -110,7 +110,7 @@ const ProfileMessages = ({ userId }) => {
           </>
         ) : (
           <>
-            <div className="p-4 flex justify-between">
+            <div className="p-2 flex justify-between">
               <div className="text-altcolor font-simibold">
                 Answers 0<div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
               </div>
@@ -187,7 +187,7 @@ const UserProfile = () => {
                   }}
                 />
               </h2>
-              <p className="text-body dark:text-secondary-alt text-lg mt-2 mb-4">
+              <p className="text-body dark:text-secondary-alt text-lg mt-1 mb-2">
                 {response.bio}
               </p>
             </div>
