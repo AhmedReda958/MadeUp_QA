@@ -56,18 +56,20 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest,
-      workbox: {
-        globPatterns: [
-          "assets/*",
-          "img/*",
-          "icons/*",
-          "assets/*",
-          // add HTML and other resources for the root directory
-          "*.{svg,png,jpg,jpeg}",
-          "*.html",
-          "manifest.webmanifest",
-        ],
-      },
+      publicDir: path.resolve(__dirname, "public"),
+      srcDir: path.resolve(__dirname, "src"),
+      filename: "serviceWorker.js",
+      strategies: "injectManifest",
+      includeAssets: [
+        "assets/*",
+        "img/*",
+        "icons/*",
+        "assets/*",
+        // add HTML and other resources for the root directory
+        "*.{svg,png,jpg,jpeg}",
+        "*.html",
+        "manifest.webmanifest",
+      ],
       devOptions: {
         enabled: true,
       },
