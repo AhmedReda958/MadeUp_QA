@@ -1,15 +1,19 @@
 import webpush from "web-push";
 
+const { env } = process;
 webpush.setVapidDetails(
-  `mailto:<${process.env.PUSH_MAIL}>`,
-  process.env.PUSH_PUBLIC_KEY,
-  process.env.PUSH_PRIVATE_KEY
+  env.VAPID_SUBJECT,
+  env.VAPID_PUBLIC_KEY,
+  env.VAPID_PRIVATE_KEY
 );
+
 let subscriptions = {}; // TODO: enhance storing
 
 export function subscribeUser(id, subscription) {
-  // TODO: handle multi-devices subscriptions
-  subscriptions[id] = subscription;
+  (id in subscriptions)
+    ? subscriptions[id] = [subscription]
+    : subscriptions[id].push(id)
+  ;
 }
 
 export function notifyUser(userId, payload) {
