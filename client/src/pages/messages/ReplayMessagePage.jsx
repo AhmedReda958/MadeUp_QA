@@ -95,7 +95,7 @@ function ReplayMessagePage() {
               {/* header */}
               <div className="pb-2">
                 <div className="flex items-baseline">
-                  <h5 className="text-altcolor font-semibold text-lg w-1/2 truncate ">
+                  <h5 className="text-altcolor font-semibold text-lg max-w-1/2 truncate ">
                     {message.sender ? message.sender.fullName : "Anonymous"}
                   </h5>
                   {message.sender && (
@@ -132,6 +132,7 @@ function ReplayMessagePage() {
               </div>
               <textarea
                 type="text"
+                dir="rtl"
                 className="font-body-play resize-none overflow-hidden bg-inherit w-full border-none focus:ring-0 dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
                 onChange={handleReplayChange}
                 placeholder="Type your replay"
