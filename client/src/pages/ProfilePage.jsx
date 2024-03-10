@@ -1,7 +1,14 @@
 // UserProfile.js
 
 import useAxios from "@/utils/hooks/useAxios";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import EmptyContentImg from "@/assets/imgs/taken.svg";
@@ -13,6 +20,7 @@ import Page from "@/components/ui/Page";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import MessageItem from "@/components/MessageItem";
 import { Button } from "flowbite-react";
+import axios from "axios";
 
 const EmptyPage = () => {
   return (
@@ -68,43 +76,64 @@ const UserNotFound = () => {
 };
 
 const ProfileMessages = ({ userId }) => {
-  const messagesData = useAxios({
-    url: `messages/user/${userId}`,
-    headers: {
-      params: {
-        page: 1,
-        limit: 10,
-        user: ["sender", "receiver"],
-        include: [
-          "content",
-          "sender",
-          "receiver",
-          "reply.content",
-          "reply.timestamp",
-          "timestamp",
-        ],
-      },
-    },
-  });
+  const [loading, setLoading] = useState(false);
+  const [messagesData, setMessagesData] = useState([]);
+  const [error, setError] = useState();
 
-  const { loading, error, response } = messagesData;
+  const getMessages = useCallback(
+    () =>
+      axios
+        .get(`messages/user/${userId}`, {
+          params: {
+            page: 1,
+            limit: 10,
+            user: ["sender", "receiver"],
+            include: [
+              "content",
+              "sender",
+              "receiver",
+              "reply.content",
+              "reply.timestamp",
+              "timestamp",
+            ],
+          },
+        })
+        .then((res) => {
+          setMessagesData(res.data);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.error(err.message);
+          setError(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        }),
+    [userId]
+  );
+  // getMessages();
+  useEffect(() => {
+    getMessages();
+  }, []);
+
+  const messages = useMemo(() => messagesData, [messagesData]);
 
   return (
     <div>
       {!loading ? (
         error ? (
           error
-        ) : response.length > 0 ? (
+        ) : messages.length > 0 ? (
           <>
             <div className="p-2 flex justify-between">
               <div className="text-altcolor font-simibold">
-                Answers {response.length}
+                Answers {messages.length}
                 <div className="m-auto mt-1 w-6 h-[2px] bg-alt"></div>
               </div>
               <div>Likes 0</div>
               <div>Score 0</div>
             </div>
-            {response.map((message) => (
+            {messages.map((message) => (
               <MessageItem key={message._id} message={message} />
             ))}
           </>

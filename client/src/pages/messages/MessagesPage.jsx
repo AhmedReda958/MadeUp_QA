@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import mailboxImg from "@/assets/imgs/mailbox.svg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import ProfilePic from "@/components/ProfilePic";
-import { formatDate } from "@/utils/helpers";
+
 import Page from "@/components/ui/Page";
 import MessageItem from "@/components/MessageItem";
 
 function MessagesPage() {
   const [loading, setLoading] = useState(false);
-  const [reload, setReload] = useState(false);
   const [messagesData, setMessagesData] = useState({});
 
   const getMessages = useCallback(() => {
@@ -33,17 +31,19 @@ function MessagesPage() {
       .finally(() => {
         setLoading(false);
       });
-  }, [reload]);
+  }, [messagesData]);
 
   useEffect(() => {
     getMessages();
   }, []);
 
+  const messages = useMemo(() => messagesData, [messagesData]);
+
   return (
     <Page title={"Messages"} loading={loading}>
-      {messagesData.length > 0 ? (
+      {messages.length > 0 ? (
         <>
-          {messagesData.map((message) => (
+          {messages.map((message) => (
             <MessageItem key={message.id} message={message} type="message" />
           ))}
         </>
