@@ -104,7 +104,7 @@ router
           content
         }).save();
       } catch (err) {
-        // TODO: handle notification error
+        console.error(err); // TODO: handle notification error
       }
 
       return res
