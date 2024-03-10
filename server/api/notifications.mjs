@@ -24,7 +24,7 @@ router.get(
   authMiddleware,
   requiredAuthMiddleware,
   paginationMiddleware,
-  async (req, res, next) => {
+  (req, res, next) => {
     Notification.forUser(req.userId, req.pagination)
       .then(forUser => res.status(200).json(forUser))
       .catch(next);

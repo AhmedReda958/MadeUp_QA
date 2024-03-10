@@ -97,6 +97,16 @@ router
         throw new DatabaseError("SAVE_MESSAGE", err);
       }
 
+      try {
+        await new Notification({
+          user: user._id,
+          title: "Received a new message",
+          content
+        }).save();
+      } catch (err) {
+        // TODO: handle notification error
+      }
+
       return res
         .status(201)
         .json(
