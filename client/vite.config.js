@@ -57,9 +57,10 @@ export default defineConfig({
       registerType: "autoUpdate",
       manifest,
       publicDir: path.resolve(__dirname, "public"),
-      srcDir: path.resolve(__dirname, "src"),
+      srcDir: path.resolve(__dirname, "src/service_workers"),
       filename: "serviceWorker.js",
       strategies: "injectManifest",
+      injectRegister: null,
       includeAssets: [
         "assets/*",
         "img/*",

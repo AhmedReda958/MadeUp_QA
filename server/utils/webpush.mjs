@@ -10,10 +10,9 @@ webpush.setVapidDetails(
 let subscriptions = {}; // TODO: enhance storing
 
 export function subscribeUser(id, subscription) {
-  (id in subscriptions)
-    ? subscriptions[id] = [subscription]
-    : subscriptions[id].push(id)
-  ;
+  id in subscriptions
+    ? subscriptions[id].push(id)
+    : (subscriptions[id] = [subscription]);
 }
 
 export function notifyUser(userId, payload) {
