@@ -17,5 +17,18 @@ export function subscribeUser(id, subscription) {
 
 export function notifyUser(userId, payload) {
   // TODO: handle unsubscribed
-  return webpush.sendNotification(subscriptions[userId], payload);
+  const userSubscriptions = subscriptions[userId];
+  if (!userSubscriptions || userSubscriptions.length === 0) {
+    // Handle case where there are no subscriptions for the user
+    return Promise.resolve();
+  }
+
+  const notificationPromises = [];
+  for (const subscription of userSubscriptions) {
+    notificationPromises.push(
+      webpush.sendNotification(subscription, JSON.stringify(payload))
+    );
+  }
+
+  return Promise.all(notificationPromises);
 }

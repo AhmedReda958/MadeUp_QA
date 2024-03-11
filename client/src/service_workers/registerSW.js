@@ -34,7 +34,8 @@ async function send() {
 
   // Send Push Notification
   console.log("Sending Push...");
-  await axios.post("notifications/subscribe", subscription);
+  if (localStorage.getItem("logedin"))
+    await axios.post("notifications/subscribe", subscription);
   console.log("Push Sent...");
 }
 
