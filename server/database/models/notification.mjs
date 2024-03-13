@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-const { Schema, model, models } = mongoose;
+const { Schema, model, models, Types } = mongoose;
+import globalStages from "#database/stages.mjs";
 import { notifyUser } from "#utils/webpush.mjs";
 
 const notificationSchema = new Schema({
@@ -20,7 +21,7 @@ const notificationSchema = new Schema({
 
 notificationSchema.statics.forUser = function (userId, pagination) {
   return this.aggregate([
-    { $match: { user: new ObjectId(userId) } },
+    { $match: { user: new Types.ObjectId(userId) } },
     ...globalStages.pagination(pagination),
     { $project: { user: 0 } },
   ]);
