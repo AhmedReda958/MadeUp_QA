@@ -105,6 +105,7 @@ router
           user: user._id,
           title: "Received a new message",
           content,
+          url: "/message/messages/replay?id=" + message._id,
         }).save();
       } catch (err) {
         console.error(err); // TODO: handle notification error

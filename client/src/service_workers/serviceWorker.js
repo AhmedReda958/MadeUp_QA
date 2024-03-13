@@ -14,18 +14,29 @@ self.addEventListener("activate", () => self.clients.claim());
 self.addEventListener("push", function (e) {
   if (!(self.Notification && self.Notification.permission === "granted")) {
     //notifications aren't supported or permission not granted!
-    console.log("nononono");
+    console.log("notifications aren't supported or permission not granted");
     return;
   }
-  console.log(e.data);
+
   if (e.data) {
     let message = e.data.json();
+    const icon = "/icons/android-chrome-512x512.png";
     e.waitUntil(
       self.registration.showNotification(message.title, {
-        body: message.body,
-        icon: message.icon,
+        body: message.content,
+        icon: message.icon || icon,
+        vibrate: [300, 100, 400, 100, 400, 100, 400],
         actions: message.actions,
+        data: { url: message.url },
       })
     );
+  }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  if (clients.openWindow) {
+    event.waitUntil(clients.openWindow(event.notification.data.url || "/"));
   }
 });

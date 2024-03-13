@@ -30,6 +30,7 @@ notificationSchema.pre("save", async function (next) {
   notifyUser(this.user._id.toString(), {
     title: this.title,
     content: this.content,
+    url: this.url,
   });
 
   next();
