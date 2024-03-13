@@ -6,10 +6,11 @@ import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
 import { checkInternetConnection } from "./utils/handleConnection";
 import ShareDialog from "./components/ui/ShareDialog";
+import useNotifications from "./service_workers/SWnotifications";
 
 function App() {
   const app = useSelector((state) => state.app);
-  const userToken = useSelector((state) => state.auth.userToken);
+  const { userToken, logedin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   // automatically authenticate user if token is found
   const autoAuth =
@@ -25,8 +26,14 @@ function App() {
   }, [autoAuth?.data, dispatch]);
 
   useEffect(() => {
+    if (logedin) useNotifications();
+  }, [logedin]);
+
+  useEffect(() => {
     checkInternetConnection();
   }, []);
+
+  useEffect;
   return (
     <div className={app.isDarkTheme ? "dark" : "light"}>
       <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">

@@ -22,6 +22,7 @@ import "@fontsource-variable/rubik";
 //only 400
 import "@fontsource-variable/cairo-play";
 import "@fontsource/rubik-doodle-shadow";
+import registerSW from "./service_workers/registerSW";
 
 // axios config
 const apiURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/";
@@ -30,6 +31,10 @@ axios.defaults.headers = {
   "Access-Control-Allow-Origin": apiURL,
   Authorization: "Bearer " + store.getState().auth.userToken,
 };
+
+if (import.meta.env.PROD) {
+  registerSW();
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

@@ -8,6 +8,7 @@ import authMiddleware, {
 import paginationMiddleware from "#middlewares/pagination.mjs";
 
 import express from "express";
+import Notification from "#database/models/notification.mjs";
 const router = express.Router();
 
 router.use(authMiddleware);
@@ -93,8 +94,21 @@ router
         receiver: user._id,
       });
 
-      try { await message.save(); } catch (err) {
+      try {
+        await message.save();
+      } catch (err) {
         throw new DatabaseError("SAVE_MESSAGE", err);
+      }
+
+      try {
+        await new Notification({
+          user: user._id,
+          title: "Received a new message",
+          content,
+          url: "/message/messages/replay?id=" + message._id,
+        }).save();
+      } catch (err) {
+        console.error(err); // TODO: handle notification error
       }
 
       return res
@@ -117,11 +131,13 @@ router
   .get((req, res, next) => {
     Message.fetch(req.params.messageId, req.userId, {
       includes: req.query.include,
-      users: req.query.user
-    }).then(message => {
-      if (message != null) res.status(200).json(message);
-      else res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
-    }).catch(next);
+      users: req.query.user,
+    })
+      .then((message) => {
+        if (message != null) res.status(200).json(message);
+        else res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
+      })
+      .catch(next);
   })
   // Reply to a message
   .post(requiredAuthMiddleware, async (req, res, next) => {
@@ -155,36 +171,41 @@ router
     }
   });
 
-router.route("/likes/message/:messageId")
-// Fetch user(s) that liked a message
-.get(paginationMiddleware, (req, res, next) => {
-  Message.likes(req.params.messageId, Object.assign(
-    req.pagination,
-    {
-      usersId: "usersId" in req.query,
-      usersBrief: "usersBrief" in req.query
-    }
-  )).then(likes => {
-    if (likes != null) res.status(200).send(likes);
-    else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
-  }).catch(next);
-})
-// Like a message
-.put(requiredAuthMiddleware, (req, res, next) => {
-  Message.setLikeBy(req.params.messageId, req.userId, true)
-  .then(({ found, updated }) => {
-    if (found) res.status(200).send({ like: true, updated });
-    else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
-  }).catch(next);
-})
-// Remove a message like
-.delete(requiredAuthMiddleware, (req, res, next) => {
-  Message.setLikeBy(req.params.messageId, req.userId, false)
-  .then(({ found, updated }) => {
-    if (found) res.status(200).send({ like: false, updated });
-    else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
-  }).catch(next);
-});
+router
+  .route("/likes/message/:messageId")
+  // Fetch user(s) that liked a message
+  .get(paginationMiddleware, (req, res, next) => {
+    Message.likes(
+      req.params.messageId,
+      Object.assign(req.pagination, {
+        usersId: "usersId" in req.query,
+        usersBrief: "usersBrief" in req.query,
+      })
+    )
+      .then((likes) => {
+        if (likes != null) res.status(200).send(likes);
+        else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
+      })
+      .catch(next);
+  })
+  // Like a message
+  .put(requiredAuthMiddleware, (req, res, next) => {
+    Message.setLikeBy(req.params.messageId, req.userId, true)
+      .then(({ found, updated }) => {
+        if (found) res.status(200).send({ like: true, updated });
+        else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
+      })
+      .catch(next);
+  })
+  // Remove a message like
+  .delete(requiredAuthMiddleware, (req, res, next) => {
+    Message.setLikeBy(req.params.messageId, req.userId, false)
+      .then(({ found, updated }) => {
+        if (found) res.status(200).send({ like: false, updated });
+        else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
+      })
+      .catch(next);
+  });
 
 // If user liked a message
 router.get("/likes/message/:messageId/liked", (req, res, next) => {
@@ -195,12 +216,12 @@ router.get("/likes/message/:messageId/liked", (req, res, next) => {
   }
 
   Message.isLikedBy(req.params.messageId, targetUserId)
-  .then(liked => {
-    if (liked != null) res.status(200).send({ liked });
-    else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
-  })
-  .catch(next);
-})
+    .then((liked) => {
+      if (liked != null) res.status(200).send({ liked });
+      else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
+    })
+    .catch(next);
+});
 
 router
   .route("/likes/user/:targetUserId")
