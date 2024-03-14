@@ -17,6 +17,14 @@ const notificationSchema = new Schema({
     type: String,
     required: [true, "MISSING_CONTENT"],
   },
+  url: {
+    type: String,
+    required: [true, "MISSING_URL"],
+  },
+  seen: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 notificationSchema.statics.forUser = function (userId, pagination) {
@@ -31,7 +39,7 @@ notificationSchema.pre("save", async function (next) {
   notifyUser(this.user._id.toString(), {
     title: this.title,
     content: this.content,
-    url: this.url,
+    url: this.url || "/",
   });
 
   next();
