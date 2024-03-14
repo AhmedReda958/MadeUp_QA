@@ -1,5 +1,6 @@
 import { Router } from "express";
 import signingRoute from "./signing.mjs";
+import appRoute from "./app.mjs";
 import usersRoute from "./users.mjs";
 import messagesRoute from "./messages.mjs";
 import notificationsRoute from "./notifications.mjs";
@@ -15,6 +16,7 @@ router.get("/", async (_, res) => {
 });
 
 router.use(signingRoute);
+router.use("/app", appRoute);
 router.use("/users", usersRoute);
 router.use("/messages", messagesRoute);
 router.use("/notifications", notificationsRoute);
