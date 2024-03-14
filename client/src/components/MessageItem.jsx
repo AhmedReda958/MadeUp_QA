@@ -41,7 +41,7 @@ const MessageMenu = ({ type, message }) => {
                         dispatch(
                           share({
                             text:
-                              message.content + "➡️" + message?.reply.content,
+                              message.content + " - " + message?.reply.content,
                             url: location.origin + "/message/" + message._id,
                           })
                         )
