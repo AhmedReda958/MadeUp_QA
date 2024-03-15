@@ -4,6 +4,7 @@ import appRoute from "./app.mjs";
 import usersRoute from "./users.mjs";
 import messagesRoute from "./messages.mjs";
 import notificationsRoute from "./notifications.mjs";
+import feedRoute from "./feed.mjs";
 import { isDBConnected } from "#database/connection.mjs";
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/app", appRoute);
 router.use("/users", usersRoute);
 router.use("/messages", messagesRoute);
 router.use("/notifications", notificationsRoute);
+router.use("/feed", feedRoute);
 
 export default router;
