@@ -160,7 +160,7 @@ const MessageItem = ({ message, type = "post" }) => {
             {type == "message" && (
               <Link to={"replay?id=" + message._id} className="button-lg ">
                 Replay
-                <i class="fa fa-share ps-2 "></i>
+                <i className="fa fa-share ps-2 "></i>
               </Link>
             )}
           </div>

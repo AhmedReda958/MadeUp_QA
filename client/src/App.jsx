@@ -26,7 +26,7 @@ function App() {
   }, [autoAuth?.data, dispatch]);
 
   useEffect(() => {
-    if (logedin) useNotifications();
+    if (logedin && import.meta.env.PROD) useNotifications();
   }, [logedin]);
 
   useEffect(() => {
