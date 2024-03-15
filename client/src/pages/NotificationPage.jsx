@@ -6,10 +6,11 @@ import { BellAlertIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { formatDate } from "@/utils/helpers";
-import { Menu, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
+import { markAsSeen } from "@/redux/actions/notificationsActions";
 
 const EmptyPage = () => {
   return (
@@ -91,6 +92,8 @@ const NotificationItem = ({ data }) => {
 const NotificationPage = () => {
   const [loading, setLoading] = useState(false);
   const [notificationsData, setNotificationsData] = useState([]);
+  const { unseen } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
 
   const getNotifications = useCallback(() => {
     setLoading(true);
@@ -109,6 +112,10 @@ const NotificationPage = () => {
 
   useEffect(() => {
     getNotifications();
+
+    if (unseen.notifications > 0) {
+      dispatch(markAsSeen({ type: "notifications" }));
+    }
   }, []);
 
   const notifications = useMemo(() => notificationsData, [notificationsData]);

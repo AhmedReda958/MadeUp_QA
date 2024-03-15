@@ -1,5 +1,9 @@
 // slices/appSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import {
+  getNotificationsCount,
+  markAsSeen,
+} from "../actions/notificationsActions";
 
 const isDarkTheme = localStorage.getItem("darkMode")
   ? localStorage.getItem("darkMode")
@@ -8,6 +12,10 @@ const isDarkTheme = localStorage.getItem("darkMode")
 const initialState = {
   isDarkTheme,
   notifications: [],
+  unseen: {
+    notifications: 0,
+    messages: 0,
+  },
   alerts: [],
   share: null,
 };
@@ -35,7 +43,16 @@ const appSlice = createSlice({
     share: (state, action) => {
       state.share = action.payload;
     },
-    // Add more actions as needed
+  },
+  // extara reducers
+  extraReducers: (builder) => {
+    builder
+      .addCase(getNotificationsCount.fulfilled, (state, { payload }) => {
+        state.unseen = payload;
+      })
+      .addCase(markAsSeen.fulfilled, (state, { payload }) => {
+        state.unseen = payload;
+      });
   },
 });
 

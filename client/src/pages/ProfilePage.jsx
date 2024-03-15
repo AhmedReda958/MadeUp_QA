@@ -100,7 +100,6 @@ const ProfileMessages = ({ userId }) => {
         })
         .then((res) => {
           setMessagesData(res.data);
-          console.log(res.data);
         })
         .catch((err) => {
           console.error(err.message);

@@ -1,14 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import mailboxImg from "@/assets/imgs/mailbox.svg";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
 import Page from "@/components/ui/Page";
 import MessageItem from "@/components/MessageItem";
+import { markAsSeen } from "@/redux/actions/notificationsActions";
 
 function MessagesPage() {
   const [loading, setLoading] = useState(false);
   const [messagesData, setMessagesData] = useState({});
+
+  const { unseen } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
 
   const getMessages = useCallback(() => {
     setLoading(true);
@@ -23,7 +28,6 @@ function MessagesPage() {
       })
       .then((res) => {
         setMessagesData(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.error(err.message);
@@ -35,6 +39,10 @@ function MessagesPage() {
 
   useEffect(() => {
     getMessages();
+
+    if (unseen.messages > 0) {
+      dispatch(markAsSeen({ type: "messages" }));
+    }
   }, []);
 
   const messages = useMemo(() => messagesData, [messagesData]);
@@ -44,7 +52,7 @@ function MessagesPage() {
       {messages.length > 0 ? (
         <>
           {messages.map((message) => (
-            <MessageItem key={message.id} message={message} type="message" />
+            <MessageItem key={message._id} message={message} type="message" />
           ))}
         </>
       ) : (

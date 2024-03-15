@@ -8,20 +8,20 @@ const router = express.Router();
 
 // get unseen notifications count
 router.get(
-  "/unseen",
+  "/unseen-count",
   authMiddleware,
   requiredAuthMiddleware,
   async (req, res, next) => {
     try {
-      const notificationsCount = await notification.countDocuments({
+      const notifications = await notification.countDocuments({
         user: req.userId,
         seen: false,
       });
-      const messagesCount = await message.countDocuments({
+      const messages = await message.countDocuments({
         receiver: req.userId,
         seen: false,
       });
-      res.status(200).json({ notificationsCount, messagesCount });
+      res.status(200).json({ notifications, messages });
     } catch (error) {
       next(error);
     }
@@ -36,6 +36,7 @@ router.patch(
   async (req, res, next) => {
     try {
       const { type } = req.query;
+
       const markNotifications = async () =>
         await notification.updateMany(
           {
@@ -54,17 +55,24 @@ router.patch(
           { seen: true }
         );
 
+      const notifications = await notification.countDocuments({
+        user: req.userId,
+        seen: false,
+      });
+      const messages = await message.countDocuments({
+        receiver: req.userId,
+        seen: false,
+      });
+
       if (type === "notificatoins") {
         await markNotifications();
-        res.json({ message: "All unseen notifications marked as seen" });
       } else if (type === "messages") {
         await markMessages();
-        res.json({ message: "All unseen messages marked as seen" });
       } else {
         await markNotifications();
         await markMessages();
-        res.json({ message: "All unseen marked as seen" });
       }
+      res.json({ notifications, messages });
     } catch (error) {
       next(error);
     }
