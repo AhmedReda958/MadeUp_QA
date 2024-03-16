@@ -3,7 +3,8 @@ import Modal from "@/components/ui/Modal";
 import Page from "@/components/ui/Page";
 import { setTheme, share } from "@/redux/slices/appSlice";
 import { logout } from "@/redux/slices/authSlice";
-import { useState, Fragment, useEffect } from "react";
+import { useState, Fragment, useEffect, useCallback, useMemo } from "react";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import postsImg from "@/assets/imgs/onlinefriends.svg";
@@ -11,6 +12,8 @@ import { Transition } from "@headlessui/react";
 import SearchBar from "@/components/SearchBar";
 
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import MessageItem from "@/components/MessageItem";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const SettingsModal = ({ opened, close }) => {
   const { auth, app } = useSelector((state) => state);
@@ -101,12 +104,91 @@ const SettingsModal = ({ opened, close }) => {
   );
 };
 
-function HomePage() {
-  const [openSettigs, setOpenSettings] = useState(false);
-  const dispatch = useDispatch();
+const Feed = () => {
+  const [loading, setLoading] = useState(false);
+  const [feedData, setFeedData] = useState({});
+
+  const { unseen } = useSelector((state) => state.app);
   const auth = useSelector((state) => state.auth);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const getPosts = useCallback(() => {
+    setLoading(true);
+    axios
+      .get(`/feed`)
+      .then((res) => {
+        setFeedData(res.data);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [feedData]);
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  const messages = useMemo(() => feedData, [feedData]);
+
+  return (
+    <div>
+      {!loading ? (
+        messages.length > 0 ? (
+          <>
+            {messages.map((message) => (
+              <MessageItem key={message._id} message={message} type="post" />
+            ))}
+          </>
+        ) : (
+          <div>
+            <img
+              src={postsImg}
+              className="w-[270px] m-auto mt-20 opacity-90 "
+              alt=""
+              draggable="false"
+            />
+            <div className="pt-12 ps-3 text m-auto w-80">
+              <p className="text-center">
+                You don't have any users you follow, to show messages in your
+                timeline follow some frinds to see their answers or
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <span
+                className="text-primary underline text-center w-full"
+                onClick={() => {
+                  auth.logedin
+                    ? dispatch(
+                        share({
+                          url:
+                            window.location.origin +
+                            "/" +
+                            auth.userInfo.username,
+                        })
+                      )
+                    : navigate("/login");
+                }}
+              >
+                Share your Account
+              </span>
+            </div>
+          </div>
+        )
+      ) : (
+        <LoadingSpinner />
+      )}
+    </div>
+  );
+};
+
+function HomePage() {
+  const [openSettigs, setOpenSettings] = useState(false);
+  const auth = useSelector((state) => state.auth);
 
   return (
     <>
@@ -141,40 +223,9 @@ function HomePage() {
         <div className="my-6">
           <SearchBar />
         </div>
-        <div>
-          <img
-            src={postsImg}
-            className="w-[270px] m-auto mt-20 opacity-90 "
-            alt=""
-            draggable="false"
-          />
-          <div className="pt-12 ps-3 text m-auto w-80">
-            <p className="text-center">
-              You don't have any users you follow, to show messages in your
-              timeline follow some frinds to see their answers or
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <span
-              className="text-primary underline text-center w-full"
-              onClick={() => {
-                auth.logedin
-                  ? dispatch(
-                      share({
-                        url:
-                          window.location.origin + "/" + auth.userInfo.username,
-                      })
-                    )
-                  : navigate("/login");
-              }}
-            >
-              Share your Account
-            </span>
-          </div>
-        </div>
-
+        <Feed />
         <button
-          className="text-2xl button-lg absolute right-10 bottom-28 z-10 hidden"
+          className="text-2xl button-lg fixed right-10 bottom-28 z-10 hidden"
           onClick={() => setOpenSettings(true)}
         >
           <i className="fa fa-bars"></i>

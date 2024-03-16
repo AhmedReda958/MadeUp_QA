@@ -16,7 +16,7 @@ const Toolbar = () => {
     // get notifications every 5m
     const counter = setInterval(
       () => dispatch(getNotificationsCount()),
-      60 * 60 * 5
+      1000 * 60 * 5
     );
     dispatch(getNotificationsCount());
 
