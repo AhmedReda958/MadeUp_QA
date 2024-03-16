@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.madeup.gad",
+        "sha256_cert_fingerprints": ["08:48:9E:8A:12:B9:99:53:FE:C0:05:C4:87:99:C2:38:4E:66:F6:1B:F3:02:DB:6E:EC:9F:60:13:91:EF:C4:62"]
+      }
+    }]
