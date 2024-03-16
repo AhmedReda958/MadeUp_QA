@@ -36,7 +36,7 @@ axios.defaults.headers = {
 if (import.meta.env.PROD) {
   registerSW();
 }
-runOneSignal();
+// runOneSignal();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
