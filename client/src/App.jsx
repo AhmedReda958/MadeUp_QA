@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
 import { checkInternetConnection } from "./utils/handleConnection";
 import ShareDialog from "./components/ui/ShareDialog";
-import useNotifications from "./service_workers/SWnotifications";
 
 function App() {
   const app = useSelector((state) => state.app);
@@ -24,10 +23,6 @@ function App() {
   useEffect(() => {
     if (autoAuth?.data) dispatch(setCredentials(autoAuth.data));
   }, [autoAuth?.data, dispatch]);
-
-  useEffect(() => {
-    if (logedin && import.meta.env.PROD) useNotifications();
-  }, [logedin]);
 
   useEffect(() => {
     checkInternetConnection();

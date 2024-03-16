@@ -59,7 +59,7 @@ export default defineConfig({
       publicDir: path.resolve(__dirname, "public"),
       srcDir: path.resolve(__dirname, "src/service_workers"),
       filename: "serviceWorker.js",
-      strategies: "injectManifest",
+      // strategies: "injectManifest",
       injectRegister: null,
       includeAssets: [
         "assets/*",
