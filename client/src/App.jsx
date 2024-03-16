@@ -26,10 +26,6 @@ function App() {
   }, [autoAuth?.data, dispatch]);
 
   useEffect(() => {
-    if (logedin && import.meta.env.PROD) useNotifications();
-  }, [logedin]);
-
-  useEffect(() => {
     checkInternetConnection();
   }, []);
 
