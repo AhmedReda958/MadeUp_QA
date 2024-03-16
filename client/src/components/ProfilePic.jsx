@@ -4,8 +4,10 @@ import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 function ProfilePic({ data, className = "", story = false, border = true }) {
   return (
     <div
-      className={`rounded-full ${border && "p-1"} ${className} ${
-        story ? " bg-green-400" : "bg-altcolor"
+      className={`rounded-full ${border && "p-[3px]"} ${className} ${
+        story
+          ? " bg-gradient-to-br from-primary-dark via-gred-light  to-alt"
+          : "bg-altcolor"
       }`}
     >
       <img
