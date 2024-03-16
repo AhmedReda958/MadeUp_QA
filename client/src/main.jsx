@@ -23,7 +23,7 @@ import "@fontsource-variable/rubik";
 import "@fontsource-variable/cairo-play";
 import "@fontsource/rubik-doodle-shadow";
 import registerSW from "./service_workers/registerSW";
-import runOneSignal from "./utils/oneSignal";
+import runOneSignal from "@/utils/oneSignal";
 
 // axios config
 const apiURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/";
