@@ -117,7 +117,21 @@ const Feed = () => {
   const getPosts = useCallback(() => {
     setLoading(true);
     axios
-      .get(`/feed`)
+      .get(`/feed`, {
+        params: {
+          page: 1,
+          limit: 10,
+          user: ["sender", "receiver"],
+          include: [
+            "content",
+            "sender",
+            "receiver",
+            "reply.content",
+            "reply.timestamp",
+            "timestamp",
+          ],
+        },
+      })
       .then((res) => {
         setFeedData(res.data);
       })
