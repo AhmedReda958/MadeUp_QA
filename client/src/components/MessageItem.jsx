@@ -114,8 +114,8 @@ const MessageItem = ({ message, type = "post" }) => {
   const navigate = useNavigate();
 
   const navigateToMessagePage = () => {
-    if (type === "message") navigate("replay?id=" + message._id);
-    else if (type === "post") navigate("message/" + message._id);
+    if (type === "message") navigate("/messages/replay?id=" + message._id);
+    else if (type === "post") navigate("/message/" + message._id);
   };
 
   return (
@@ -131,10 +131,7 @@ const MessageItem = ({ message, type = "post" }) => {
           </Link>
         </div>
 
-        <div
-          onClick={navigateToMessagePage}
-          className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer"
-        >
+        <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer">
           {/* header */}
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
             <Link to={message.sender && "/" + message.sender.username}>
@@ -158,16 +155,20 @@ const MessageItem = ({ message, type = "post" }) => {
           <div
             className="p-2 text-altcolor font-semibold font-body-play"
             dir="rtl"
+            onClick={navigateToMessagePage}
           >
             {message.content}
           </div>
           <div className="pt-2 pb-3 flex justify-between items-center">
             <div className="text-xs">{formatDate(message.timestamp)}</div>
             {type == "message" && (
-              <button className="button-lg ">
+              <Link
+                to={"/messages/replay?id=" + message._id}
+                className="button-lg "
+              >
                 Replay
                 <i className="fa fa-share ps-2 "></i>
-              </button>
+              </Link>
             )}
           </div>
         </div>
@@ -181,10 +182,7 @@ const MessageItem = ({ message, type = "post" }) => {
             </Link>
           </div>
           <div className="w-full pb-6 border-b border-gray-300 dark:border-dark-alt">
-            <div
-              onClick={navigateToMessagePage}
-              className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer"
-            >
+            <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer">
               {/* header */}
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link to={message.receiver && "/" + message.receiver.username}>
@@ -214,6 +212,7 @@ const MessageItem = ({ message, type = "post" }) => {
               </div>
               {/* content */}
               <div
+                onClick={navigateToMessagePage}
                 className="p-2 text-altcolor font-semibold font-body-play"
                 dir="rtl"
               >
