@@ -374,4 +374,30 @@ messageSchema.statics.likedBy = function (
   ]).exec();
 };
 
+// basic feed
+messageSchema.statics.userFeed = function (
+  userId,
+  pagination,
+  { users, includes, allow, only }
+) {
+  users = parseInternalUsers(users);
+  return this.aggregate([
+    {
+      $match: {
+        "reply.private": false,
+        $and: [
+          { "reply.content": { $exists: true } },
+          { $expr: { $ne: [{ $type: "$reply.content" }, "object"] } },
+        ],
+      },
+    },
+    {
+      $sample: { size: 10 },
+    },
+    ...globalStages.pagination(pagination),
+    ...messageStages.internalUsers(users),
+    { $project: parseIncludesIntoProject(includes, allow, only, users) },
+  ]);
+};
+
 export default models.Message || model("Message", messageSchema);
