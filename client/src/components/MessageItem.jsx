@@ -127,7 +127,7 @@ const MessageItem = ({ message, type = "post" }) => {
         {/* profile pic */}
         <div className="me-1 cursor-pointer">
           <Link to={message.sender && "/" + message.sender.username}>
-            <ProfilePic data={message} className="w-14 h-14" />
+            <ProfilePic data={message.sender} className="w-14 h-14" />
           </Link>
         </div>
 

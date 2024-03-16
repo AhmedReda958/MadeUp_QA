@@ -59,6 +59,7 @@ let userBriefProject = {
   _id: 1,
   username: 1,
   fullName: 1,
+  profilePicture: 1,
   // TODO: add those later on
   // "hasStory", "verified", "online"
 };
