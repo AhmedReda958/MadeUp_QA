@@ -21,6 +21,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import MessageItem from "@/components/MessageItem";
 import { Button } from "flowbite-react";
 import axios from "axios";
+import { share } from "@/redux/slices/appSlice";
 
 const EmptyPage = () => {
   return (
@@ -162,6 +163,8 @@ const UserProfile = () => {
   const user = useAxios({ url: `/users?username=${username}` });
   const { response, error, loading } = user;
 
+  const dispatch = useDispatch();
+
   return (
     <Page header={false}>
       {!loading ? (
@@ -220,8 +223,30 @@ const UserProfile = () => {
               </p>
             </div>
 
-            {userInfo.username != username && (
+            {userInfo.username != username ? (
               <SendMessageFrom userId={response._id} />
+            ) : (
+              <div className="mt-3 mb-2 flex justify-between gap-3 *:flex-1 *:font-bold ">
+                {/* edit profile and share profile  buttons*/}
+                <Button color="gray" size="sm" as={Link} to="/settings/info">
+                  Edit Profile
+                  <i className="fa fa-edit mx-1"></i>
+                </Button>
+                <Button
+                  color="gray"
+                  size="sm"
+                  onClick={() =>
+                    dispatch(
+                      share({
+                        url: window.location.origin + "/" + userInfo.username,
+                      })
+                    )
+                  }
+                >
+                  Share Profile
+                  <i className="fa fa-share-alt mx-2"></i>
+                </Button>
+              </div>
             )}
 
             <ProfileMessages userId={response._id} />
