@@ -58,10 +58,12 @@ export const fetchMessages = createAsyncThunk(
     try {
       const state = getState();
       const currentPage = state.content.messages.received.page;
-      const response = await axios.get("/messages", {
+      const response = await axios.get("/messages/inbox", {
         params: {
+          include: ["content", "timestamp"],
+          user: "sender",
           page: currentPage,
-          refresh: false, // Update property name to 'refresh: false'
+          limit: 20,
         },
       });
       return response.data;

@@ -1,54 +1,39 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import mailboxImg from "@/assets/imgs/mailbox.svg";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 
 import Page from "@/components/ui/Page";
 import MessageItem from "@/components/MessageItem";
 import { markAsSeen } from "@/redux/actions/notificationsActions";
+import { fetchMessages } from "@/redux/slices/contentSlice";
+import mailboxImg from "@/assets/imgs/mailbox.svg";
 
 function MessagesPage() {
-  const [loading, setLoading] = useState(false);
-  const [messagesData, setMessagesData] = useState({});
-
-  const { unseen } = useSelector((state) => state.app);
   const dispatch = useDispatch();
-
-  const getMessages = useCallback(() => {
-    setLoading(true);
-    axios
-      .get(`/messages/inbox`, {
-        params: {
-          include: ["content", "timestamp"],
-          user: "sender",
-          page: 1,
-          limit: 100,
-        },
-      })
-      .then((res) => {
-        setMessagesData(res.data);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [messagesData]);
+  const { unseen } = useSelector((state) => state.app);
+  const { data: messagesData, loading: messagesLoading } = useSelector(
+    (state) => state.content.messages.received
+  );
 
   useEffect(() => {
-    getMessages();
+    fetchMessagesData();
+    markMessagesAsSeen();
+  }, []);
 
+  const fetchMessagesData = () => {
+    dispatch(fetchMessages());
+  };
+
+  const markMessagesAsSeen = () => {
     if (unseen.messages > 0) {
       dispatch(markAsSeen({ type: "messages" }));
     }
-  }, []);
+  };
 
-  const messages = useMemo(() => messagesData, [messagesData]);
+  const messages = messagesData;
+  const isLoading = messagesLoading && messages.length === 0;
 
   return (
-    <Page title={"Messages"} loading={loading}>
+    <Page title={"Messages"} loading={isLoading}>
       {messages.length > 0 ? (
         <>
           {messages.map((message) => (
