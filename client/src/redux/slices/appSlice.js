@@ -5,9 +5,7 @@ import {
   markAsSeen,
 } from "../actions/notificationsActions";
 
-const isDarkTheme = localStorage.getItem("darkMode")
-  ? localStorage.getItem("darkMode")
-  : false;
+const isDarkTheme = localStorage.darkMode === "true" || false;
 
 const initialState = {
   isDarkTheme,
