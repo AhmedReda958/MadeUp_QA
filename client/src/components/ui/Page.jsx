@@ -5,7 +5,7 @@ import { Transition } from "@headlessui/react";
 
 const Header = ({ title, children }) => {
   const [isSticky, setIsSticky] = useState(false);
-  const [isShown, setIsShown] = useState(false);
+  const [isShown, setIsShown] = useState(true);
 
   useEffect(() => {
     const main = document.querySelector("#main-app");
@@ -18,8 +18,10 @@ const Header = ({ title, children }) => {
         if (currentScroll > lastScroll) {
           setIsSticky(false);
           setIsShown(false);
-        } else if (currentScroll < 450) {
+        } else if (currentScroll < 100) {
           setIsSticky(false);
+        } else if (currentScroll < 450) {
+          setIsShown(true);
         } else {
           setIsSticky(true);
           setIsShown(true);
