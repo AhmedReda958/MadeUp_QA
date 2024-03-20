@@ -15,16 +15,9 @@ const Header = ({ title, children }) => {
       main.addEventListener("scroll", () => {
         let currentScroll = main.scrollTop;
 
-        if (currentScroll > lastScroll) {
-          setIsShown(false);
-        } else if (currentScroll < 100) {
-          setIsSticky(false);
-        } else if (currentScroll < 450) {
-          setIsShown(true);
-        } else {
-          setIsShown(true);
-          setIsSticky(true);
-        }
+        setIsSticky(currentScroll < lastScroll && currentScroll > 100);
+        setIsShown(currentScroll < lastScroll || currentScroll < 650);
+
         lastScroll = currentScroll;
       });
     };
@@ -43,7 +36,7 @@ const Header = ({ title, children }) => {
       enter="ease duration-[.4s]"
       enterFrom="opacity-0 -translate-y-64"
       enterTo=" opacity-100 translate-y-0"
-      leave="ease duration-[.1s]"
+      leave="ease duration-[1s]"
       leaveFrom="opacity-100  -translate-y-64 "
       leaveTo="opacity-0  translate-y-0  "
     >
