@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, memo } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
@@ -74,11 +73,11 @@ const Feed = () => {
 
   const { data, loading } = useSelector((state) => state.content.feed);
   const messages = data;
-  const fetchLoading = messages.length === 0 && loading;
+  const isLoading = messages.length === 0 && loading;
 
   return (
     <div>
-      {!fetchLoading ? (
+      {!isLoading ? (
         messages.length > 0 ? (
           <>
             {messages.map((message) => (
@@ -126,4 +125,4 @@ const Feed = () => {
     </div>
   );
 };
-export default memo(HomePage);
+export default HomePage;

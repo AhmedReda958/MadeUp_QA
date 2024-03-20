@@ -37,11 +37,11 @@ export const fetchNotifications = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const state = getState();
-      const currentPage = state.content.notification.page;
-      const response = await axios.get("/notifications", {
+      const currentPage = state.content.notifications.page; // Update property name to 'messages.received'
+      const response = await axios.get("/notifications/inbox", {
         params: {
           page: currentPage,
-          refresh: refresh,
+          limit: 10,
         },
       });
       return response.data;
@@ -61,7 +61,7 @@ export const fetchMessages = createAsyncThunk(
       const response = await axios.get("/messages", {
         params: {
           page: currentPage,
-          refresh: refresh,
+          refresh: false, // Update property name to 'refresh: false'
         },
       });
       return response.data;
@@ -81,7 +81,7 @@ const contentSlice = createSlice({
       error: null,
       page: 1,
     },
-    notification: {
+    notifications: {
       data: [],
       loading: false,
       refresh: false,
@@ -125,18 +125,18 @@ const contentSlice = createSlice({
       })
       // Fetch notifications pending
       .addCase(fetchNotifications.pending, (state) => {
-        state.notification.loading = true;
-        state.notification.error = null;
+        state.notifications.loading = true;
+        state.notifications.error = null;
       })
       // Fetch notifications fulfilled
       .addCase(fetchNotifications.fulfilled, (state, action) => {
-        state.notification.loading = false;
-        state.notification.data = action.payload;
+        state.notifications.loading = false;
+        state.notifications.data = action.payload;
       })
       // Fetch notifications rejected
       .addCase(fetchNotifications.rejected, (state, action) => {
-        state.notification.loading = false;
-        state.notification.error = action.payload;
+        state.notifications.loading = false;
+        state.notifications.error = action.payload;
       })
       // Fetch messages pending
       .addCase(fetchMessages.pending, (state) => {
