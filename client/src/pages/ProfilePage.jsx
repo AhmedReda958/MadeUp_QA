@@ -114,9 +114,9 @@ const ProfileMessages = ({ userId }) => {
   // getMessages();
   useEffect(() => {
     getMessages();
-  }, []);
+  }, [userId]);
 
-  const messages = useMemo(() => messagesData, [messagesData]);
+  const messages = useMemo(() => messagesData, [messagesData, userId]);
 
   return (
     <div>
