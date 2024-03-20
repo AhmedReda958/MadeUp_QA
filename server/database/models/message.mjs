@@ -6,6 +6,7 @@ const {
   Types: { ObjectId },
 } = mongoose;
 import globalStages from "#database/stages.mjs";
+import events from "#tools/events.mjs";
 
 const messageSchema = new Schema({
   content: {
@@ -400,5 +401,16 @@ messageSchema.statics.userFeed = function (
     { $project: parseIncludesIntoProject(includes, allow, only, users) },
   ]);
 };
+
+messageSchema.pre("save", function (next) {
+  events.emit("MessageSent", {
+    content: this.content,
+    anonymous: this.anonymous,
+    sender: this.sender,
+    receiver: this.receiver,
+  });
+
+  next();
+});
 
 export default models.Message || model("Message", messageSchema);

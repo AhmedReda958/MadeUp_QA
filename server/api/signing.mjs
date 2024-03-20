@@ -64,6 +64,8 @@ router.post("/register", async (req, res, next) => {
       throw new DatabaseError("SAVE_NEW_USER", err);
     }
 
+    // TODO: create onesignal user
+
     const token = jwt.sign({ userId: user._id }, JWT_SECRET_KEY, {
       expiresIn: SIGNING_EXPIRY,
     });

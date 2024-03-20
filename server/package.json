@@ -13,10 +13,12 @@
   "imports": {
     "#utils/*": "./utils/*",
     "#errors/*": "./errors/*",
+    "#tools/*": "./tools/*",
     "#middlewares/*": "./middlewares/*",
     "#database/*": "./database/*"
   },
   "dependencies": {
+    "@onesignal/node-onesignal": "^2.0.1-beta2",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",

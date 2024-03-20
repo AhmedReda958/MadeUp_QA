@@ -21,10 +21,16 @@ const authSlice = createSlice({
     setCredentials: (state, { payload }) => {
       state.userInfo = payload;
       state.logedin = true;
+      OneSignalDeferred.push(function () {
+        OneSignal.login(state.userInfo._id);
+      });
     },
     logout: (state) => {
       state.userInfo = {};
       state.logedin = false;
+      OneSignalDeferred.push(function () {
+        OneSignal.logout();
+      });
       localStorage.clear();
       window.location.reload();
     },

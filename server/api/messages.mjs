@@ -8,7 +8,6 @@ import authMiddleware, {
 import paginationMiddleware from "#middlewares/pagination.mjs";
 
 import express from "express";
-import Notification from "#database/models/notification.mjs";
 const router = express.Router();
 
 router.use(authMiddleware);
@@ -98,17 +97,6 @@ router
         await message.save();
       } catch (err) {
         throw new DatabaseError("SAVE_MESSAGE", err);
-      }
-
-      try {
-        await new Notification({
-          user: user._id,
-          title: "Received a new message",
-          content,
-          url: "/messages/replay?id=" + message._id,
-        }).save();
-      } catch (err) {
-        console.error(err); // TODO: handle notification error
       }
 
       return res

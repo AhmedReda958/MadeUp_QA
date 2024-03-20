@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 const { Schema, model, models, Types } = mongoose;
 import globalStages from "#database/stages.mjs";
-import { notifyUser } from "#utils/webpush.mjs";
 
 const notificationSchema = new Schema({
   user: {
@@ -34,15 +33,5 @@ notificationSchema.statics.forUser = function (userId, pagination) {
     { $project: { user: 0 } },
   ]);
 };
-
-notificationSchema.pre("save", async function (next) {
-  notifyUser(this.user._id.toString(), {
-    title: this.title,
-    content: this.content,
-    url: this.url || "/",
-  });
-
-  next();
-});
 
 export default models.Notification || model("Notification", notificationSchema);
