@@ -53,25 +53,25 @@ const manifest = {
 export default defineConfig({
   plugins: [
     react(),
-    VitePWA({
-      registerType: "autoUpdate",
-      manifest,
-      workbox: {
-        globPatterns: [
-          "assets/*",
-          "img/*",
-          "icons/*",
-          "assets/*",
-          // add HTML and other resources for the root directory
-          "*.{svg,png,jpg,jpeg}",
-          "*.html",
-          "manifest.webmanifest",
-        ],
-      },
-      devOptions: {
-        enabled: true,
-      },
-    }),
+    // VitePWA({
+    //   registerType: "autoUpdate",
+    //   manifest,
+    //   workbox: {
+    //     globPatterns: [
+    //       "assets/*",
+    //       "img/*",
+    //       "icons/*",
+    //       "assets/*",
+    //       // add HTML and other resources for the root directory
+    //       "*.{svg,png,jpg,jpeg}",
+    //       "*.html",
+    //       "manifest.webmanifest",
+    //     ],
+    //   },
+    //   devOptions: {
+    //     enabled: true,
+    //   },
+    // }),
   ],
   resolve: {
     alias: {

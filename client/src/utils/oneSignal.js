@@ -5,6 +5,7 @@ export default async function runOneSignal() {
     appId: import.meta.env.VITE_ONESIGNAL_APP_ID,
     safari_web_id: import.meta.env.VITE_ONESIGNAL_SAFARI_WEB_ID,
     allowLocalhostAsSecureOrigin: true,
+    serviceWorkerParam: { scope: "/notifications/" },
   });
   OneSignal.Slidedown.promptPush();
 }

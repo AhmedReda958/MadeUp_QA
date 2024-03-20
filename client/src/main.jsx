@@ -33,11 +33,11 @@ axios.defaults.headers = {
   Authorization: "Bearer " + store.getState().auth.userToken,
 };
 
-if (import.meta.env.PROD) {
-  registerSW();
-}
+// if (import.meta.env.PROD) {
+//   registerSW();
+// }
 
-runOneSignal();
+// runOneSignal();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

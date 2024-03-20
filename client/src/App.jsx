@@ -29,7 +29,6 @@ function App() {
     checkInternetConnection();
   }, []);
 
-  useEffect;
   return (
     <div className={app.isDarkTheme ? "dark" : "light"}>
       <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">

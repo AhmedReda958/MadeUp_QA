@@ -1,0 +1,45 @@
+{
+  "name": "MadeUp",
+  "short_name": "MadeUp",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "lang": "en",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#000007",
+  "id": "/",
+  "description": "Send and anwser Anonymous messages",
+  "dir": "auto",
+  "orientation": "portrait-primary",
+  "categories": ["entertainment", "social"],
+  "shortcuts": [
+    { "name": "Home", "url": "/", "description": "" },
+    { "name": "Messages", "url": "/messages", "description": "" }
+  ]
+}
