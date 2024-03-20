@@ -6,8 +6,11 @@ import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-const SettingsModal = ({ opened = false, close = () => {} }) => {
-  const { auth, app } = useSelector((state) => state);
+const SettingsModal = (props) => {
+  const { opened, close } = props;
+
+  const { isDarkTheme } = useSelector((state) => state.app);
+  const { logedin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   return (
     <Modal opened={opened} close={() => close()}>
@@ -25,7 +28,7 @@ const SettingsModal = ({ opened = false, close = () => {} }) => {
               // close();
             }}
           >
-            {app.isDarkTheme ? (
+            {isDarkTheme ? (
               <>
                 <i className="fa fa-sun text-3xl"></i>
                 <span className="text-sm pt-2">Light</span>{" "}
@@ -44,7 +47,7 @@ const SettingsModal = ({ opened = false, close = () => {} }) => {
           enterFrom="opacity-0 scale-0 "
           enterTo="opacity-100 scal-100"
         >
-          {auth.logedin ? (
+          {logedin ? (
             <div
               className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt"
               onClick={() => {
@@ -72,7 +75,7 @@ const SettingsModal = ({ opened = false, close = () => {} }) => {
           enterTo="opacity-100 scal-100"
         >
           <Link
-            to={auth.logedin ? "settings" : "/login"}
+            to={logedin ? "settings" : "/login"}
             className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt"
           >
             <i className="fa-solid fa-gear text-3xl"></i>

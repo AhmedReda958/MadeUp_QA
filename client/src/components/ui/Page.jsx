@@ -16,15 +16,14 @@ const Header = ({ title, children }) => {
         let currentScroll = main.scrollTop;
 
         if (currentScroll > lastScroll) {
-          setIsSticky(false);
           setIsShown(false);
         } else if (currentScroll < 100) {
           setIsSticky(false);
         } else if (currentScroll < 450) {
           setIsShown(true);
         } else {
-          setIsSticky(true);
           setIsShown(true);
+          setIsSticky(true);
         }
         lastScroll = currentScroll;
       });
@@ -42,11 +41,11 @@ const Header = ({ title, children }) => {
       show={isShown}
       as={Fragment}
       enter="ease duration-[.4s]"
-      enterFrom=" -translate-y-64"
-      enterTo=" translate-y-0"
-      leave="ease duration-[.4s]"
-      leaveFrom="-translate-y-64 "
-      leaveTo="translate-y-0  "
+      enterFrom="opacity-0 -translate-y-64"
+      enterTo=" opacity-100 translate-y-0"
+      leave="ease duration-[.1s]"
+      leaveFrom="opacity-100  -translate-y-64 "
+      leaveTo="opacity-0  translate-y-0  "
     >
       <div
         className={` contianer w-full z-20 bg-maincolor mb-3 ${
