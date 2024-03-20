@@ -4,7 +4,7 @@ const events = new EventEmitter();
 export default events;
 
 import OneSignal, { OneSignalAPI, ONESIGNAL_APP_ID } from "./one-signal.mjs";
-const RECEIVED_MESSAGE_TEMPLATE_ID = "158ce485-bd11-4ee4-8063-5c812d1402ff"; // TODO: configure
+const RECEIVED_MESSAGE_TEMPLATE_ID = "364498a2-74d7-43da-8f88-6bd4e3116576"; // TODO: configure
 events.on("MessageSent", (message) => {
   // TODO
   let notification = new OneSignal.Notification();
