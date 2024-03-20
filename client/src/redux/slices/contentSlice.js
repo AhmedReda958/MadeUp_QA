@@ -25,8 +25,11 @@ export const fetchFeed = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error.response.data);
+      if (error.response && error.response.data.code) {
+        return rejectWithValue(error.response.data.code);
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -46,7 +49,11 @@ export const fetchNotifications = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      if (error.response && error.response.data.code) {
+        return rejectWithValue(error.response.data.code);
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -68,7 +75,11 @@ export const fetchMessages = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      if (error.response && error.response.data.code) {
+        return rejectWithValue(error.response.data.code);
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
@@ -110,47 +121,52 @@ const contentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch feed pending
+      // feed ====================================================================
+      //? Fetch feed pending
       .addCase(fetchFeed.pending, (state) => {
         state.feed.loading = true;
         state.feed.error = null;
       })
-      // Fetch feed fulfilled
+      //* Fetch feed fulfilled
       .addCase(fetchFeed.fulfilled, (state, action) => {
         state.feed.loading = false;
         state.feed.data = action.payload;
       })
-      // Fetch feed rejected
+      //! Fetch feed rejected
       .addCase(fetchFeed.rejected, (state, action) => {
         state.feed.loading = false;
         state.feed.error = action.payload;
       })
-      // Fetch notifications pending
+
+      // notifications ==========================================================
+      //? Fetch notifications pending
       .addCase(fetchNotifications.pending, (state) => {
         state.notifications.loading = true;
         state.notifications.error = null;
       })
-      // Fetch notifications fulfilled
+      //* Fetch notifications fulfilled
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.notifications.loading = false;
         state.notifications.data = action.payload;
       })
-      // Fetch notifications rejected
+      //! Fetch notifications rejected
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.notifications.loading = false;
         state.notifications.error = action.payload;
       })
-      // Fetch messages pending
+
+      // messages ===============================================================
+      //? Fetch messages pending
       .addCase(fetchMessages.pending, (state) => {
         state.messages.received.loading = true;
         state.messages.received.error = null;
       })
-      // Fetch messages fulfilled
+      //* Fetch messages fulfilled
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.messages.received.loading = false;
         state.messages.received.data = action.payload;
       })
-      // Fetch messages rejected
+      //! Fetch messages rejected
       .addCase(fetchMessages.rejected, (state, action) => {
         state.messages.received.loading = false;
         state.messages.received.error = action.payload;

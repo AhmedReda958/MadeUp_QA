@@ -6,7 +6,7 @@ import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-const SettingsModal = ({ opened, close }) => {
+const SettingsModal = ({ opened = false, close = () => {} }) => {
   const { auth, app } = useSelector((state) => state);
   const dispatch = useDispatch();
   return (
