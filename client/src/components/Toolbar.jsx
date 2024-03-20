@@ -14,10 +14,9 @@ const Toolbar = () => {
 
   useEffect(() => {
     // get notifications every 5m
-    const counter = setInterval(
-      () => dispatch(getNotificationsCount()),
-      1000 * 60 * 5
-    );
+    const counter = setInterval(() => {
+      if (logedin) dispatch(getNotificationsCount());
+    }, 1000 * 60 * 5);
     dispatch(getNotificationsCount());
 
     return () => {
