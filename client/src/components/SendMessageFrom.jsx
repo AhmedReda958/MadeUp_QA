@@ -81,7 +81,7 @@ const SendMessageFrom = ({ userId }) => {
           <button
             onClick={sendMessage}
             className="w-full mt-3 px-8 py-3  text-center bg-gradient-to-tr from-primary-dark to-gred hover:opacity-90 disabled:opacity-80  text-lg text-white rounded-2xl group transition-all duration-200 shadow shadow-dark-alt"
-            disabled={MsgLoading || msgContent.length < 6}
+            disabled={MsgLoading}
           >
             {msgAnonymously ? "Send anonymously" : "Send publicly"}
             <span className=" float-end group-hover:rotate-12">

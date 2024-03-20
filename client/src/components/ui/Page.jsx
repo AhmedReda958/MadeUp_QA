@@ -4,29 +4,76 @@ import { useState, useEffect, Fragment } from "react";
 import { Transition } from "@headlessui/react";
 
 const Header = ({ title, children }) => {
-  return (
-    <div className="flex justify-between items-center h-12 py-2 mb-3 ">
-      <div className="flex items-center ">
-        <h1 className="font-bold text-2xl font-logo text-black dark:text-white ps-1">
-          MadeUp
-        </h1>
-        <h2 className="ms-5 border-s-2 border-body-alt ps-3 text-lg ">
-          {title}
-        </h2>
-      </div>
-      {/* back link */}
+  const [isSticky, setIsSticky] = useState(false);
+  const [isShown, setIsShown] = useState(true);
 
-      {children ? (
-        children
-      ) : (
-        <Link
-          to={-1}
-          className="pt-1 pe-3 cursor-pointer transition-all hover:text-primary duration-100 ease-in-out"
+  useEffect(() => {
+    const main = document.querySelector("#main-app");
+
+    const onScroll = () => {
+      let lastScroll = 0;
+      main.addEventListener("scroll", () => {
+        let currentScroll = main.scrollTop;
+
+        setIsSticky(currentScroll < lastScroll && currentScroll > 100);
+        setIsShown(currentScroll < lastScroll || currentScroll < 650);
+
+        lastScroll = currentScroll;
+      });
+    };
+
+    onScroll();
+
+    return () => {
+      main.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  return (
+    <Transition
+      show={isShown}
+      as={Fragment}
+      enter="ease duration-[.4s]"
+      enterFrom="opacity-0 -translate-y-64"
+      enterTo=" opacity-100 translate-y-0"
+      leave="ease duration-[1s]"
+      leaveFrom="opacity-100  -translate-y-64 "
+      leaveTo="opacity-0  translate-y-0  "
+    >
+      <div
+        className={` contianer w-full z-20 bg-maincolor mb-3 ${
+          isSticky && "fixed top-0 left-0 py-0 mb-0"
+        }`}
+      >
+        <div
+          className={`flex justify-between items-center h-12 ${
+            isSticky &&
+            "m-auto  w-full h-16 px-5 max-w-[768px] drop-shadow-sm bg-maincolor"
+          }`}
         >
-          <i className="fa-solid fa-arrow-left"></i>
-        </Link>
-      )}
-    </div>
+          <div className="flex items-center">
+            <h1 className="font-bold text-2xl font-logo text-black dark:text-white ps-1">
+              MadeUp
+            </h1>
+            <h2 className="ms-5 border-s-2 border-body-alt ps-3 text-lg">
+              {title}
+            </h2>
+          </div>
+          {/* back link */}
+
+          {children ? (
+            children
+          ) : (
+            <Link
+              to={-1}
+              className="pt-1 pe-3 cursor-pointer transition-all hover:text-primary duration-100 ease-in-out"
+            >
+              <i className="fa-solid fa-arrow-left"></i>
+            </Link>
+          )}
+        </div>
+      </div>
+    </Transition>
   );
 };
 
@@ -38,7 +85,7 @@ const Page = (props) => {
   useEffect(() => setAnimate(true), []);
 
   return (
-    <div className={`pb-20 ${className}`}>
+    <div className={`${className}`}>
       {header && <Header title={title} />}
       <Transition
         as={"div"}
@@ -47,7 +94,7 @@ const Page = (props) => {
         enterFrom="opacity-0 "
         enterTo="opacity-100 "
       >
-        {!loading ? children : <LoadingSpinner />}
+        <div className="px-30">{!loading ? children : <LoadingSpinner />}</div>
       </Transition>
     </div>
   );

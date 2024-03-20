@@ -11,6 +11,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
 import { markAsSeen } from "@/redux/actions/notificationsActions";
+import { fetchNotifications } from "@/redux/slices/contentSlice";
 
 const EmptyPage = () => {
   return (
@@ -90,38 +91,23 @@ const NotificationItem = ({ data }) => {
 };
 
 const NotificationPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [notificationsData, setNotificationsData] = useState([]);
   const { unseen } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
-  const getNotifications = useCallback(() => {
-    setLoading(true);
-    axios
-      .get(`/notifications/inbox`, { params: { page: 1, limit: 10 } })
-      .then((res) => {
-        setNotificationsData(res.data);
-      })
-      .catch((err) => {
-        console.error(err.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [notificationsData]);
-
   useEffect(() => {
-    getNotifications();
+    dispatch(fetchNotifications());
 
     if (unseen.notifications > 0) {
       dispatch(markAsSeen({ type: "notifications" }));
     }
   }, []);
 
-  const notifications = useMemo(() => notificationsData, [notificationsData]);
+  const { data, loading } = useSelector((state) => state.content.notifications);
+  const notifications = data;
+  const isLoading = loading && notifications.length === 0;
 
   return (
-    <Page title={"Notification"} loading={loading}>
+    <Page title={"Notification"} loading={isLoading}>
       {notifications.length > 0 ? (
         notifications.map((item) => {
           return <NotificationItem data={item} key={item._id} />;
