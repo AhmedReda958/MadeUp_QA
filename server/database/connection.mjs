@@ -1,5 +1,5 @@
 import DatabaseError from "#errors/database.mjs";
-const { MONGODB_URI, NODE_ENV } = process.env;
+const { MONGODB_URI, MONGODB_DBNAME } = process.env;
 import mongoose from "mongoose";
 
 export function isDBConnected() {
@@ -10,9 +10,7 @@ export function attemptDBConnection() {
   mongoose.set("strictQuery");
   if (isDBConnected()) return console.log("Already connected to the database.");
   mongoose
-    .connect(MONGODB_URI, {
-      dbName: NODE_ENV === "production" ? "MadeUp" : "anon_app",
-    })
+    .connect(MONGODB_URI, { dbName: MONGODB_DBNAME })
     .then(() => {
       console.error("Connected to the database!");
     })

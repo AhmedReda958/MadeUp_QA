@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { corsOptions } from "../app.mjs";
+import CORS from "cors";
 import signingRoute from "./signing.mjs";
 import appRoute from "./app.mjs";
 import usersRoute from "./users.mjs";
@@ -6,7 +8,11 @@ import messagesRoute from "./messages.mjs";
 import notificationsRoute from "./notifications.mjs";
 import feedRoute from "./feed.mjs";
 import { isDBConnected } from "#database/connection.mjs";
+
 const router = Router();
+let cors = CORS(corsOptions);
+router.options(cors);
+router.use(cors);
 
 router.get("/", async (_, res) => {
   if (isDBConnected()) {
