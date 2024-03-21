@@ -154,6 +154,7 @@ messageStages.internalUsers = (users) => {
   return [{ $lookup: lookup }, { $set: set }];
 };
 
+messageSchema.index({ timestamp: -1 }, { name: "questions" });
 messageSchema.statics.userInbox = function (
   userId,
   pagination,
@@ -167,6 +168,7 @@ messageSchema.statics.userInbox = function (
         "reply.content": null,
       },
     },
+    { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
     ...messageStages.internalUsers(users),
@@ -184,6 +186,7 @@ messageSchema.statics.sentByUser = function (
 
   let pipeline = [
     { $match: { sender: new ObjectId(userId) } },
+    { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
     ...messageStages.internalUsers(users),
     { $project: project },
@@ -195,6 +198,7 @@ messageSchema.statics.sentByUser = function (
   return this.aggregate(pipeline);
 };
 
+messageSchema.index({ "reply.timestamp": -1 }, { name: "answers" });
 messageSchema.statics.answeredByUser = function (
   userId,
   pagination,
@@ -209,6 +213,7 @@ messageSchema.statics.answeredByUser = function (
         publicOnly ? { "reply.private": false } : {}
       ),
     },
+    { $sort: { "reply.timestamp": -1 } },
     ...globalStages.pagination(pagination),
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) },
@@ -396,6 +401,7 @@ messageSchema.statics.userFeed = function (
     {
       $sample: { size: 10 },
     },
+    { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) },
