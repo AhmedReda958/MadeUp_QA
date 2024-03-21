@@ -10,9 +10,17 @@ export default function authMiddleware(req, res, next) {
   try {
     decodedToken = jwt.verify(token, JWT_SECRET_KEY);
   } catch (err) {
-    if (err?.message == "jwt malformed") req.unauthorizedReason = 'INVALID_TOKEN';
-    else console.error(new CommonError(err, "Unable to verify the jwt."));
-    // TODO: log errors
+    switch(err?.message) {
+      case "jwt malformed":
+        req.unauthorizedReason = 'INVALID_TOKEN';
+        break;
+      case "invalid signature":
+        req.unauthorizedReason = 'INVALID_SIGNATURE';
+        break;
+      default:
+        // TODO: log errors
+        console.error(new CommonError(err, "Unable to verify the jwt."));
+    }
   }
 
   // TODO: check if changed password after token iat and cancel auth
