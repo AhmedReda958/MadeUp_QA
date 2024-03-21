@@ -215,6 +215,7 @@ messageSchema.statics.answeredByUser = function (
     },
     { $sort: { "reply.timestamp": -1 } },
     ...globalStages.pagination(pagination),
+    messageStages.hideSenderIfAnonymous,
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) },
   ]);
@@ -403,6 +404,7 @@ messageSchema.statics.userFeed = function (
     },
     { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
+    messageStages.hideSenderIfAnonymous,
     ...messageStages.internalUsers(users),
     { $project: parseIncludesIntoProject(includes, allow, only, users) },
   ]);
