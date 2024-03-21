@@ -14,7 +14,7 @@ router.get("/", authMiddleware, async (req, res, next) => {
       userId = req.userId;
     let user = isValidObjectId(userId)
       ? await User.findById(userId)
-      : await User.findOne({ username: username });
+      : await User.findOne({ username: username?.toLowerCase() });
     if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
     // if (req.userId != user._id) // TODO: hide private info
@@ -24,12 +24,14 @@ router.get("/", authMiddleware, async (req, res, next) => {
   }
 });
 
-router.get("/search", async (req, res, next) => {
+router.get("/find", async (req, res, next) => {
   try {
-    let { username } = req.query;
+    let { query } = req.query;
 
-    const regex = new RegExp(username, "i");
-    const users = await User.find({ username: { $regex: regex } }).limit(10);
+    let regexQuery = { $regex: query, $options: "i" };
+    const users = await User.find({
+      $or: [{ username: regexQuery }, { fullName: regexQuery }],
+    }).limit(10);
 
     if (!users) return res.status(404).json({ code: "USER_NOT_FOUND" });
 

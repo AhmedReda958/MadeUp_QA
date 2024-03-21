@@ -9,7 +9,7 @@ const userSchema = new Schema(
       trim: true,
       required: [true, "MISSING_USERNAME"],
       match: [
-        /^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+        /^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-z0-9._]+(?<![_.])$/,
         "INVALID_USERNAME",
       ],
       index: { name: "username", unique: true }
@@ -78,6 +78,12 @@ const userSchema = new Schema(
     },
   }
 );
+
+userSchema.pre("validate", function (next) {
+  if (typeof this.username == "string")
+    this.username = this.username.toLowerCase();
+  next();
+});
 
 userSchema.pre("save", async function (next) {
   this.updatedAt = new Date();

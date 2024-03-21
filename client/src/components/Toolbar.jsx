@@ -28,7 +28,7 @@ const Toolbar = () => {
     };
   }, []);
 
-  let username = userInfo?.username;
+  let username = userInfo?.username?.toLowerCase();
   const links = [
     { to: "/", icon: "fa-compass" },
     {

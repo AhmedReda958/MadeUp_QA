@@ -157,7 +157,7 @@ const ProfileMessages = ({ userId }) => {
 };
 
 const UserProfile = () => {
-  const { username } = useParams();
+  const username = useParams().username.toLowerCase();
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
   const user = useAxios({ url: `/users?username=${username}` });

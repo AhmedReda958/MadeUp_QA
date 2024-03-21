@@ -12,7 +12,7 @@ export default function SearchBar() {
 
   const doSearch = () => {
     axios
-      .get("/users/search", { params: { username: query } })
+      .get("/users/find", { params: { query } })
       .then((res) => {
         setUsers(res.data);
         console.log(res);
