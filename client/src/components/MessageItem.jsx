@@ -136,7 +136,7 @@ const MessageItem = ({ message, type = "post" }) => {
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
             <Link to={message.sender && "/" + message.sender.username}>
               <div className="flex">
-                <h5 className="text-altcolor font-semibold">
+                <h5 className="text-altcolor font-semibold truncate max-w-40">
                   {" "}
                   {message.sender ? message.sender.fullName : "Anonymous"}
                 </h5>
@@ -187,7 +187,7 @@ const MessageItem = ({ message, type = "post" }) => {
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link to={message.receiver && "/" + message.receiver.username}>
                   <div className="flex">
-                    <h5 className="text-altcolor font-semibold">
+                    <h5 className="text-altcolor font-semibold truncate max-w-40">
                       {" "}
                       {message.receiver
                         ? message.receiver.fullName

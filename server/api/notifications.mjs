@@ -4,6 +4,7 @@ import authMiddleware, {
   requiredAuthMiddleware,
 } from "#middlewares/authorization.mjs";
 import express from "express";
+import Notification from "#database/models/notification.mjs";
 const router = express.Router();
 
 router.get(
