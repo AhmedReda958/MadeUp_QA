@@ -29,4 +29,4 @@ switch (env.NODE_ENV) {
       throw new Error("Invalid JWT secret key.");
 }
 
-// export { allowedOrigins };
+export { allowedOrigins };
