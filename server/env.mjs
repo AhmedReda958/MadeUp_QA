@@ -10,7 +10,8 @@ function isNonEmptyString(input) {
   return typeof input == "string" && input.length > 0;
 }
 let portsRange = new IntegerRange(0, Math.pow(2, 16), 1, false, false);
-// let allowedOrigins = env.ALLOWED_ORIGINS?.split('n').map(origin => origin.trim()) ?? [];
+let allowedOrigins =
+  env.ALLOWED_ORIGINS?.split("n").map((origin) => origin.trim()) ?? [];
 
 switch (env.NODE_ENV) {
   case "development":
