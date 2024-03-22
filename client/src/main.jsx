@@ -27,7 +27,7 @@ import "@fontsource/rubik-doodle-shadow";
 const apiURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/";
 axios.defaults.baseURL = apiURL;
 axios.defaults.headers = {
-  // "Access-Control-Allow-Origin": apiURL,
+  "Access-Control-Allow-Origin": apiURL,
   Authorization: "Bearer " + store.getState().auth.userToken,
 };
 
