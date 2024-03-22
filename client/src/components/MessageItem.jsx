@@ -31,7 +31,7 @@ const MessageMenu = ({ type, message }) => {
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
+          leave="transition ease-in duration-200"
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
@@ -251,12 +251,29 @@ const LikeButton = ({ message }) => {
   return (
     <div className="flex items-center" onClick={likeHandler}>
       <span className="text-xs pe-1">20</span>
-      {liked ? (
-        <HeartIconSolid className="w-6 h-6 text-red-500 pe-1" />
-      ) : (
-        <HeartIcon className="w-6 h-6 text-gray-500 pe-1" />
-      )}
-      <span>{message.likes}</span>
+
+      <div className="w-6 h-6 pointer ">
+        <Transition
+          show={liked}
+          enter=" ease-in-out duration-200 "
+          enterFrom="rounded-full bg-red-700 opacity-80 scale-0"
+          enterTo=" opacity-100 scale-150"
+        >
+          <div>
+            <HeartIconSolid className="w-6 h-6 sc text-red-500 rounded-full" />
+          </div>
+        </Transition>
+        <Transition
+          show={!liked}
+          enter="transition ease-out duration-400"
+          enterFrom="opacity-0 scale-0"
+          enterTo="opacity-100 scale-100"
+        >
+          <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
+        </Transition>
+
+        <span>{message.likes}</span>
+      </div>
     </div>
   );
 };
