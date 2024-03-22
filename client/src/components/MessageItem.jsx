@@ -247,10 +247,10 @@ const LikeButton = memo(({ message }) => {
   const logedIn = useSelector((state) => state.auth.logedIn);
 
   const likeHandler = async () => {
-    if (!logedIn) {
-      navigate("/login");
-      return;
-    }
+    // if (!logedIn) {
+    //   navigate("/login");
+    //   return;
+    // }
     // const audio = new Audio(liked ? unLikeSound : likeSound);
     // audio.play();
     setLiked(!liked);
@@ -303,7 +303,7 @@ const LikeButton = memo(({ message }) => {
         {count > 0 && count}
       </span>
 
-      <div className="w-6 h-6 pointer ">
+      <div className="w-6 h-6 pointer overflow-hidden">
         <Transition
           show={liked}
           enter=" ease-in-out duration-200 "
