@@ -243,8 +243,14 @@ const MessageItem = ({ message, type = "post" }) => {
 const LikeButton = memo(({ message }) => {
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(0);
+  const navigate = useNavigate();
+  const logedIn = useSelector((state) => state.auth.logedIn);
 
   const likeHandler = async () => {
+    if (!logedIn) {
+      navigate("/login");
+      return;
+    }
     const audio = new Audio(liked ? unLikeSound : likeSound);
     audio.play();
     setLiked(!liked);
