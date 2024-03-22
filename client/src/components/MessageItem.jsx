@@ -141,12 +141,12 @@ const MessageItem = ({ message, type = "post" }) => {
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
             <Link to={message.sender && "/" + message.sender.username}>
               <div className="flex">
-                <h5 className="text-altcolor font-semibold truncate max-w-40">
+                <h5 className="text-altcolor font-semibold truncate max-w-36">
                   {" "}
                   {message.sender ? message.sender.fullName : "Anonymous"}
                 </h5>
                 {message.sender && (
-                  <span className="ps-1 pt-1 text-sm">
+                  <span className="ps-1 pt-1 text-sm truncate max-w-20">
                     @{message.sender.username}
                   </span>
                 )}
@@ -194,14 +194,14 @@ const MessageItem = ({ message, type = "post" }) => {
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link to={message.receiver && "/" + message.receiver.username}>
                   <div className="flex">
-                    <h5 className="text-altcolor font-semibold truncate max-w-40">
+                    <h5 className="text-altcolor font-semibold truncate max-w-36">
                       {" "}
                       {message.receiver
                         ? message.receiver.fullName
                         : "Anonymous"}
                     </h5>
                     {message.receiver && (
-                      <span className="ps-1 pt-1 text-sm">
+                      <span className="ps-1 pt-1 text-sm truncate max-w-20">
                         @{message.receiver.username}
                       </span>
                     )}
@@ -211,9 +211,9 @@ const MessageItem = ({ message, type = "post" }) => {
                   <MessageMenu type={type} message={message} />
                 </div>
               </div>
-              <div className="flex items-baseline text-sm leading-3 -mt-1">
+              <div className="flex items-baseline text-sm leading-6 -mt-3">
                 Replying to
-                <span className="text-primary ps-2">
+                <span className="text-primary ps-1 max-w-30 truncate leading">
                   {message.sender ? `@${message.sender.username}` : "Anonymous"}
                 </span>
               </div>
