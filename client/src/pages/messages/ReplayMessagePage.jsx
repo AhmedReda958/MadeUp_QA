@@ -88,14 +88,14 @@ function ReplayMessagePage() {
               to={message.sender && "/" + message.sender.username}
               className="me-4"
             >
-              <ProfilePic data={message} className="w-14 h-14" />
+              <ProfilePic data={message.sender} className="w-14 h-14" />
             </Link>
 
             <div className=" w-full min-h-40">
               {/* header */}
               <div className="pb-2">
                 <div className="flex items-baseline">
-                  <h5 className="text-altcolor font-semibold text-lg max-w-1/2 truncate ">
+                  <h5 className="text-altcolor font-semibold text-lg  truncate max-w-52">
                     {message.sender ? message.sender.fullName : "Anonymous"}
                   </h5>
                   {message.sender && (
@@ -121,7 +121,7 @@ function ReplayMessagePage() {
           {/* replay */}
           <div className="flex">
             <div className="me-4 drop-shadow-2xl">
-              <ProfilePic data={message} className="w-14 h-14" />
+              <ProfilePic data={message.receiver} className="w-14 h-14" />
             </div>
             <div className="w-full">
               <div className="flex items-baseline pb-2">
