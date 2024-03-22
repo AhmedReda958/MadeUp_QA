@@ -251,8 +251,8 @@ const LikeButton = memo(({ message }) => {
       navigate("/login");
       return;
     }
-    const audio = new Audio(liked ? unLikeSound : likeSound);
-    audio.play();
+    // const audio = new Audio(liked ? unLikeSound : likeSound);
+    // audio.play();
     setLiked(!liked);
     if (!liked) {
       await axios
