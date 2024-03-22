@@ -247,6 +247,7 @@ const LikeButton = memo(({ message }) => {
   const likeHandler = async () => {
     const audio = new Audio(liked ? unLikeSound : likeSound);
     audio.play();
+    setLiked(!liked);
     if (!liked) {
       await axios
         .put(`/messages/likes/message/${message._id}`)
