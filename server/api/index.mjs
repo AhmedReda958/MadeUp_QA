@@ -1,6 +1,6 @@
 import { Router } from "express";
 // import { corsOptions } from "../app.mjs";
-import CORS from "cors";
+// import CORS from "cors";
 import signingRoute from "./signing.mjs";
 import appRoute from "./app.mjs";
 import usersRoute from "./users.mjs";

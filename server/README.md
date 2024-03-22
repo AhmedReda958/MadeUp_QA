@@ -8,7 +8,6 @@ MONGODB_DBNAME = MadeUp
 
 HOST = localhost
 PORT = 8000
-ALLOWED_ORIGINS = http://localhost:5173
 
 JWT_SECRET_KEY = insecure-secret-key
 

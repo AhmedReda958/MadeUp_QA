@@ -4,11 +4,10 @@ let app = express();
 
 app.use(express.json());
 
-let corsOptions = {
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
+// let corsOptions = {
+//   credentials: true,
+//   optionsSuccessStatus: 200
+// };
 // import { allowedOrigins } from './env.mjs';
 // if (allowedOrigins.length > 0) corsOptions.origin = function callbackIfAllowedOrigin(origin, callback) {
 //   if (!origin) return callback(null, true);
