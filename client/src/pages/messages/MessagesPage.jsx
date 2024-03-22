@@ -47,6 +47,7 @@ function MessagesPage() {
             className="max-w-60 m-auto mt-20 opacity-70 "
             alt=""
             draggable="false"
+            loading="lazy"
           />
           <div className="pt-12 ps-3 text m-auto w-80">
             <p className="text-xl text-altcolor">There's no new messages</p>

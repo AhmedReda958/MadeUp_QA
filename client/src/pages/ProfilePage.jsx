@@ -31,6 +31,7 @@ const EmptyPage = () => {
         alt=""
         draggable="false"
         className=" max-w-60 m-auto mt-6 opacity-70 "
+        loading="lazy"
       />
       <div
         className=" absolute left-3 top-28 text-lg font-light  text-altcolor "

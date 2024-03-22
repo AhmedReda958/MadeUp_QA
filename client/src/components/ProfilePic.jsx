@@ -19,6 +19,7 @@ function ProfilePic({ data, className = "", story = false, border = true }) {
         }}
         alt="profile pic"
         className="rounded-full w-full h-full"
+        loading="lazy"
       />
     </div>
   );

@@ -57,6 +57,7 @@ const PersonalInfoSettingsPage = () => {
           className="w-40 opacity-90"
           draggable="false"
           alt="edit profile page placeholder"
+          loading="lazy"
         />
       </div>
       <Formik
