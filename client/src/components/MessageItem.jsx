@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ProfilePic from "./ProfilePic";
@@ -7,6 +7,8 @@ import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import { HeartIcon } from "@heroicons/react/24/outline";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
@@ -161,7 +163,7 @@ const MessageItem = ({ message, type = "post" }) => {
           </div>
           <div className="pt-2 pb-3 flex justify-between items-center">
             <div className="text-xs">{formatDate(message.timestamp)}</div>
-            {type == "message" && (
+            {type == "message" ? (
               <Link
                 to={"/messages/replay?id=" + message._id}
                 className="button-lg "
@@ -169,6 +171,8 @@ const MessageItem = ({ message, type = "post" }) => {
                 Replay
                 <i className="fa fa-share ps-2 "></i>
               </Link>
+            ) : (
+              <LikeButton message={message} />
             )}
           </div>
         </div>
@@ -222,11 +226,33 @@ const MessageItem = ({ message, type = "post" }) => {
                 <div className="text-xs">
                   {formatDate(message.reply.timestamp)}
                 </div>
+                <LikeButton message={message} />
               </div>
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// like button
+const LikeButton = ({ message }) => {
+  const [liked, setLiked] = useState(false);
+
+  const likeHandler = () => {
+    setLiked(!liked);
+  };
+
+  return (
+    <div className="flex items-center" onClick={likeHandler}>
+      <span className="text-xs pe-1">20</span>
+      {liked ? (
+        <HeartIconSolid className="w-6 h-6 text-red-500 pe-1" />
+      ) : (
+        <HeartIcon className="w-6 h-6 text-gray-500 pe-1" />
+      )}
+      <span>{message.likes}</span>
     </div>
   );
 };
