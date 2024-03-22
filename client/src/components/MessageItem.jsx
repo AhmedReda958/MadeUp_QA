@@ -9,6 +9,8 @@ import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { HeartIcon } from "@heroicons/react/24/outline";
+import likeSound from "@/assets/sounds/wow.mp3";
+import unLikeSound from "@/assets/sounds/ohShit.mp3";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
@@ -241,6 +243,8 @@ const LikeButton = ({ message }) => {
   const [liked, setLiked] = useState(false);
 
   const likeHandler = () => {
+    const audio = new Audio(liked ? unLikeSound : likeSound);
+    audio.play();
     setLiked(!liked);
   };
 
