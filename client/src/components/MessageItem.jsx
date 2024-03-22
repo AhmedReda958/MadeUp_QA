@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, memo, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ProfilePic from "./ProfilePic";
@@ -240,8 +240,9 @@ const MessageItem = ({ message, type = "post" }) => {
 };
 
 // like button
-const LikeButton = ({ message }) => {
+const LikeButton = memo(({ message }) => {
   const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(0);
 
   const likeHandler = async () => {
     // const audio = new Audio(liked ? unLikeSound : likeSound);
@@ -251,6 +252,7 @@ const LikeButton = ({ message }) => {
         .put(`/messages/likes/message/${message._id}`)
         .then((res) => {
           setLiked(true);
+          setCount(count + 1);
         })
         .catch((err) => {
           setLiked(false);
@@ -260,16 +262,39 @@ const LikeButton = ({ message }) => {
         .delete(`/messages/likes/message/${message._id}`)
         .then((res) => {
           setLiked(false);
+          setCount(count - 1);
         })
         .catch((err) => {
           setLiked(true);
         });
     }
   };
+  useEffect(() => {
+    axios
+      .get(`/messages/likes/message/${message._id}/liked`)
+      .then((res) => {
+        setLiked(res.data.liked);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        setLiked(false);
+      });
+    axios
+      .get(`/messages/likes/message/${message._id}`)
+      .then((res) => {
+        setCount(res.data.total);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        setLiked(false);
+      });
+  }, []);
 
   return (
     <div className="flex items-center" onClick={likeHandler}>
-      {/* <span className="text-xs pe-1">20</span> */}
+      <span className={`text-xs pe-1 ${liked && "text-red-600"}`}>
+        {count > 0 && count}
+      </span>
 
       <div className="w-6 h-6 pointer ">
         <Transition
@@ -293,6 +318,6 @@ const LikeButton = ({ message }) => {
       </div>
     </div>
   );
-};
+});
 
 export default MessageItem;
