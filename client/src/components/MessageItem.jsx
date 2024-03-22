@@ -11,6 +11,7 @@ import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import likeSound from "@/assets/sounds/wow.mp3";
 import unLikeSound from "@/assets/sounds/ohShit.mp3";
+import axios from "axios";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
@@ -242,25 +243,43 @@ const MessageItem = ({ message, type = "post" }) => {
 const LikeButton = ({ message }) => {
   const [liked, setLiked] = useState(false);
 
-  const likeHandler = () => {
-    const audio = new Audio(liked ? unLikeSound : likeSound);
-    audio.play();
-    setLiked(!liked);
+  const likeHandler = async () => {
+    // const audio = new Audio(liked ? unLikeSound : likeSound);
+    // audio.play();
+    if (!liked) {
+      await axios
+        .put(`/messages/likes/message/${message._id}`)
+        .then((res) => {
+          setLiked(true);
+        })
+        .catch((err) => {
+          setLiked(false);
+        });
+    } else {
+      await axios
+        .delete(`/messages/likes/message/${message._id}`)
+        .then((res) => {
+          setLiked(false);
+        })
+        .catch((err) => {
+          setLiked(true);
+        });
+    }
   };
 
   return (
     <div className="flex items-center" onClick={likeHandler}>
-      <span className="text-xs pe-1">20</span>
+      {/* <span className="text-xs pe-1">20</span> */}
 
       <div className="w-6 h-6 pointer ">
         <Transition
           show={liked}
           enter=" ease-in-out duration-200 "
           enterFrom="rounded-full bg-red-700 opacity-80 scale-0"
-          enterTo=" opacity-100 scale-150"
+          enterTo=" opacity-100 scale-100"
         >
           <div>
-            <HeartIconSolid className="w-6 h-6 sc text-red-500 rounded-full" />
+            <HeartIconSolid className="w-6 h-6  text-red-500 " />
           </div>
         </Transition>
         <Transition
@@ -271,8 +290,6 @@ const LikeButton = ({ message }) => {
         >
           <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
         </Transition>
-
-        <span>{message.likes}</span>
       </div>
     </div>
   );
