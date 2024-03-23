@@ -41,15 +41,7 @@ const ShowMessagePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const messageData = useAxios({
-    url: `/messages/message/${id}`,
-    headers: {
-      params: {
-        include: ["content", "timestamp", "reply.content", "reply.timestamp"],
-        user: ["sender", "receiver"],
-      },
-    },
-  });
+  const messageData = useAxios({ url: `/messages/message/${id}` });
   const { response, error, loading } = messageData;
 
   return (

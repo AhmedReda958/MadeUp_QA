@@ -21,15 +21,7 @@ function ReplayMessagePage() {
 
   if (!id) navigate("/messages");
 
-  const messageData = useAxios({
-    url: `/messages/message/${id}`,
-    headers: {
-      params: {
-        include: ["content", "timestamp"],
-        user: ["sender", "receiver"],
-      },
-    },
-  });
+  const messageData = useAxios({ url: `/messages/message/${id}` });
   const message = messageData.response;
 
   // todo add validation

@@ -89,15 +89,6 @@ const ProfileMessages = ({ userId }) => {
           params: {
             page: 1,
             limit: 10,
-            user: ["sender", "receiver"],
-            include: [
-              "content",
-              "sender",
-              "receiver",
-              "reply.content",
-              "reply.timestamp",
-              "timestamp",
-            ],
           },
         })
         .then((res) => {

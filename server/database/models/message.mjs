@@ -17,10 +17,6 @@ const messageSchema = new Schema({
     type: Boolean,
     default: true,
   },
-  seen: {
-    type: Boolean,
-    default: false,
-  },
   sender: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -31,6 +27,10 @@ const messageSchema = new Schema({
     ref: "User",
     required: true,
     index: { name: "inbox" },
+  },
+  seen: {
+    type: Boolean,
+    default: false,
   },
   reply: {
     private: {
@@ -44,6 +44,9 @@ const messageSchema = new Schema({
       type: Date,
     },
   },
+  pinned: {
+    type: Boolean,
+  },
   likes: [
     {
       type: Schema.Types.ObjectId,
@@ -55,6 +58,16 @@ const messageSchema = new Schema({
     default: Date.now,
   },
 });
+
+let messageProject = {
+  _id: 1,
+  content: 1,
+  sender: 1,
+  receiver: 1,
+  pinned: 1,
+  reply: 1,
+  timestamp: 1,
+};
 
 let userBriefProject = {
   _id: 1,
@@ -79,88 +92,57 @@ messageStages.hideSenderIfAnonymous = {
   },
 };
 
-function arrayOfStrings(input) {
-  return Array.isArray(input) ? input : typeof input == "string" ? [input] : [];
-}
-
-let defaultAllow = [
-  "content",
-  "sender",
-  "receiver",
-  "reply.content",
-  "reply.timestamp",
-  "timestamp",
-];
-function parseIncludesIntoProject(includes, allow = [], only, force) {
-  let allowedFields = only ? allow : [...defaultAllow, ...allow];
-  let project = Object.fromEntries(
-    [
-      "_id",
-      ...arrayOfStrings(includes).filter((field) =>
-        allowedFields.includes(field)
-      ),
-    ].map((field) => [field, 1])
-  );
-  force.forEach((field) => (project[field] = 1));
-  return project;
-}
-
 let internalUsers = Object.keys(messageSchema.paths).filter(
   (path) => messageSchema.paths[path].options.ref == "User"
 );
-function parseInternalUsers(users) {
-  return arrayOfStrings(users).filter((user) => internalUsers.includes(user));
-}
 
-messageStages.internalUsers = (users) => {
-  let lookup = { from: "users", as: "_users", pipeline: [] };
-  if (users.length > 1) {
-    lookup.let = { users: users.map((user) => `$${user}`) };
-    lookup.pipeline.push({
-      $match: {
-        $expr: {
-          $in: ["$_id", "$$users"],
-        },
-      },
-    });
-  } else {
-    lookup.localField = users.at(0);
-    lookup.foreignField = "_id";
-  }
-  lookup.pipeline.push({ $project: userBriefProject });
-
-  let set = {};
-  users.forEach((user) => {
-    set[user] = {
-      $ifNull: [
+messageStages.briefUsers = [
+  {
+    $lookup: {
+      from: "users",
+      as: "_users",
+      let: { users: internalUsers.map((user) => `$${user}`) },
+      pipeline: [
         {
-          $first: {
-            $filter: {
-              input: "$_users",
-              as: "user",
-              cond: {
-                $eq: ["$$user._id", `$${user}`],
-              },
-              limit: 1,
+          $match: {
+            $expr: {
+              $in: ["$_id", "$$users"],
             },
           },
         },
-        `$${user}`,
+        { $project: userBriefProject },
       ],
-    };
-  });
-  set._users = "$$REMOVE";
-
-  return [{ $lookup: lookup }, { $set: set }];
-};
+    },
+  },
+  {
+    $set: Object.fromEntries([
+      ...internalUsers.map((user) => [
+        user,
+        {
+          $ifNull: [
+            {
+              $first: {
+                $filter: {
+                  input: "$_users",
+                  as: "user",
+                  cond: {
+                    $eq: ["$$user._id", `$${user}`],
+                  },
+                  limit: 1,
+                },
+              },
+            },
+            `$${user}`,
+          ],
+        },
+      ]),
+      ["_users", "$$REMOVE"],
+    ]),
+  },
+];
 
 messageSchema.index({ timestamp: -1 }, { name: "questions" });
-messageSchema.statics.userInbox = function (
-  userId,
-  pagination,
-  { users, includes, allow, only }
-) {
-  users = parseInternalUsers(users);
+messageSchema.statics.userInbox = function (userId, pagination, briefUsers) {
   return this.aggregate([
     {
       $match: {
@@ -171,25 +153,18 @@ messageSchema.statics.userInbox = function (
     { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
-    ...messageStages.internalUsers(users),
-    { $project: parseIncludesIntoProject(includes, allow, only, users) },
+    ...(briefUsers ? messageStages.briefUsers : []),
+    { $project: messageProject },
   ]);
 };
 
-messageSchema.statics.sentByUser = function (
-  userId,
-  pagination,
-  { users, includes, allow, only }
-) {
-  users = parseInternalUsers(users);
-  let project = parseIncludesIntoProject(includes, allow, only, users);
-
+messageSchema.statics.sentByUser = function (userId, pagination, briefUsers) {
   let pipeline = [
     { $match: { sender: new ObjectId(userId) } },
     { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
-    ...messageStages.internalUsers(users),
-    { $project: project },
+    ...(briefUsers ? messageStages.briefUsers : []),
+    { $project: messageProject },
   ];
 
   if ("reply.content" in project)
@@ -202,30 +177,29 @@ messageSchema.index({ "reply.timestamp": -1 }, { name: "answers" });
 messageSchema.statics.answeredByUser = function (
   userId,
   pagination,
-  publicOnly,
-  { users, includes, allow, only }
+  briefUsers,
+  publicly,
+  pinned
 ) {
-  users = parseInternalUsers(users);
+  let match = {
+    receiver: new ObjectId(userId),
+    "reply.content": { $ne: null },
+  };
+  if (typeof publicly == "boolean") match["reply.private"] = !publicly;
+  if (typeof pinned == "boolean") match.pinned = pinned ? true : { $ne: true };
   return this.aggregate([
     {
-      $match: Object.assign(
-        { receiver: new ObjectId(userId), "reply.content": { $ne: null } },
-        publicOnly ? { "reply.private": false } : {}
-      ),
+      $match: match,
     },
     { $sort: { "reply.timestamp": -1 } },
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
-    ...messageStages.internalUsers(users),
-    { $project: parseIncludesIntoProject(includes, allow, only, users) },
+    ...(briefUsers ? messageStages.briefUsers : []),
+    { $project: messageProject },
   ]);
 };
 
-messageSchema.statics.fetch = function (
-  messageId,
-  requester,
-  { users, includes, allow, only }
-) {
+messageSchema.statics.fetch = function (messageId, requester, briefUsers) {
   requester = isValidObjectId(requester)
     ? new ObjectId(requester)
     : `${requester}`;
@@ -241,8 +215,8 @@ messageSchema.statics.fetch = function (
       },
     },
     messageStages.hideSenderIfAnonymous,
-    ...messageStages.internalUsers(users),
-    { $project: parseIncludesIntoProject(includes, allow, only, users) },
+    ...(briefUsers ? messageStages.briefUsers : []),
+    { $project: messageProject },
   ])
     .exec()
     .then((docs) => docs.at(0));
@@ -368,27 +342,17 @@ messageSchema.statics.isLikedBy = function (messageId, userId) {
     .then((docs) => docs.at(0)?.liked);
 };
 
-messageSchema.statics.likedBy = function (
-  userId,
-  pagination,
-  { users, includes, allow, only }
-) {
-  users = parseInternalUsers(users);
+messageSchema.statics.likedBy = function (userId, pagination, briefUsers) {
   return this.aggregate([
     { $match: { likes: new ObjectId(userId) } },
     ...globalStages.pagination(pagination),
-    ...messageStages.internalUsers(users),
-    { $project: parseIncludesIntoProject(includes, allow, only, users) },
+    ...(briefUsers ? messageStages.briefUsers : []),
+    { $project: messageProject },
   ]).exec();
 };
 
 // basic feed
-messageSchema.statics.userFeed = function (
-  userId,
-  pagination,
-  { users, includes, allow, only }
-) {
-  users = parseInternalUsers(users);
+messageSchema.statics.userFeed = function (userId, pagination, briefUsers) {
   return this.aggregate([
     {
       $match: {
@@ -405,8 +369,8 @@ messageSchema.statics.userFeed = function (
     { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
-    ...messageStages.internalUsers(users),
-    { $project: parseIncludesIntoProject(includes, allow, only, users) },
+    ...(briefUsers ? messageStages.briefUsers : []),
+    { $project: messageProject },
   ]);
 };
 
