@@ -59,6 +59,7 @@ const ProfilePicPage = () => {
     await axios
       .patch("users", { profilePicture: link })
       .then((res) => {
+        setCredentials(res.data);
         Alert({ title: "Profile updated", type: "success" });
         navigate(`/${userInfo.username}`);
       })
@@ -81,7 +82,7 @@ const ProfilePicPage = () => {
             className="w-40 h-40 shadow "
           />
         </div>
-
+        {loading && <LoadingSpinner className="mt-4" />}
         <Button
           as="label"
           color="dark"
