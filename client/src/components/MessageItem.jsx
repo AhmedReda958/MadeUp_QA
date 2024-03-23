@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, memo, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ProfilePic from "./ProfilePic";
@@ -7,6 +7,11 @@ import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import { HeartIcon } from "@heroicons/react/24/outline";
+import likeSound from "@/assets/sounds/wow.mp3";
+import unLikeSound from "@/assets/sounds/ohShit.mp3";
+
 import axios from "axios";
 
 const MessageMenu = ({ type, message }) => {
@@ -104,7 +109,7 @@ const MessageMenu = ({ type, message }) => {
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
+          leave="transition ease-in duration-200"
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
@@ -219,12 +224,12 @@ const MessageItem = ({ message, type = "post" }) => {
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
             <Link to={message.sender && "/" + message.sender.username}>
               <div className="flex">
-                <h5 className="text-altcolor font-semibold truncate max-w-40">
+                <h5 className="text-altcolor font-semibold truncate max-w-36">
                   {" "}
                   {message.sender ? message.sender.fullName : "Anonymous"}
                 </h5>
                 {message.sender && (
-                  <span className="ps-1 pt-1 text-sm">
+                  <span className="ps-1 pt-1 text-sm truncate max-w-20">
                     @{message.sender.username}
                   </span>
                 )}
@@ -244,7 +249,7 @@ const MessageItem = ({ message, type = "post" }) => {
           </div>
           <div className="pt-2 pb-3 flex justify-between items-center">
             <div className="text-xs">{formatDate(message.timestamp)}</div>
-            {type == "message" && (
+            {type == "message" ? (
               <Link
                 to={"/messages/replay?id=" + message._id}
                 className="button-lg "
@@ -252,6 +257,8 @@ const MessageItem = ({ message, type = "post" }) => {
                 Replay
                 <i className="fa fa-share ps-2 "></i>
               </Link>
+            ) : (
+              <LikeButton message={message} />
             )}
           </div>
         </div>
@@ -270,14 +277,14 @@ const MessageItem = ({ message, type = "post" }) => {
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link to={message.receiver && "/" + message.receiver.username}>
                   <div className="flex">
-                    <h5 className="text-altcolor font-semibold truncate max-w-40">
+                    <h5 className="text-altcolor font-semibold truncate max-w-36">
                       {" "}
                       {message.receiver
                         ? message.receiver.fullName
                         : "Anonymous"}
                     </h5>
                     {message.receiver && (
-                      <span className="ps-1 pt-1 text-sm">
+                      <span className="ps-1 pt-1 text-sm truncate max-w-20">
                         @{message.receiver.username}
                       </span>
                     )}
@@ -287,9 +294,9 @@ const MessageItem = ({ message, type = "post" }) => {
                   <MessageMenu type={type} message={message} />
                 </div>
               </div>
-              <div className="flex items-baseline text-sm leading-3 -mt-1">
+              <div className="flex items-baseline text-sm leading-6 -mt-3">
                 Replying to
-                <span className="text-primary ps-2">
+                <span className="text-primary ps-1 max-w-30 truncate leading">
                   {message.sender ? `@${message.sender.username}` : "Anonymous"}
                 </span>
               </div>
@@ -305,6 +312,7 @@ const MessageItem = ({ message, type = "post" }) => {
                 <div className="text-xs">
                   {formatDate(message.reply.timestamp)}
                 </div>
+                <LikeButton message={message} />
               </div>
             </div>
           </div>
@@ -313,5 +321,102 @@ const MessageItem = ({ message, type = "post" }) => {
     </div>
   );
 };
+
+// like button
+const LikeButton = memo(({ message }) => {
+  const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(0);
+  const navigate = useNavigate();
+  const logedIn = useSelector((state) => state.auth.logedIn);
+
+  const likeHandler = async () => {
+    // if (!logedIn) {
+    //   navigate("/login");
+    //   return;
+    // }
+    // const audio = new Audio(liked ? unLikeSound : likeSound);
+    // audio.play();
+    setLiked(!liked);
+    if (!liked) {
+      setCount(count + 1);
+      await axios
+
+        .put(`/messages/likes/message/${message._id}`)
+        .then((res) => {
+          setLiked(true);
+        })
+        .catch((err) => {
+          setLiked(false);
+          setCount(count - 1);
+        });
+    } else {
+      setCount(count - 1);
+      await axios
+        .delete(`/messages/likes/message/${message._id}`)
+        .then((res) => {
+          setLiked(false);
+        })
+        .catch((err) => {
+          setCount(count + 1);
+
+          setLiked(true);
+        });
+    }
+  };
+  useEffect(() => {
+    axios
+      .get(`/messages/likes/message/${message._id}/liked`)
+      .then((res) => {
+        setLiked(res.data.liked);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        setLiked(false);
+      });
+    axios
+      .get(`/messages/likes/message/${message._id}`)
+      .then((res) => {
+        setCount(res.data.total);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        setLiked(false);
+      });
+  }, []);
+
+  return (
+    <div className="flex items-center" onClick={likeHandler}>
+      <span className={`text-xs pe-1 ${liked && "text-red-600"}`}>
+        {count > 0 && count}
+      </span>
+      <div className="w-6 h-6 pointer overflow-hidden">
+        <Transition
+          show={liked}
+          enter=" ease-in-out duration-100 "
+          enterFrom="rounded-full bg-red-700 opacity-80 scale-0"
+          enterTo=" opacity-100 scale-100"
+        >
+          <div>
+            <HeartIconSolid className="w-6 h-6  text-red-500 " />
+          </div>
+        </Transition>
+        <Transition
+          show={!liked}
+          enter="transition ease-out duration-75"
+          enterFrom="opacity-0 scale-0"
+          enterTo="opacity-100 scale-100"
+        >
+          <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
+        </Transition>
+
+        {/* {liked ? (
+          <HeartIconSolid className="w-6 h-6  text-red-500 " />
+        ) : (
+          <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
+        )} */}
+      </div>
+    </div>
+  );
+});
 
 export default MessageItem;

@@ -73,10 +73,7 @@ const NotificationMenu = ({ data }) => {
 
 const NotificationItem = ({ data }) => {
   return (
-    <Link
-      to={data?.url}
-      className="flex p-2 pt-3 mb-4 shadow rounded-md bg-altcolor text-maincolor"
-    >
+    <div className="flex p-2 pt-3 mb-4 shadow rounded-md bg-altcolor text-maincolor">
       <div className="pe-2 w-12 h-12 flex items-center justify-center">
         <BellAlertIcon className={`w-8 h-8 ${!data.seen && "text-primary"}`} />
       </div>
@@ -85,9 +82,11 @@ const NotificationItem = ({ data }) => {
           <h3 className="text-altcolor text-md">{data?.title}</h3>
           <NotificationMenu data={data} />
         </div>
-        <p className="text-sm truncate">{data?.content}</p>
+        <Link to={data?.url} as="p" className="text-sm truncate">
+          {data?.content}
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 };
 
