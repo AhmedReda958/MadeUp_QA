@@ -7,6 +7,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
+import axios from "axios";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
@@ -15,6 +16,82 @@ const MessageMenu = ({ type, message }) => {
 
   const receiver = message.receiver;
   const msgOwner = receiver?.username;
+
+  const togglePrivateReply = () => {
+    axios
+      .patch(
+        "/messages/message/" + message._id,
+        { action: "private", state: !message.reply.private },
+        { headers: { "Content-Type": "application/json" } }
+      )
+      .then((res) => {
+        Alert({
+          title:
+            (message.reply.private ? "Published" : "Hidden") + " the message",
+          type: "success",
+        });
+        window.location.reload(); // TODO: just remove the message item
+      })
+      .catch((err) => {
+        console.error(err.response.data);
+        Alert({
+          title: `Unable to ${
+            message.reply.private ? "publish" : "hide"
+          } the message`,
+          type: "error",
+        });
+      });
+  };
+
+  const cancelReply = () => {
+    axios
+      .patch("/messages/message/" + message._id, { action: "cancel" })
+      .then((res) => {
+        Alert({ title: "Canceled the reply", type: "success" });
+        window.location.reload(); // TODO: just remove the message item
+      })
+      .catch((err) => {
+        console.error(err.response.data);
+        Alert({ title: "Unable to cancel the reply", type: "error" });
+      });
+  };
+
+  const togglePin = () => {
+    console.log(message.pinned, !message.pinned);
+    axios
+      .patch(
+        "/messages/message/" + message._id,
+        { action: "pin", state: !message.pinned },
+        { headers: { "Content-Type": "application/json" } }
+      )
+      .then((res) => {
+        Alert({
+          title: (message.pinned ? "Unpinned" : "Pinned") + " the message",
+          type: "success",
+        });
+        window.location.reload(); // TODO: just remove the message item
+      })
+      .catch((err) => {
+        console.error(err.response.data);
+        Alert({
+          title: `Unable to ${message.pinned ? "unpin" : "pin"} the message`,
+          type: "error",
+        });
+      });
+  };
+
+  const deleteMessage = () => {
+    axios
+      .delete("/messages/message/" + message._id)
+      .then((res) => {
+        Alert({ title: "Deleted the message", type: "success" });
+        window.location.reload(); // TODO: just remove the message item
+      })
+      .catch((err) => {
+        console.error(err.response.data);
+        Alert({ title: "Unable to deleted the message", type: "error" });
+      });
+  };
 
   return (
     <Menu as="div" className="relative inline-block text-left w-6 h-6">
@@ -49,30 +126,38 @@ const MessageMenu = ({ type, message }) => {
                       className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                     >
                       <i className="fa fa-share text-primary pe-3"></i>
-                      Share your answer
+                      Share answer
                     </button>
                   </Menu.Item>
 
                   <Menu.Item>
                     <button
-                      onClick={() =>
-                        Alert({ title: "Coming soon!", type: "comingsoon" })
-                      }
+                      onClick={cancelReply}
+                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                    >
+                      <i className="fa fa-ban text-gray-500 pe-3"></i>
+                      Cancel answer
+                    </button>
+                  </Menu.Item>
+
+                  <Menu.Item>
+                    <button
+                      onClick={togglePin}
                       className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                     >
                       <i className="fa fa-thumbtack text-gray-500 pe-3"></i>
-                      Pin in your Profile
+                      {message.pinned ? "Unpin from " : "Pin in "} Profile
                     </button>
                   </Menu.Item>
                   <Menu.Item>
                     <button
-                      onClick={() =>
-                        Alert({ title: "Coming soon!", type: "comingsoon" })
-                      }
+                      onClick={togglePrivateReply}
                       className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                     >
                       <i className="fa fa-eye-slash text-gray-500 pe-3"></i>
-                      Hide from Profile
+                      {message.reply.private
+                        ? "Publish to Profile"
+                        : "Hide from Profile"}
                     </button>
                   </Menu.Item>
                 </>
@@ -91,9 +176,7 @@ const MessageMenu = ({ type, message }) => {
               {(type === "message") | (msgOwner === userInfo.username) ? (
                 <Menu.Item>
                   <button
-                    onClick={() =>
-                      Alert({ title: "Coming soon!", type: "comingsoon" })
-                    }
+                    onClick={deleteMessage}
                     className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                   >
                     <i className="fa fa-trash text-red-500 pe-3"></i>

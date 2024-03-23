@@ -12,15 +12,6 @@ export const fetchFeed = createAsyncThunk(
         params: {
           page: currentPage,
           limit: 10,
-          user: ["sender", "receiver"],
-          include: [
-            "content",
-            "sender",
-            "receiver",
-            "reply.content",
-            "reply.timestamp",
-            "timestamp",
-          ],
         },
       });
       return response.data;
@@ -67,8 +58,6 @@ export const fetchMessages = createAsyncThunk(
       const currentPage = state.content.messages.received.page;
       const response = await axios.get("/messages/inbox", {
         params: {
-          include: ["content", "timestamp"],
-          user: "sender",
           page: currentPage,
           limit: 20,
         },

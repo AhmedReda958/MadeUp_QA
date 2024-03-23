@@ -38,10 +38,7 @@ router.get(
   requiredAuthMiddleware,
   paginationMiddleware,
   (req, res, next) => {
-    Message.userInbox(req.userId, req.pagination, {
-      includes: req.query.include,
-      users: req.query.user,
-    })
+    Message.userInbox(req.userId, req.pagination, !("onlyids" in req.query))
       .then((userInbox) => res.status(200).json(userInbox))
       .catch(next);
   }
@@ -53,11 +50,7 @@ router.get(
   requiredAuthMiddleware,
   paginationMiddleware,
   (req, res, next) => {
-    Message.sentByUser(req.userId, req.pagination, {
-      includes: req.query.include,
-      allow: ["anonymous"],
-      users: req.query.user,
-    })
+    Message.sentByUser(req.userId, req.pagination, !("onlyids" in req.query))
       .then((sentByUser) => res.status(200).json(sentByUser))
       .catch(next);
   }
@@ -66,18 +59,26 @@ router.get(
 router
   .route("/user/:targetUserId")
   // Fetch Answered Messages
-  .get(paginationMiddleware, (req, res, next) => {
-    Message.answeredByUser(
-      req.params.targetUserId,
-      req.pagination,
-      req.userId != req.params.targetUserId,
-      {
-        includes: req.query.include,
-        users: req.query.user,
-      }
-    )
-      .then((answeredByUser) => res.status(200).json(answeredByUser))
-      .catch(next);
+  .get(paginationMiddleware, async (req, res, next) => {
+    try {
+      let pinned = await Message.answeredByUser(
+        req.params.targetUserId,
+        req.pagination,
+        !("onlyids" in req.query),
+        true,
+        true
+      );
+      let answered = await Message.answeredByUser(
+        req.params.targetUserId,
+        req.pagination,
+        !("onlyids" in req.query),
+        true,
+        false
+      );
+      res.status(200).json([...pinned, ...answered]);
+    } catch (err) {
+      next();
+    }
   })
   // Send Message
   .post(async (req, res, next) => {
@@ -117,10 +118,7 @@ router
   .route("/message/:messageId")
   // Fetch a message
   .get((req, res, next) => {
-    Message.fetch(req.params.messageId, req.userId, {
-      includes: req.query.include,
-      users: req.query.user,
-    })
+    Message.fetch(req.params.messageId, req.userId, !("onlyids" in req.query))
       .then((message) => {
         if (message != null) res.status(200).json(message);
         else res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
@@ -156,6 +154,98 @@ router
       return res.status(201).json(reply);
     } catch (err) {
       next(err);
+    }
+  })
+  // Message's reply actions
+  .patch(async (req, res, next) => {
+    let action = req.body.action?.toUpperCase();
+    if (!action) return res.status(400).json({ code: "MISSING_ACTION" });
+    let { messageId } = req.params;
+    const message = await Message.findById(messageId, {
+      receiver: 1,
+      "reply.private": 1,
+      "reply.content": 1,
+      pinned: 1,
+    });
+    if (!message) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
+    if (message.receiver != req.userId)
+      return res.status(403).json({ code: "NOT_THE_RECEIVER" });
+    switch (action) {
+      case "PRIVATE":
+        var state = !!req.body.state;
+        if (message.reply.private == state)
+          return res
+            .status(409)
+            .json({ code: state ? "ALREADY_HIDDEN" : "NOT_HIDDEN" });
+        try {
+          await Message.updateOne(
+            { _id: messageId },
+            { $set: { "reply.private": state } }
+          );
+          res
+            .status(200)
+            .json({ code: "CHANGED_REPLY_PRIVACY", private: state });
+        } catch (err) {
+          throw new DatabaseError("UPDATE_MESSAGE_REPLY_PRIVACY", err);
+        }
+        break;
+      case "CANCEL":
+        if (!message.reply.content)
+          return res.status(409).json({ code: "NOT_REPLIED" });
+        try {
+          await Message.updateOne(
+            { _id: messageId },
+            {
+              $unset: { "reply.content": "", "reply.timestamp": "" },
+              $set: {
+                "reply.private": false,
+              },
+            }
+          );
+          res.status(200).json({ code: "CANCELED_REPLY" });
+        } catch (err) {
+          throw new DatabaseError("CANCEL_MESSAGE_REPLY", err);
+        }
+        break;
+      case "PIN":
+        var state = !!req.body.state;
+        console.log(message.pinned, state);
+        if (!!message.pinned == state)
+          return res
+            .status(409)
+            .json({ code: state ? "ALREADY_PINNED" : "NOT_PINNED" });
+        try {
+          // TODO: apply a limit to pinned messages
+          await Message.updateOne(
+            { _id: messageId },
+            { [state ? "$set" : "$unset"]: { pinned: state ? true : "" } }
+          );
+          res
+            .status(200)
+            .json({ code: "CHANGED_REPLY_PRIVACY", private: state });
+        } catch (err) {
+          throw new DatabaseError("UPDATE_MESSAGE_REPLY_PRIVACY", err);
+        }
+        break;
+      default:
+        res.status(400).json({ code: "INVALID_ACTION" });
+    }
+  })
+  // Delete a received message
+  .delete(async (req, res, next) => {
+    let { messageId } = req.params;
+    const message = await Message.findById(messageId, {
+      receiver: 1,
+      "reply.content": 1,
+    });
+    if (!message) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
+    if (message.receiver != req.userId)
+      return res.status(403).json({ code: "NOT_THE_RECEIVER" });
+    try {
+      await Message.deleteOne({ _id: messageId });
+      res.status(200).json({ code: "DELETED_MESSAGE" });
+    } catch (err) {
+      throw new DatabaseError("DELETE_MESSAGE", err);
     }
   });
 
@@ -215,10 +305,11 @@ router
   .route("/likes/user/:targetUserId")
   // Fetch messages that are liked by a user
   .get(paginationMiddleware, (req, res, next) => {
-    Message.likedBy(req.params.targetUserId, req.pagination, {
-      includes: req.query.include,
-      users: req.query.user,
-    })
+    Message.likedBy(
+      req.params.targetUserId,
+      req.pagination,
+      !("onlyids" in req.query)
+    )
       .then((likedByUser) => res.status(200).json(likedByUser))
       .catch(next);
   });
