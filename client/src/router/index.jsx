@@ -12,6 +12,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
 import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
 import ShowMessagePage from "@/pages/messages/ShowMessagePage";
+import ProfilePicPage from "@/pages/settings/ProfilePicPage";
 
 const router = createBrowserRouter([
   {
@@ -58,19 +59,20 @@ const router = createBrowserRouter([
       },
       {
         path: "settings",
-        element: (
-          <ProtectedRoute>
-            <SettingsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "settings/info",
-        element: (
-          <ProtectedRoute>
-            <PersonalInfoSettingsPage />
-          </ProtectedRoute>
-        ),
+        children: [
+          {
+            index: true,
+            element: <SettingsPage />,
+          },
+          {
+            path: "info",
+            element: <PersonalInfoSettingsPage />,
+          },
+          {
+            path: "profilePic",
+            element: <ProfilePicPage />,
+          },
+        ],
       },
     ],
   },

@@ -3,7 +3,7 @@ import React from "react";
 import ProfilePic from "@/components/ProfilePic";
 import { useSelector, useDispatch } from "react-redux";
 import { addAlert, share } from "@/redux/slices/appSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   InboxArrowDownIcon,
@@ -13,9 +13,9 @@ import {
   ArrowLeftEndOnRectangleIcon,
   ExclamationTriangleIcon,
   ChevronRightIcon,
-  ShareIcon,
 } from "@heroicons/react/24/outline";
 
+import { CameraIcon } from "@heroicons/react/24/solid";
 const settingsList = [
   {
     title: "Personal information",
@@ -69,22 +69,15 @@ const SettingsPage = () => {
   };
   return (
     <Page title={"Settings"} className="z-50">
-      <div className="-mb-8 ">
-        <div
-          className="w-16 p-4"
-          onClick={() =>
-            dispatch(
-              share({
-                url: window.location.origin + "/" + userInfo.username,
-              })
-            )
-          }
-        >
-          <ShareIcon className="w-5 h-5 dark:text-primary-light text-primary" />
-        </div>
-      </div>
       <div className="flex items-center flex-col">
-        <ProfilePic data={userInfo} className="w-24 h-24 shadow " />
+        {/* edit profile pic */}
+        <Link to="profilePic" className="relative pointer">
+          <ProfilePic data={userInfo} className="w-24 h-24 shadow " />
+          {/* edit profile pic */}
+          <div>
+            <CameraIcon className="w-7 h-7 text-alt bg-dark dark:bg-dark-alt  rounded-full absolute bottom-1 right-0 p-1 cursor-pointer" />
+          </div>
+        </Link>
         <h3 className="mt-1 text-lg text-altcolor font-bold">
           {userInfo.fullName}
         </h3>
