@@ -8,6 +8,7 @@ import { CameraIcon } from "@heroicons/react/24/solid";
 import useAlert from "@/utils/hooks/useAlert";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { setCredentials } from "@/redux/slices/authSlice";
 
 const ProfilePicPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
