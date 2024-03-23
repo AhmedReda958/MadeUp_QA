@@ -11,8 +11,6 @@ import { useSelector } from "react-redux";
 
 const ProfilePicPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [deletehash, setDeletehash] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInput = useRef(null);
@@ -45,14 +43,10 @@ const ProfilePicPage = () => {
       })
       .then(function (response) {
         const { link, deletehash } = response.data.data;
-        setImageUrl(link);
-        setDeletehash(deletehash);
-        applyNewPic();
+        applyNewPic(link, deletehash);
       })
       .catch(function (response) {
         console.error(response);
-        setImageUrl(null);
-        setDeletehash(null);
         setError("Error uploading image");
       })
       .finally(() => {
@@ -61,10 +55,9 @@ const ProfilePicPage = () => {
       });
   };
 
-  const applyNewPic = async () => {
-    // update user profile picture
+  const applyNewPic = async (link) => {
     await axios
-      .put("users", { profilePic: { link: imageUrl, deletehash } })
+      .patch("users", { profilePicture: link })
       .then((res) => {
         Alert({ title: "Profile updated", type: "success" });
         navigate(`/${userInfo.username}`);
@@ -83,13 +76,11 @@ const ProfilePicPage = () => {
             imgUrl={
               selectedImage
                 ? URL.createObjectURL(selectedImage)
-                : userInfo.profilePic
+                : userInfo.profilePicture
             }
             className="w-40 h-40 shadow "
           />
         </div>
-
-        {loading && <LoadingSpinner />}
 
         <Button
           as="label"
@@ -110,7 +101,12 @@ const ProfilePicPage = () => {
           hidden
         />
         {error && <p className="test-sm text-red-600">{error}</p>}
-        <Button color="primary" type="submit" className="w-full mt-6">
+        <Button
+          color="primary"
+          type="submit"
+          className="w-full mt-6"
+          disabled={loading || !selectedImage}
+        >
           Save
         </Button>
       </form>
