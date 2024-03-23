@@ -255,23 +255,27 @@ const LikeButton = memo(({ message }) => {
     // audio.play();
     setLiked(!liked);
     if (!liked) {
+      setCount(count + 1);
       await axios
+
         .put(`/messages/likes/message/${message._id}`)
         .then((res) => {
           setLiked(true);
-          setCount(count + 1);
         })
         .catch((err) => {
           setLiked(false);
+          setCount(count - 1);
         });
     } else {
+      setCount(count - 1);
       await axios
         .delete(`/messages/likes/message/${message._id}`)
         .then((res) => {
           setLiked(false);
-          setCount(count - 1);
         })
         .catch((err) => {
+          setCount(count + 1);
+
           setLiked(true);
         });
     }
@@ -302,11 +306,10 @@ const LikeButton = memo(({ message }) => {
       <span className={`text-xs pe-1 ${liked && "text-red-600"}`}>
         {count > 0 && count}
       </span>
-
       <div className="w-6 h-6 pointer overflow-hidden">
         <Transition
           show={liked}
-          enter=" ease-in-out duration-200 "
+          enter=" ease-in-out duration-100 "
           enterFrom="rounded-full bg-red-700 opacity-80 scale-0"
           enterTo=" opacity-100 scale-100"
         >
@@ -316,12 +319,18 @@ const LikeButton = memo(({ message }) => {
         </Transition>
         <Transition
           show={!liked}
-          enter="transition ease-out duration-400"
+          enter="transition ease-out duration-75"
           enterFrom="opacity-0 scale-0"
           enterTo="opacity-100 scale-100"
         >
           <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
         </Transition>
+
+        {/* {liked ? (
+          <HeartIconSolid className="w-6 h-6  text-red-500 " />
+        ) : (
+          <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
+        )} */}
       </div>
     </div>
   );
