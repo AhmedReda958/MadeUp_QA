@@ -1,7 +1,13 @@
 import React from "react";
 import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 
-function ProfilePic({ data, className = "", story = false, border = true }) {
+function ProfilePic({
+  data,
+  imgUrl,
+  className = "",
+  story = false,
+  border = true,
+}) {
   return (
     <div
       className={`rounded-full ${border && "p-[3px]"} ${className} ${
@@ -11,7 +17,7 @@ function ProfilePic({ data, className = "", story = false, border = true }) {
       }`}
     >
       <img
-        src={data?.profilePicture || MaleProfilePic}
+        src={imgUrl || data?.profilePicture || MaleProfilePic}
         draggable="false"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null; // prevents looping
