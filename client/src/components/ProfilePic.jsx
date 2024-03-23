@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
 
 function ProfilePic({
@@ -31,4 +31,4 @@ function ProfilePic({
   );
 }
 
-export default ProfilePic;
+export default memo(ProfilePic);

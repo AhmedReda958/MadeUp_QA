@@ -5,13 +5,21 @@ import Page from "@/components/ui/Page";
 import ProfilePic from "@/components/ProfilePic";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { CameraIcon } from "@heroicons/react/24/solid";
+import useAlert from "@/utils/hooks/useAlert";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProfilePicPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [deletehash, setDeletehash] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInput = useRef(null);
+  const userInfo = useSelector((state) => state.auth.userInfo);
+
+  const Alert = useAlert();
+  const navigate = useNavigate();
 
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
@@ -36,13 +44,15 @@ const ProfilePicPage = () => {
         },
       })
       .then(function (response) {
-        const { link } = response.data.data;
+        const { link, deletehash } = response.data.data;
         setImageUrl(link);
-        alert("Image uploaded successfully");
+        setDeletehash(deletehash);
+        applyNewPic();
       })
       .catch(function (response) {
         console.error(response);
         setImageUrl(null);
+        setDeletehash(null);
         setError("Error uploading image");
       })
       .finally(() => {
@@ -51,12 +61,30 @@ const ProfilePicPage = () => {
       });
   };
 
+  const applyNewPic = async () => {
+    // update user profile picture
+    await axios
+      .put("users", { profilePic: { link: imageUrl, deletehash } })
+      .then((res) => {
+        Alert({ title: "Profile updated", type: "success" });
+        navigate(`/${userInfo.username}`);
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert({ title: "Error updating profile", type: "error" });
+      });
+  };
+
   return (
     <Page title="Profile Picture">
       <form onSubmit={handleImageUpload}>
         <div className="flex justify-center">
           <ProfilePic
-            imgUrl={selectedImage && URL.createObjectURL(selectedImage)}
+            imgUrl={
+              selectedImage
+                ? URL.createObjectURL(selectedImage)
+                : userInfo.profilePic
+            }
             className="w-40 h-40 shadow "
           />
         </div>

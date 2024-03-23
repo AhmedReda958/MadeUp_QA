@@ -41,7 +41,7 @@ router.get("/find", async (req, res, next) => {
   }
 });
 
-router.patch(
+router.put(
   "/",
   authMiddleware,
   requiredAuthMiddleware,
