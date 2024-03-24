@@ -77,6 +77,8 @@ const userSchema = new Schema(
     toJSON: {
       transform(doc, ret) {
         delete ret.password;
+        //! temporary
+        delete ret.email;
       },
     },
   }
