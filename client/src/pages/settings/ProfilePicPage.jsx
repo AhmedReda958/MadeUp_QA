@@ -58,14 +58,15 @@ const ProfilePicPage = () => {
         }
         // apply new image
         applyNewPic(link, deletehash);
+        setLoading(false);
       })
       .catch(function (response) {
         console.error(response);
         setError("Error uploading image");
+        setLoading(false);
       })
       .finally(() => {
         setError(null);
-        setLoading(false);
       });
   };
   // handle profile picture delete
