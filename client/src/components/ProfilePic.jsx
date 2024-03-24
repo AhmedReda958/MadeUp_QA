@@ -30,7 +30,7 @@ function ProfilePic({
           currentTarget.src = MaleProfilePic;
         }}
         alt="profile pic"
-        className="rounded-full w-full h-full"
+        className={`rounded-full w-full h-full ${annoymous && "dark:invert"}`}
         loading="lazy"
       />
     </div>
