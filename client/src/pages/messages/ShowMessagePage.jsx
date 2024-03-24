@@ -55,7 +55,7 @@ const ShowMessagePage = () => {
             to={"/" + response?.receiver.username}
             className="w-full *:w-full *:justify-between mt-10 rounded-2xl shadow-md"
           >
-            <ProfilePic data={response} className="w-8 h-8" />
+            <ProfilePic data={response.receiver} className="w-8 h-8" />
             <div>
               Send Message to
               <span className="truncate"> @{response?.receiver.username}</span>

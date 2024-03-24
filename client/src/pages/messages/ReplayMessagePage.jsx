@@ -80,7 +80,11 @@ function ReplayMessagePage() {
               to={message.sender && "/" + message.sender.username}
               className="me-4"
             >
-              <ProfilePic data={message.sender} className="w-14 h-14" />
+              <ProfilePic
+                data={message.sender}
+                annoymous={!message.sender}
+                className="w-14 h-14"
+              />
             </Link>
 
             <div className=" w-full min-h-40">

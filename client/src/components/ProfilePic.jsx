@@ -1,9 +1,11 @@
 import React, { memo } from "react";
 import MaleProfilePic from "@/assets/imgs/maleProfilePic.png";
+import AnnoymousUserPic from "@/assets/imgs/anonymous-user.png";
 
 function ProfilePic({
   data,
   imgUrl,
+  annoymous = false,
   className = "",
   story = false,
   border = true,
@@ -17,7 +19,11 @@ function ProfilePic({
       }`}
     >
       <img
-        src={imgUrl || data?.profilePicture || MaleProfilePic}
+        src={
+          annoymous
+            ? AnnoymousUserPic
+            : imgUrl || data?.profilePicture || MaleProfilePic
+        }
         draggable="false"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null; // prevents looping
