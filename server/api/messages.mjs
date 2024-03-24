@@ -286,19 +286,19 @@ router
   });
 
 // If user liked a message
-router.get("/likes/message/:messageId/liked", (req, res, next) => {
+router.get("/likes/message/:messageId/liked", async (req, res, next) => {
   let targetUserId = req.query.userId;
-  if (!isValidObjectId(targetUserId)) {
-    if (req.userId) targetUserId = req.userId;
-    else return res.status(400).json({ code: "INVALID_USER_ID" });
-  }
+  if (!isValidObjectId(targetUserId)) targetUserId = req.userId;
 
-  Message.isLikedBy(req.params.messageId, targetUserId)
-    .then((liked) => {
-      if (liked != null) res.status(200).send({ liked });
-      else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
-    })
-    .catch(next);
+  try {
+    let liked = targetUserId
+      ? await Message.isLikedBy(req.params.messageId, targetUserId)
+      : await Message.findById(req.params.messageId, { _id: 1 });
+    if (liked != null) res.status(200).send({ liked });
+    else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
+  } catch (err) {
+    next(err);
+  }
 });
 
 router
