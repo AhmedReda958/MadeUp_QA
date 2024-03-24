@@ -364,7 +364,7 @@ messageSchema.statics.userFeed = function (userId, pagination, briefUsers) {
       },
     },
     {
-      $sample: { size: 10 },
+      $sample: { size: pagination.limit },
     },
     { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
