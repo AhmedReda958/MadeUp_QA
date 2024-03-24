@@ -179,7 +179,7 @@ const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
         height={250}
         border={30}
         color={[0, 0, 0, 0.6]} // RGBA
-        backgroundColor="#fff"
+        backgroundColor="#ffffff"
         scale={scale}
         rotate={rotate}
         borderRadius={200}
@@ -190,7 +190,7 @@ const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
           name="scale"
           type="range"
           onChange={handleScale}
-          min="0.5"
+          min="1"
           max="2"
           step="0.01"
           className="w-full "

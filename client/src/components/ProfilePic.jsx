@@ -22,13 +22,13 @@ function ProfilePic({
         src={
           annoymous
             ? AnnoymousUserPic
-            : imgUrl || data?.profilePicture || MaleProfilePic
+            : imgUrl || data?.profilePicture?.link || MaleProfilePic
         }
-        draggable="false"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null; // prevents looping
           currentTarget.src = MaleProfilePic;
         }}
+        draggable="false"
         alt="profile pic"
         className={`rounded-full w-full h-full ${annoymous && "dark:invert"}`}
         loading="lazy"
