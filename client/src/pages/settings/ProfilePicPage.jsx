@@ -68,6 +68,26 @@ const ProfilePicPage = () => {
         setLoading(false);
       });
   };
+  // handle profile picture delete
+  const handleProfilePicDelete = async () => {
+    setLoading(true);
+    if (userInfo.profilePicture.deletehash) {
+      await deleteImage(userInfo.profilePicture.deletehash);
+    }
+    await axios
+      .patch("users", { profilePicture: { link: "", deletehash: "" } }) // remove profile picture
+      .then((res) => {
+        // update user info
+        setCredentials(res.data);
+        Alert({ title: "Profile picture removed", type: "success" });
+        navigate(`/${userInfo.username}`); // navigate to user profile
+      })
+      .catch((error) => {
+        console.error(error);
+        Alert({ title: "Error removing profile picture", type: "error" });
+      });
+    setLoading(false);
+  };
 
   // delete image from imgur
   const deleteImage = async (deletehash) => {
@@ -112,7 +132,7 @@ const ProfilePicPage = () => {
         />
         {!showEditor ? (
           <>
-            <div className="flex justify-center">
+            <div className="flex justify-center relative">
               <ProfilePic
                 imgUrl={
                   selectedImage
@@ -121,6 +141,13 @@ const ProfilePicPage = () => {
                 }
                 className="w-40 h-40 shadow "
               />
+              <div
+                className=" text-xs absolute top-0 left-0"
+                onClick={handleProfilePicDelete}
+              >
+                <i className="fas fa-trash-alt  text-red-500 cursor-pointer pe-1"></i>
+                Remove
+              </div>
             </div>
             {loading && <LoadingSpinner className="mt-4" />}
             {/* image picker */}
