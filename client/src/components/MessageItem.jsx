@@ -367,26 +367,27 @@ const LikeButton = memo(({ message }) => {
         });
     }
   };
-  useEffect(() => {
-    axios
-      .get(`/messages/likes/message/${message._id}/liked`)
-      .then((res) => {
-        setLiked(res.data.liked);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        setLiked(false);
-      });
-    axios
-      .get(`/messages/likes/message/${message._id}`)
-      .then((res) => {
-        setCount(res.data.total);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        setLiked(false);
-      });
-  }, []);
+  //? temprory disabled
+  // useEffect(() => {
+  //   axios
+  //     .get(`/messages/likes/message/${message._id}/liked`)
+  //     .then((res) => {
+  //       setLiked(res.data.liked);
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       setLiked(false);
+  //     });
+  //   axios
+  //     .get(`/messages/likes/message/${message._id}`)
+  //     .then((res) => {
+  //       setCount(res.data.total);
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       setLiked(false);
+  //     });
+  // }, []);
 
   return (
     <div className="flex items-center" onClick={likeHandler}>
