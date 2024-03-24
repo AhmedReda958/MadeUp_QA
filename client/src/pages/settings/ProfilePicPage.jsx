@@ -102,6 +102,17 @@ const ProfilePicPage = () => {
             </div>
             {loading && <LoadingSpinner className="mt-4" />}
             {/* image picker */}
+            {selectedImage && (
+              <Button
+                color="dark"
+                className="w-full mt-2"
+                disabled={loading || !selectedImage}
+                onClick={() => setShowEditor(true)}
+              >
+                <i className="fas fa-crop-simple me-2"></i>
+                Edit
+              </Button>
+            )}
             <Button
               as="label"
               color="dark"
@@ -111,7 +122,6 @@ const ProfilePicPage = () => {
               <CameraIcon className="w-6 h-6 me-3" />
               Choose new picture
             </Button>
-
             {error && <p className="test-sm text-red-600">{error}</p>}
 
             <Button
@@ -126,7 +136,7 @@ const ProfilePicPage = () => {
         ) : (
           <div>
             <ImageEditor
-              image={selectedImage}
+              image={fileInput.current.files[0]}
               ref={editorRef}
               setSelectedImage={setSelectedImage}
               setShowEditor={setShowEditor}
@@ -218,7 +228,6 @@ const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
         className="w-full mt-4"
         onClick={() => {
           setShowEditor(false);
-          setSelectedImage(null);
         }}
         disabled={loading}
       >
