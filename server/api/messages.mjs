@@ -290,7 +290,7 @@ router.get("/likes/message/:messageId/liked", (req, res, next) => {
   let targetUserId = req.query.userId;
   if (!isValidObjectId(targetUserId)) {
     if (req.userId) targetUserId = req.userId;
-    else res.status(400).json({ code: "INVALID_USER_ID" });
+    else return res.status(400).json({ code: "INVALID_USER_ID" });
   }
 
   Message.isLikedBy(req.params.messageId, targetUserId)
