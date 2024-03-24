@@ -33,10 +33,10 @@ const Header = ({ title, children }) => {
     <Transition
       show={isShown}
       as={Fragment}
-      enter="ease duration-[.4s]"
+      enter="ease duration-200"
       enterFrom="opacity-0 -translate-y-64"
       enterTo=" opacity-100 translate-y-0"
-      leave="ease duration-[1s]"
+      leave="ease duration-75"
       leaveFrom="opacity-100  -translate-y-64 "
       leaveTo="opacity-0  translate-y-0  "
     >

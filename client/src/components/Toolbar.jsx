@@ -73,10 +73,10 @@ const Toolbar = () => {
     <div className="fixed z-30 bottom-0 left-0 w-full pt-4 px-6 pb-5 ">
       <Transition
         show={show}
-        enter="ease duration-[.3s]"
+        enter="ease duration-200"
         enterFrom=" translate-y-64"
         enterTo=" translate-y-0"
-        leave="ease duration-[1s]"
+        leave="ease duration-75"
         leaveFrom=" translate-y-0"
         leaveTo="  translate-y-64"
       >

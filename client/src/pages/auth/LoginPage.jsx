@@ -34,12 +34,12 @@ const LoginPage = () => {
 
   return (
     <Transition as={Fragment} show={animate}>
-      <div className={app.isDarkTheme ? "dark" : "light"}>
+      <div className={`${app.isDarkTheme ? "dark" : "light"}`}>
         <main className="font-body min-h-screen min-w-screen  bg-dark-alt text-white bg-center bg-[url('/img/login.jpeg')] bg-cover bg-blend-multiply">
-          <div className="relative container w-full h-screen no-scrollbar max-w-[768px] mx-auto md-7 overflow-y-auto scroll-smooth bg-center bg-[url('/img/login.jpeg')] bg-cover ">
+          <div className="relative container w-full min-h-screen no-scrollbar max-w-[768px] mx-auto md-7 overflow-y-auto scroll-smooth bg-center bg-[url('/img/login.jpeg')] bg-cover ">
             <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr    to-primary  from-gred-light  via-black opacity-80 mix-blend-soft-light"></div>
             <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-black "></div>
-            <div className="h-full  px-10 bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
+            <div className="min-h-screen h-full  px-10 bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
               <header className="flex justify-between items-center py-8 mb-6">
                 <Transition.Child
                   as={Fragment}
