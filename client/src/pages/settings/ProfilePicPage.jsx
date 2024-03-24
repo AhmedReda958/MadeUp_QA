@@ -34,19 +34,18 @@ const ProfilePicPage = () => {
 
   const handleImageUpload = async (event) => {
     event.preventDefault();
-    const file = fileInput.current.files[0];
+    const file = selectedImage;
     const formData = new FormData();
-
     formData.append("type", "image");
     formData.append("image", file);
 
     // upload image to imgur
-    const CLIENT_ID = "b417912ffdff89e";
+    const CLIENT_ID = "ea5139e02ebfd90";
     setLoading(true);
     await axios
       .post("https://api.imgur.com/3/image", formData, {
         headers: {
-          Authorization: "Client-ID  " + CLIENT_ID, // TODO: configure
+          Authorization: "Client-ID " + CLIENT_ID, // TODO: configure
         },
       })
       .then(function (response) {
@@ -80,11 +79,24 @@ const ProfilePicPage = () => {
   return (
     <Page title="Profile Picture">
       <form onSubmit={handleImageUpload}>
+        <input
+          type="file"
+          accept="image/*"
+          id="imgUploader"
+          ref={fileInput}
+          onChange={handleImageSelect}
+          disabled={loading}
+          hidden
+        />
         {!showEditor ? (
           <>
             <div className="flex justify-center">
               <ProfilePic
-                imgUrl={selectedImage ? selectedImage : userInfo.profilePicture}
+                imgUrl={
+                  selectedImage
+                    ? URL.createObjectURL(selectedImage)
+                    : userInfo.profilePicture
+                }
                 className="w-40 h-40 shadow "
               />
             </div>
@@ -98,15 +110,6 @@ const ProfilePicPage = () => {
             >
               <CameraIcon className="w-6 h-6 me-3" />
               Choose new picture
-              <input
-                type="file"
-                accept="image/*"
-                id="imgUploader"
-                ref={fileInput}
-                onChange={handleImageSelect}
-                disabled={loading}
-                hidden
-              />
             </Button>
 
             {error && <p className="test-sm text-red-600">{error}</p>}
@@ -136,12 +139,25 @@ const ProfilePicPage = () => {
 };
 
 const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
+  const [loading, setLoading] = useState(false);
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const editorRef = useRef(null);
 
   const handleScale = (event) => {
     setScale(parseFloat(event.target.value));
+  };
+  const applyChanges = () => {
+    setLoading(true);
+    const canvas = editorRef.current.getImage().toDataURL();
+    let imageURL;
+    fetch(canvas).then(async (res) => {
+      const blob = await res.blob();
+      imageURL = new File([blob], "profile-pic.png", { type: "image/png" });
+      setSelectedImage(imageURL);
+    });
+    setLoading(false);
+    setShowEditor(false);
   };
 
   return (
@@ -169,7 +185,6 @@ const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
           step="0.01"
           className="w-full "
           defaultValue="1"
-          showgrid={true}
         />
         <span>{scale.toFixed(2)}x</span>
       </div>
@@ -193,14 +208,8 @@ const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
           <i className="fas fa-rotate-right"></i>
         </Button>
       </div>
-      <Button
-        color="primary"
-        className="w-full mt-6"
-        onClick={() => {
-          setSelectedImage(editorRef.current.getImage().toDataURL());
-          setShowEditor(false);
-        }}
-      >
+      {loading && <LoadingSpinner className="mt-4" />}
+      <Button color="primary" className="w-full mt-6" onClick={applyChanges}>
         Apply
         <i className="fas fa-check ms-2"></i>
       </Button>
@@ -211,6 +220,7 @@ const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
           setShowEditor(false);
           setSelectedImage(null);
         }}
+        disabled={loading}
       >
         Cancel
       </Button>
