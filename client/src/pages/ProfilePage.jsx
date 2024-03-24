@@ -22,6 +22,7 @@ import MessageItem from "@/components/MessageItem";
 import { Button } from "flowbite-react";
 import axios from "axios";
 import { share } from "@/redux/slices/appSlice";
+import useAlert from "@/utils/hooks/useAlert";
 
 const EmptyPage = () => {
   return (
@@ -156,6 +157,7 @@ const UserProfile = () => {
   const { response, error, loading } = user;
 
   const dispatch = useDispatch();
+  const Alert = useAlert();
 
   return (
     <Page header={false}>
@@ -166,7 +168,15 @@ const UserProfile = () => {
           <>
             <Page.Header title={"@" + response.username}>
               {userInfo.username != username ? (
-                <div className="p-3 text-lg cursor-pointer text-primary dark:text-white ">
+                <div
+                  className="p-3 text-lg cursor-pointer text-primary dark:text-white "
+                  onClick={() =>
+                    Alert({
+                      title: "Coming soon!",
+                      type: "comingsoon",
+                    })
+                  }
+                >
                   <i className="fa fa-user-plus"></i>
                 </div>
               ) : (
