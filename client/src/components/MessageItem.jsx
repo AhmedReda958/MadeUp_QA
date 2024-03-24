@@ -394,7 +394,7 @@ const LikeButton = memo(({ message }) => {
         {count > 0 && count}
       </span>
       <div className="w-6 h-6 pointer overflow-hidden">
-        <Transition
+        {/* <Transition
           show={liked}
           enter=" ease-in-out duration-100 "
           enterFrom="rounded-full bg-red-700 opacity-80 scale-0"
@@ -411,13 +411,13 @@ const LikeButton = memo(({ message }) => {
           enterTo="opacity-100 scale-100"
         >
           <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
-        </Transition>
+        </Transition> */}
 
-        {/* {liked ? (
+        {liked ? (
           <HeartIconSolid className="w-6 h-6  text-red-500 " />
         ) : (
           <HeartIcon className="w-6 h-6 text-gray-500 pe-1 " />
-        )} */}
+        )}
       </div>
     </div>
   );
