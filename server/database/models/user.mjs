@@ -12,7 +12,7 @@ const userSchema = new Schema(
         /^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-z0-9._]+(?<![_.])$/,
         "INVALID_USERNAME",
       ],
-      index: { name: "username", unique: true }
+      index: { name: "username", unique: true },
     },
     email: {
       type: String,
@@ -20,12 +20,12 @@ const userSchema = new Schema(
       lowercase: true,
       required: [true, "MISSING_EMAIL"],
       match: [/^\S+@\S+\.\S+$/, "INVALID_EMAIL"],
-      index: { name: "userEmail", unique: true }
+      index: { name: "userEmail", unique: true },
     },
     password: {
       type: String,
       // match: [/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, "INVALID_PASSWORD"], // TODO: more strength
-      required: [true, "MISSING_PASSWORD"]
+      required: [true, "MISSING_PASSWORD"],
     },
     fullName: {
       type: String,
@@ -34,10 +34,13 @@ const userSchema = new Schema(
       },
     },
     bio: {
-      type: String
+      type: String,
     },
     profilePicture: {
-      type: String,
+      link: {
+        type: String,
+      },
+      deletehash: { type: String },
     },
     //   friends: [
     //     {

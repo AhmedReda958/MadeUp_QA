@@ -26,12 +26,14 @@ const ProfilePicPage = () => {
   const Alert = useAlert();
   const navigate = useNavigate();
 
+  // select image
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
     setSelectedImage(file);
     setShowEditor(true);
   };
 
+  // upload image to imgur then apply to user
   const handleImageUpload = async (event) => {
     event.preventDefault();
     const file = selectedImage;
@@ -50,6 +52,11 @@ const ProfilePicPage = () => {
       })
       .then(function (response) {
         const { link, deletehash } = response.data.data;
+        // delete previous image
+        if (userInfo.profilePicture.deletehash) {
+          deleteImage(userInfo.profilePicture.deletehash);
+        }
+        // apply new image
         applyNewPic(link, deletehash);
       })
       .catch(function (response) {
@@ -62,9 +69,24 @@ const ProfilePicPage = () => {
       });
   };
 
-  const applyNewPic = async (link) => {
+  // delete image from imgur
+  const deleteImage = async (deletehash) => {
     await axios
-      .patch("users", { profilePicture: link })
+      .delete(`https://api.imgur.com/3/image/${deletehash}`, {
+        headers: {
+          Authorization: "Client-ID " + CLIENT_ID,
+        },
+      })
+      .catch((error) => {
+        console.error(error);
+        throw new Error("Error deleting image");
+      });
+  };
+
+  // apply new image to user
+  const applyNewPic = async (link, deletehash) => {
+    await axios
+      .patch("users", { profilePicture: { link, deletehash } })
       .then((res) => {
         setCredentials(res.data);
         Alert({ title: "Profile updated", type: "success" });
