@@ -11,7 +11,7 @@ export const fetchFeed = createAsyncThunk(
       const response = await axios.get("/feed", {
         params: {
           page: currentPage,
-          limit: 10,
+          limit: 40,
         },
       });
       return response.data;
@@ -59,7 +59,7 @@ export const fetchMessages = createAsyncThunk(
       const response = await axios.get("/messages/inbox", {
         params: {
           page: currentPage,
-          limit: 20,
+          limit: 30,
         },
       });
       return response.data;
