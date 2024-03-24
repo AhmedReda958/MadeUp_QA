@@ -137,7 +137,7 @@ const ProfilePicPage = () => {
                 imgUrl={
                   selectedImage
                     ? URL.createObjectURL(selectedImage)
-                    : userInfo.profilePicture.link
+                    : userInfo.profilePicture?.link
                 }
                 className="w-40 h-40 shadow "
               />
