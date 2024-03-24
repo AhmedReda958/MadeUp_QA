@@ -15,8 +15,11 @@ const ProfilePicPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
   const fileInput = useRef(null);
+
+  //editor
+  const [showEditor, setShowEditor] = useState(false);
+  const editorRef = useRef(null);
 
   const userInfo = useSelector((state) => state.auth.userInfo);
 
@@ -77,62 +80,70 @@ const ProfilePicPage = () => {
   return (
     <Page title="Profile Picture">
       <form onSubmit={handleImageUpload}>
-        <div className="flex justify-center">
-          {!showEditor ? (
-            <ProfilePic
-              imgUrl={
-                selectedImage
-                  ? URL.createObjectURL(selectedImage)
-                  : userInfo.profilePicture
-              }
-              className="w-40 h-40 shadow "
-            />
-          ) : (
-            <ImageEditor image={selectedImage} />
-          )}
-        </div>
+        {!showEditor ? (
+          <>
+            <div className="flex justify-center">
+              <ProfilePic
+                imgUrl={selectedImage ? selectedImage : userInfo.profilePicture}
+                className="w-40 h-40 shadow "
+              />
+            </div>
+            {loading && <LoadingSpinner className="mt-4" />}
+            {/* image picker */}
+            <Button
+              as="label"
+              color="dark"
+              className="w-full mt-4 text cursor-pointer"
+              htmlFor="imgUploader"
+            >
+              <CameraIcon className="w-6 h-6 me-3" />
+              Choose new picture
+              <input
+                type="file"
+                accept="image/*"
+                id="imgUploader"
+                ref={fileInput}
+                onChange={handleImageSelect}
+                disabled={loading}
+                hidden
+              />
+            </Button>
 
-        {loading && <LoadingSpinner className="mt-4" />}
-        <Button
-          as="label"
-          color="dark"
-          className="w-full mt-4 text cursor-pointer"
-          htmlFor="imgUploader"
-        >
-          <CameraIcon className="w-6 h-6 me-3" />
-          Choose new picture
-          <input
-            type="file"
-            accept="image/*"
-            id="imgUploader"
-            ref={fileInput}
-            onChange={handleImageSelect}
-            disabled={loading}
-            hidden
-          />
-        </Button>
-        {error && <p className="test-sm text-red-600">{error}</p>}
-        <Button
-          color="primary"
-          type="submit"
-          className="w-full mt-6"
-          disabled={loading || !selectedImage}
-        >
-          Save
-        </Button>
+            {error && <p className="test-sm text-red-600">{error}</p>}
+
+            <Button
+              color="primary"
+              type="submit"
+              className="w-full mt-6"
+              disabled={loading || !selectedImage}
+            >
+              Save
+            </Button>
+          </>
+        ) : (
+          <div>
+            <ImageEditor
+              image={selectedImage}
+              ref={editorRef}
+              setSelectedImage={setSelectedImage}
+              setShowEditor={setShowEditor}
+            />
+          </div>
+        )}
       </form>
     </Page>
   );
 };
 
-const ImageEditor = ({ image }) => {
+const ImageEditor = ({ image, setSelectedImage, setShowEditor }) => {
   const [scale, setScale] = useState(1);
-
+  const [rotate, setRotate] = useState(0);
   const editorRef = useRef(null);
 
   const handleScale = (event) => {
     setScale(parseFloat(event.target.value));
   };
+
   return (
     <div>
       <AvatarEditor
@@ -142,24 +153,67 @@ const ImageEditor = ({ image }) => {
         height={250}
         border={30}
         color={[0, 0, 0, 0.6]} // RGBA
+        backgroundColor="#fff"
         scale={scale}
-        rotate={0}
+        rotate={rotate}
         borderRadius={200}
-        className="border-4 border-dashed border-body-alt dark:border-body "
+        className="border-4 border-dashed border-body-alt dark:border-body m-auto"
       />
       <div className="flex items-center gap-3 mt-5">
         <input
           name="scale"
           type="range"
           onChange={handleScale}
-          min={1}
+          min="0.5"
           max="2"
           step="0.01"
           className="w-full "
           defaultValue="1"
+          showgrid={true}
         />
         <span>{scale.toFixed(2)}x</span>
       </div>
+      <div className="flex gap-3 mt-2">
+        <Button
+          color="gray"
+          outline
+          onClick={() => {
+            setRotate(rotate - 90);
+          }}
+        >
+          <i className="fas fa-rotate-left fa"></i>
+        </Button>
+        <Button
+          color="gray"
+          outline
+          onClick={() => {
+            setRotate(rotate + 90);
+          }}
+        >
+          <i className="fas fa-rotate-right"></i>
+        </Button>
+      </div>
+      <Button
+        color="primary"
+        className="w-full mt-6"
+        onClick={() => {
+          setSelectedImage(editorRef.current.getImage().toDataURL());
+          setShowEditor(false);
+        }}
+      >
+        Apply
+        <i className="fas fa-check ms-2"></i>
+      </Button>
+      <Button
+        color="gray"
+        className="w-full mt-4"
+        onClick={() => {
+          setShowEditor(false);
+          setSelectedImage(null);
+        }}
+      >
+        Cancel
+      </Button>
     </div>
   );
 };
