@@ -261,9 +261,7 @@ const MessageItem = ({ message, type = "post" }) => {
                 Replay
                 <i className="fa fa-share ps-2 "></i>
               </Link>
-            ) : (
-              <LikeButton message={message} />
-            )}
+            ) : null}
           </div>
         </div>
       </div>
@@ -328,8 +326,8 @@ const MessageItem = ({ message, type = "post" }) => {
 
 // like button
 const LikeButton = memo(({ message }) => {
-  const [liked, setLiked] = useState(false);
-  const [count, setCount] = useState(0);
+  const [liked, setLiked] = useState(message.liked);
+  const [count, setCount] = useState(message.likes);
   const navigate = useNavigate();
   const logedIn = useSelector((state) => state.auth.logedIn);
 
@@ -340,54 +338,17 @@ const LikeButton = memo(({ message }) => {
     // }
     // const audio = new Audio(liked ? unLikeSound : likeSound);
     // audio.play();
-    setLiked(!liked);
-    if (!liked) {
-      setCount(count + 1);
-      await axios
-
-        .put(`/messages/likes/message/${message._id}`)
-        .then((res) => {
-          setLiked(true);
-        })
-        .catch((err) => {
-          setLiked(false);
-          setCount(count - 1);
-        });
-    } else {
-      setCount(count - 1);
-      await axios
-        .delete(`/messages/likes/message/${message._id}`)
-        .then((res) => {
-          setLiked(false);
-        })
-        .catch((err) => {
-          setCount(count + 1);
-
-          setLiked(true);
-        });
-    }
+    let action = !liked;
+    let variation = action ? 1 : -1;
+    setLiked(action);
+    setCount(count + variation);
+    await (action ? axios.put : axios.delete)(
+      `/messages/likes/message/${message._id}`
+    ).catch((err) => {
+      setLiked(!action);
+      setCount(count - variation);
+    });
   };
-  
-  useEffect(() => {
-    axios
-      .get(`/messages/likes/message/${message._id}/liked`)
-      .then((res) => {
-        setLiked(res.data.liked);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        setLiked(false);
-      });
-    axios
-      .get(`/messages/likes/message/${message._id}`)
-      .then((res) => {
-        setCount(res.data.total);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        setLiked(false);
-      });
-  }, []);
 
   return (
     <div className="flex items-center" onClick={likeHandler}>

@@ -59,25 +59,6 @@ const messageSchema = new Schema({
   },
 });
 
-let messageProject = {
-  _id: 1,
-  content: 1,
-  sender: 1,
-  receiver: 1,
-  pinned: 1,
-  reply: 1,
-  timestamp: 1,
-};
-
-let userBriefProject = {
-  _id: 1,
-  username: 1,
-  fullName: 1,
-  profilePicture: 1,
-  // TODO: add those later on
-  // "hasStory", "verified", "online"
-};
-
 let messageStages = {};
 
 messageStages.hideSenderIfAnonymous = {
@@ -95,6 +76,15 @@ messageStages.hideSenderIfAnonymous = {
 let internalUsers = Object.keys(messageSchema.paths).filter(
   (path) => messageSchema.paths[path].options.ref == "User"
 );
+
+let userBriefProject = {
+  _id: 1,
+  username: 1,
+  fullName: 1,
+  profilePicture: 1,
+  // TODO: add those later on
+  // "hasStory", "verified", "online"
+};
 
 messageStages.briefUsers = [
   {
@@ -141,8 +131,37 @@ messageStages.briefUsers = [
   },
 ];
 
+messageStages.likesCount = {
+  $cond: {
+    if: { $isArray: "$likes" },
+    then: { $size: "$likes" },
+    else: 0,
+  },
+};
+
+messageStages.likedBy = (userId) => {
+  return {
+    $in: [new ObjectId(userId), { $ifNull: ["$likes", []] }],
+  };
+};
+
+let messageProject = {
+  _id: 1,
+  content: 1,
+  sender: 1,
+  receiver: 1,
+  reply: 1,
+  pinned: 1,
+  likes: messageStages.likesCount,
+  timestamp: 1,
+};
+
 messageSchema.index({ timestamp: -1 }, { name: "questions" });
-messageSchema.statics.userInbox = function (userId, pagination, briefUsers) {
+messageSchema.statics.userInbox = function ({
+  userId,
+  pagination,
+  briefUsers,
+}) {
   return this.aggregate([
     {
       $match: {
@@ -154,33 +173,43 @@ messageSchema.statics.userInbox = function (userId, pagination, briefUsers) {
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
-    { $project: messageProject },
+    {
+      $project: Object.assign(messageProject, {
+        liked: messageStages.likedBy(userId),
+      }),
+    },
   ]);
 };
 
-messageSchema.statics.sentByUser = function (userId, pagination, briefUsers) {
+messageSchema.statics.sentByUser = function ({
+  userId,
+  pagination,
+  briefUsers,
+}) {
   let pipeline = [
     { $match: { sender: new ObjectId(userId) } },
     { $sort: { timestamp: -1 } },
     ...globalStages.pagination(pagination),
     ...(briefUsers ? messageStages.briefUsers : []),
-    { $project: messageProject },
+    {
+      $project: Object.assign(messageProject, {
+        liked: messageStages.likedBy(userId),
+      }),
+    },
   ];
-
-  if ("reply.content" in project)
-    pipeline.push({ $fill: { output: { "reply.content": { value: null } } } });
 
   return this.aggregate(pipeline);
 };
 
 messageSchema.index({ "reply.timestamp": -1 }, { name: "answers" });
-messageSchema.statics.answeredByUser = function (
+messageSchema.statics.answeredByUser = function ({
   userId,
   pagination,
   briefUsers,
+  viewer,
   publicly,
-  pinned
-) {
+  pinned,
+}) {
   let match = {
     receiver: new ObjectId(userId),
     "reply.content": { $ne: null },
@@ -195,50 +224,58 @@ messageSchema.statics.answeredByUser = function (
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
-    { $project: messageProject },
+    {
+      $project: Object.assign(
+        messageProject,
+        isValidObjectId(viewer)
+          ? { liked: messageStages.likedBy(viewer) }
+          : null
+      ),
+    },
   ]);
 };
 
-messageSchema.statics.fetch = function (messageId, requester, briefUsers) {
-  requester = isValidObjectId(requester)
-    ? new ObjectId(requester)
-    : `${requester}`;
+messageSchema.statics.fetch = function ({ messageId, briefUsers, viewer }) {
+  let viewing = isValidObjectId(viewer);
+  viewer = viewing ? new ObjectId(viewer) : `${viewer}`;
   return this.aggregate([
     {
       $match: {
         _id: new ObjectId(messageId),
         $or: [
-          { sender: { $eq: requester } },
-          { receiver: { $eq: requester } },
+          { sender: { $eq: viewer } },
+          { receiver: { $eq: viewer } },
           { "reply.private": { $eq: false }, "reply.content": { $ne: null } },
         ],
       },
     },
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
-    { $project: messageProject },
+    {
+      $project: Object.assign(
+        messageProject,
+        viewing ? { liked: messageStages.likedBy(viewer) } : null
+      ),
+    },
   ])
     .exec()
     .then((docs) => docs.at(0));
 };
 
-messageSchema.statics.likes = function (
+messageSchema.statics.likes = function ({
   messageId,
-  { usersId, usersBrief, page, limit }
-) {
+  usersId,
+  usersBrief,
+  page,
+  limit,
+}) {
   let pipeline = [
     { $match: { _id: new ObjectId(messageId) } },
     {
       $project: Object.assign(
         {
           _id: 0,
-          total: {
-            $cond: {
-              if: { $isArray: "$likes" },
-              then: { $size: "$likes" },
-              else: 0,
-            },
-          },
+          total: messageStages.likesCount,
         },
         usersId || usersBrief
           ? {
@@ -312,7 +349,7 @@ messageSchema.statics.likes = function (
     .then((docs) => docs.at(0));
 };
 
-messageSchema.statics.setLikeBy = function (messageId, userId, status) {
+messageSchema.statics.setLikeBy = function ({messageId, userId, status}) {
   return this.updateOne(
     { _id: messageId },
     { [status ? "$addToSet" : "$pull"]: { likes: userId } }
@@ -326,15 +363,13 @@ messageSchema.statics.setLikeBy = function (messageId, userId, status) {
     });
 };
 
-messageSchema.statics.isLikedBy = function (messageId, userId) {
+messageSchema.statics.isLikedBy = function ({messageId, userId}) {
   return this.aggregate([
     { $match: { _id: new ObjectId(messageId) } },
     {
       $project: {
         _id: 0,
-        liked: {
-          $in: [new ObjectId(userId), { $ifNull: ["$likes", []] }],
-        },
+        liked: messageStages.likedBy(userId),
       },
     },
   ])
@@ -342,17 +377,30 @@ messageSchema.statics.isLikedBy = function (messageId, userId) {
     .then((docs) => docs.at(0)?.liked);
 };
 
-messageSchema.statics.likedBy = function (userId, pagination, briefUsers) {
+messageSchema.statics.likedBy = function ({
+  userId,
+  pagination,
+  briefUsers,
+  viewer,
+}) {
   return this.aggregate([
     { $match: { likes: new ObjectId(userId) } },
     ...globalStages.pagination(pagination),
     ...(briefUsers ? messageStages.briefUsers : []),
-    { $project: messageProject },
+    {
+      $project: Object.assign(
+        messageProject,
+        isValidObjectId(viewer)
+          ? { liked: messageStages.likedBy(viewer) }
+          : null
+      ),
+    },
   ]).exec();
 };
 
 // basic feed
-messageSchema.statics.userFeed = function (userId, pagination, briefUsers) {
+messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
+  console.log(userId, isValidObjectId(userId));
   return this.aggregate([
     {
       $match: {
@@ -370,7 +418,12 @@ messageSchema.statics.userFeed = function (userId, pagination, briefUsers) {
     ...globalStages.pagination(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
-    { $project: messageProject },
+    {
+      $project: Object.assign(
+        messageProject,
+        isValidObjectId(userId) ? { liked: messageStages.likedBy(userId) } : null
+      ),
+    },
   ]);
 };
 

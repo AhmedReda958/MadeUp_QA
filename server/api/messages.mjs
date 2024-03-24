@@ -38,7 +38,11 @@ router.get(
   requiredAuthMiddleware,
   paginationMiddleware,
   (req, res, next) => {
-    Message.userInbox(req.userId, req.pagination, !("onlyids" in req.query))
+    Message.userInbox({
+      userId: req.userId,
+      pagination: req.pagination,
+      briefUsers: !("onlyids" in req.query),
+    })
       .then((userInbox) => res.status(200).json(userInbox))
       .catch(next);
   }
@@ -50,7 +54,11 @@ router.get(
   requiredAuthMiddleware,
   paginationMiddleware,
   (req, res, next) => {
-    Message.sentByUser(req.userId, req.pagination, !("onlyids" in req.query))
+    Message.sentByUser({
+      userId: req.userId,
+      pagination: req.pagination,
+      briefUsers: !("onlyids" in req.query),
+    })
       .then((sentByUser) => res.status(200).json(sentByUser))
       .catch(next);
   }
@@ -61,23 +69,28 @@ router
   // Fetch Answered Messages
   .get(paginationMiddleware, async (req, res, next) => {
     try {
-      let pinned = await Message.answeredByUser(
-        req.params.targetUserId,
-        req.pagination,
-        !("onlyids" in req.query),
-        true,
-        true
+      res.status(200).json(
+        (await Promise.all([
+          Message.answeredByUser({
+            userId: req.params.targetUserId,
+            pagination: req.pagination,
+            briefUsers: !("onlyids" in req.query),
+            viewer: req.userId,
+            publicly: true,
+            pinned: true,
+          }),
+          Message.answeredByUser({
+            userId: req.params.targetUserId,
+            pagination: req.pagination,
+            briefUsers: !("onlyids" in req.query),
+            viewer: req.userId,
+            publicly: true,
+            pinned: false,
+          }),
+        ])).reduce((pinned, answered) => pinned.concat(answered))
       );
-      let answered = await Message.answeredByUser(
-        req.params.targetUserId,
-        req.pagination,
-        !("onlyids" in req.query),
-        true,
-        false
-      );
-      res.status(200).json([...pinned, ...answered]);
     } catch (err) {
-      next();
+      next(err);
     }
   })
   // Send Message
@@ -118,7 +131,11 @@ router
   .route("/message/:messageId")
   // Fetch a message
   .get((req, res, next) => {
-    Message.fetch(req.params.messageId, req.userId, !("onlyids" in req.query))
+    Message.fetch({
+      messageId: req.params.messageId,
+      briefUsers: !("onlyids" in req.query),
+      viewer: req.userId,
+    })
       .then((message) => {
         if (message != null) res.status(200).json(message);
         else res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
@@ -254,11 +271,14 @@ router
   // Fetch user(s) that liked a message
   .get(paginationMiddleware, (req, res, next) => {
     Message.likes(
-      req.params.messageId,
-      Object.assign(req.pagination, {
-        usersId: "usersId" in req.query,
-        usersBrief: "usersBrief" in req.query,
-      })
+      Object.assign(
+        {
+          messageId: req.params.messageId,
+          usersId: "usersId" in req.query,
+          usersBrief: "usersBrief" in req.query,
+        },
+        req.pagination
+      )
     )
       .then((likes) => {
         if (likes != null) res.status(200).send(likes);
@@ -268,7 +288,11 @@ router
   })
   // Like a message
   .put(requiredAuthMiddleware, (req, res, next) => {
-    Message.setLikeBy(req.params.messageId, req.userId, true)
+    Message.setLikeBy({
+      messageId: req.params.messageId,
+      userId: req.userId,
+      status: true,
+    })
       .then(({ found, updated }) => {
         if (found) res.status(200).send({ like: true, updated });
         else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
@@ -277,7 +301,11 @@ router
   })
   // Remove a message like
   .delete(requiredAuthMiddleware, (req, res, next) => {
-    Message.setLikeBy(req.params.messageId, req.userId, false)
+    Message.setLikeBy({
+      messageId: req.params.messageId,
+      userId: req.userId,
+      status: false,
+    })
       .then(({ found, updated }) => {
         if (found) res.status(200).send({ like: false, updated });
         else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
@@ -292,7 +320,10 @@ router.get("/likes/message/:messageId/liked", async (req, res, next) => {
 
   try {
     let liked = targetUserId
-      ? await Message.isLikedBy(req.params.messageId, targetUserId)
+      ? await Message.isLikedBy({
+          messageId: req.params.messageId,
+          userId: targetUserId,
+        })
       : await Message.findById(req.params.messageId, { _id: 1 });
     if (liked != null) res.status(200).send({ liked });
     else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
@@ -305,11 +336,12 @@ router
   .route("/likes/user/:targetUserId")
   // Fetch messages that are liked by a user
   .get(paginationMiddleware, (req, res, next) => {
-    Message.likedBy(
-      req.params.targetUserId,
-      req.pagination,
-      !("onlyids" in req.query)
-    )
+    Message.likedBy({
+      userId: req.params.targetUserId,
+      pagination: req.pagination,
+      briefUsers: !("onlyids" in req.query),
+      viewer: req.userId,
+    })
       .then((likedByUser) => res.status(200).json(likedByUser))
       .catch(next);
   });

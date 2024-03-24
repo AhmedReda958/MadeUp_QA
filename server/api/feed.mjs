@@ -13,7 +13,11 @@ router.get(
   paginationMiddleware,
   async (req, res, next) => {
     message
-      .userFeed(req.userId, req.pagination, !("onlyids" in req.query))
+      .userFeed({
+        userId: req.userId,
+        pagination: req.pagination,
+        briefUsers: !("onlyids" in req.query),
+      })
       .then((posts) => res.status(200).json(posts))
       .catch(next);
   }
