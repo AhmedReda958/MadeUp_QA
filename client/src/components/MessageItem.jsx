@@ -261,7 +261,9 @@ const MessageItem = ({ message, type = "post" }) => {
                 Replay
                 <i className="fa fa-share ps-2 "></i>
               </Link>
-            ) : null}
+            ) : (
+              <LikeButton message={message} />
+            )}
           </div>
         </div>
       </div>
@@ -314,7 +316,8 @@ const MessageItem = ({ message, type = "post" }) => {
                 <div className="text-xs">
                   {formatDate(message.reply.timestamp)}
                 </div>
-                <LikeButton message={message} />
+                {/* //todo: add likes to replay */}
+                {/* <LikeButton message={message.reply} /> */}
               </div>
             </div>
           </div>
@@ -328,8 +331,8 @@ const MessageItem = ({ message, type = "post" }) => {
 const LikeButton = memo(({ message }) => {
   const [liked, setLiked] = useState(message.liked);
   const [count, setCount] = useState(message.likes);
-  const navigate = useNavigate();
-  const logedIn = useSelector((state) => state.auth.logedIn);
+  // const navigate = useNavigate();
+  // const logedIn = useSelector((state) => state.auth.logedIn);
 
   const likeHandler = async () => {
     // if (!logedIn) {
@@ -344,7 +347,7 @@ const LikeButton = memo(({ message }) => {
     setCount(count + variation);
     await (action ? axios.put : axios.delete)(
       `/messages/likes/message/${message._id}`
-    ).catch((err) => {
+    ).catch(() => {
       setLiked(!action);
       setCount(count - variation);
     });
