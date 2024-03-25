@@ -21,7 +21,13 @@ function App() {
   // const { data, isFetching } = autoAuth;
 
   useEffect(() => {
-    if (autoAuth?.data) dispatch(setCredentials(autoAuth.data));
+    if (autoAuth?.data) {
+      dispatch(setCredentials(autoAuth.data));
+      // login to OneSignal
+      OneSignalDeferred.push(function () {
+        OneSignal.login(autoAuth.data._id);
+      });
+    }
   }, [autoAuth?.data, dispatch]);
 
   useEffect(() => {

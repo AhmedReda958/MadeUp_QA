@@ -63,7 +63,7 @@ export const determineLoginType = (credentials) => {
     };
   } else {
     loginData = {
-      username: credentials.username,
+      username: credentials.username.toLowerCase(),
       password: credentials.password,
     };
   }

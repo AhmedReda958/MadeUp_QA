@@ -21,9 +21,6 @@ const authSlice = createSlice({
     setCredentials: (state, { payload }) => {
       state.userInfo = payload;
       state.logedin = true;
-      OneSignalDeferred.push(function () {
-        OneSignal.login(state.userInfo._id);
-      });
     },
     logout: (state) => {
       state.userInfo = {};
