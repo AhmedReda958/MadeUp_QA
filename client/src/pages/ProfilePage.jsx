@@ -23,6 +23,7 @@ import { Button } from "flowbite-react";
 import axios from "axios";
 import { share } from "@/redux/slices/appSlice";
 import useAlert from "@/utils/hooks/useAlert";
+import { CameraIcon } from "@heroicons/react/24/solid";
 
 const EmptyPage = () => {
   return (
@@ -189,7 +190,17 @@ const UserProfile = () => {
               )}
             </Page.Header>
             <div className="flex">
-              <ProfilePic data={response} className="w-24 h-24" />
+              <Link
+                to={userInfo.username === username && "/settings/profilePic"}
+                className="relative pointer"
+              >
+                <ProfilePic data={response} className="w-24 h-24" />
+                {userInfo.username === username && (
+                  <div>
+                    <CameraIcon className="w-7 h-7 text-alt bg-dark dark:bg-dark-alt  rounded-full absolute bottom-1 right-0 p-1 cursor-pointer" />
+                  </div>
+                )}
+              </Link>
 
               <div className="text-altcolor font-bold text-center grow flex items-center justify-around">
                 <div>

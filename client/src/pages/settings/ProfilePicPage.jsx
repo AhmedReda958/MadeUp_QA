@@ -8,7 +8,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { CameraIcon } from "@heroicons/react/24/solid";
 import useAlert from "@/utils/hooks/useAlert";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/authSlice";
 
 const ProfilePicPage = () => {
@@ -23,8 +23,10 @@ const ProfilePicPage = () => {
 
   const userInfo = useSelector((state) => state.auth.userInfo);
 
+  // hooks and functions
   const Alert = useAlert();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // select image
   const handleImageSelect = (event) => {
@@ -50,14 +52,14 @@ const ProfilePicPage = () => {
           Authorization: "Client-ID " + CLIENT_ID, // TODO: configure
         },
       })
-      .then(function (response) {
+      .then(async function (response) {
         const { link, deletehash } = response.data.data;
         // delete previous image
         if (userInfo.profilePicture.deletehash) {
-          deleteImage(userInfo.profilePicture.deletehash);
+          await deleteImage(userInfo.profilePicture.deletehash);
         }
         // apply new image
-        applyNewPic(link, deletehash);
+        await applyNewPic(link, deletehash);
         setLoading(false);
       })
       .catch(function (response) {
@@ -71,6 +73,8 @@ const ProfilePicPage = () => {
   };
   // handle profile picture delete
   const handleProfilePicDelete = async () => {
+    if (loading) return;
+
     setLoading(true);
     if (userInfo.profilePicture.deletehash) {
       await deleteImage(userInfo.profilePicture.deletehash);
@@ -79,7 +83,7 @@ const ProfilePicPage = () => {
       .patch("users", { profilePicture: { link: "", deletehash: "" } }) // remove profile picture
       .then((res) => {
         // update user info
-        setCredentials(res.data);
+        dispatch(setCredentials(res.data));
         Alert({ title: "Profile picture removed", type: "success" });
         navigate(`/${userInfo.username}`); // navigate to user profile
       })
@@ -92,6 +96,7 @@ const ProfilePicPage = () => {
 
   // delete image from imgur
   const deleteImage = async (deletehash) => {
+    const CLIENT_ID = "ea5139e02ebfd90";
     await axios
       .delete(`https://api.imgur.com/3/image/${deletehash}`, {
         headers: {
@@ -100,7 +105,7 @@ const ProfilePicPage = () => {
       })
       .catch((error) => {
         console.error(error);
-        throw new Error("Error deleting image");
+        Alert({ title: "Error deleting old image", type: "error" });
       });
   };
 
@@ -109,7 +114,7 @@ const ProfilePicPage = () => {
     await axios
       .patch("users", { profilePicture: { link, deletehash } })
       .then((res) => {
-        setCredentials(res.data);
+        dispatch(setCredentials(res.data));
         Alert({ title: "Profile updated", type: "success" });
         navigate(`/${userInfo.username}`);
       })
@@ -168,6 +173,7 @@ const ProfilePicPage = () => {
               color="dark"
               className="w-full mt-4 text cursor-pointer"
               htmlFor="imgUploader"
+              disabled={loading}
             >
               <CameraIcon className="w-6 h-6 me-3" />
               Choose new picture
