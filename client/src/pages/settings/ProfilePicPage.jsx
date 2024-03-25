@@ -55,7 +55,7 @@ const ProfilePicPage = () => {
       .then(async function (response) {
         const { link, deletehash } = response.data.data;
         // delete previous image
-        if (userInfo.profilePicture.deletehash) {
+        if (!!userInfo.profilePicture?.deletehash) {
           await deleteImage(userInfo.profilePicture.deletehash);
         }
         // apply new image
@@ -76,7 +76,7 @@ const ProfilePicPage = () => {
     if (loading) return;
 
     setLoading(true);
-    if (userInfo.profilePicture.deletehash) {
+    if (!!userInfo.profilePicture?.deletehash) {
       await deleteImage(userInfo.profilePicture.deletehash);
     }
     await axios
