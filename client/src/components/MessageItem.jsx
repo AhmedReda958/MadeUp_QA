@@ -219,6 +219,7 @@ const MessageItem = ({ message, type = "post" }) => {
               data={message.sender}
               className="w-14 h-14"
               annoymous={!message.sender}
+              showLastSeen
             />
           </Link>
         </div>
@@ -272,7 +273,11 @@ const MessageItem = ({ message, type = "post" }) => {
         <div className="flex mt-4">
           <div className="me-3 cursor-pointer">
             <Link to={message.receiver && "/" + message.receiver.username}>
-              <ProfilePic data={message.receiver} className="w-14 h-14" />
+              <ProfilePic
+                data={message.receiver}
+                className="w-14 h-14"
+                showLastSeen
+              />
             </Link>
           </div>
           <div className="w-full pb-6 border-b border-gray-300 dark:border-dark-alt">

@@ -25,7 +25,7 @@ import { share } from "@/redux/slices/appSlice";
 import useAlert from "@/utils/hooks/useAlert";
 import { CameraIcon } from "@heroicons/react/24/solid";
 import { Helmet } from "react-helmet";
-import { isOnline as isUserOnline } from "@/utils/userProfileHelpers";
+import { isUserOnline } from "@/utils/userProfileHelpers";
 
 const EmptyPage = () => {
   return (

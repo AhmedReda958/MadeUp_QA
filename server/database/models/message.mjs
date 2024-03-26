@@ -82,6 +82,7 @@ let userBriefProject = {
   username: 1,
   fullName: 1,
   profilePicture: 1,
+  lastSeen: 1,
   // TODO: add those later on
   // "hasStory", "verified", "online"
 };
@@ -349,7 +350,7 @@ messageSchema.statics.likes = function ({
     .then((docs) => docs.at(0));
 };
 
-messageSchema.statics.setLikeBy = function ({messageId, userId, status}) {
+messageSchema.statics.setLikeBy = function ({ messageId, userId, status }) {
   return this.updateOne(
     { _id: messageId },
     { [status ? "$addToSet" : "$pull"]: { likes: userId } }
@@ -363,7 +364,7 @@ messageSchema.statics.setLikeBy = function ({messageId, userId, status}) {
     });
 };
 
-messageSchema.statics.isLikedBy = function ({messageId, userId}) {
+messageSchema.statics.isLikedBy = function ({ messageId, userId }) {
   return this.aggregate([
     { $match: { _id: new ObjectId(messageId) } },
     {
@@ -421,7 +422,9 @@ messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
     {
       $project: Object.assign(
         messageProject,
-        isValidObjectId(userId) ? { liked: messageStages.likedBy(userId) } : null
+        isValidObjectId(userId)
+          ? { liked: messageStages.likedBy(userId) }
+          : null
       ),
     },
   ]);
