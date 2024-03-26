@@ -42,6 +42,9 @@ const userSchema = new Schema(
       },
       deletehash: { type: String },
     },
+    lastSeen: {
+      type: Date,
+    },
     //   friends: [
     //     {
     //       type: mongoose.Schema.Types.ObjectId,
