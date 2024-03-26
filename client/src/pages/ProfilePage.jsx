@@ -25,6 +25,7 @@ import { share } from "@/redux/slices/appSlice";
 import useAlert from "@/utils/hooks/useAlert";
 import { CameraIcon } from "@heroicons/react/24/solid";
 import { Helmet } from "react-helmet";
+import { isUserOnline } from "@/utils/userProfileHelpers";
 
 const EmptyPage = () => {
   return (
@@ -153,6 +154,7 @@ const ProfileMessages = ({ userId }) => {
 
 const UserProfile = () => {
   const username = useParams().username.toLowerCase();
+
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
   const user = useAxios({ url: `/users?username=${username}` });
@@ -160,6 +162,8 @@ const UserProfile = () => {
 
   const dispatch = useDispatch();
   const Alert = useAlert();
+
+  const isOnline = isUserOnline(response?.lastSeen);
 
   return (
     <Page header={false}>
@@ -203,10 +207,20 @@ const UserProfile = () => {
                 className="relative pointer"
               >
                 <ProfilePic data={response} className="w-24 h-24" />
-                {userInfo.username === username && (
+                {userInfo.username === username ? (
                   <div>
                     <CameraIcon className="w-7 h-7 text-alt bg-dark dark:bg-dark-alt  rounded-full absolute bottom-1 right-0 p-1 cursor-pointer" />
                   </div>
+                ) : (
+                  // check if online
+                  <>
+                    {isOnline && (
+                      <div className="absolute bottom-2 -right-10 flex items-center gap-1">
+                        <div className="w-5 h-5 bg-green-500 rounded-full  border-2 border-green-200"></div>
+                        <span className="text-sm text-green-500">online</span>
+                      </div>
+                    )}
+                  </>
                 )}
               </Link>
 
