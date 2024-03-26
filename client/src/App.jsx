@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { setCredentials } from "./redux/slices/authSlice";
 import { checkInternetConnection } from "./utils/handleConnection";
 import ShareDialog from "./components/ui/ShareDialog";
+import { Helmet } from "react-helmet";
 
 function App() {
   const app = useSelector((state) => state.app);
@@ -37,6 +38,13 @@ function App() {
   return (
     <div className={app.isDarkTheme ? "dark" : "light"}>
       <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
+        <Helmet>
+          <title>MadeUp</title>
+          <meta
+            name="description"
+            content="Send and recieve annonymous messages"
+          ></meta>
+        </Helmet>
         <main
           id="main-app"
           className="relative container w-full h-screen no-scrollbar max-w-[768px] mx-auto p-4 px-5 md-7 overflow-y-auto scroll-smooth"

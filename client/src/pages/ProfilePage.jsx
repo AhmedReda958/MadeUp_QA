@@ -24,6 +24,7 @@ import axios from "axios";
 import { share } from "@/redux/slices/appSlice";
 import useAlert from "@/utils/hooks/useAlert";
 import { CameraIcon } from "@heroicons/react/24/solid";
+import { Helmet } from "react-helmet";
 
 const EmptyPage = () => {
   return (
@@ -167,6 +168,13 @@ const UserProfile = () => {
           <UserNotFound />
         ) : (
           <>
+            <Helmet>
+              <title>{response.fullName} | MadeUp</title>
+              <meta
+                name="description"
+                content={response.bio || `@${response.username} profile`}
+              />
+            </Helmet>
             <Page.Header title={"@" + response.username}>
               {userInfo.username != username ? (
                 <div
