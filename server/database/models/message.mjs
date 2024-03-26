@@ -401,7 +401,6 @@ messageSchema.statics.likedBy = function ({
 
 // basic feed
 messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
-  console.log(userId, isValidObjectId(userId));
   return this.aggregate([
     {
       $match: {
