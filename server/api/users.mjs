@@ -18,11 +18,10 @@ router.get("/", authMiddleware, async (req, res, next) => {
     if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
     // if (req.userId != user._id) // TODO: hide private info
-
     // update last seen for the loged in user
     if (req.userId === user._id.toString()) {
       user.lastSeen = new Date();
-      User.updateOne({ _id: user._id }, { lastSeen: user.lastSeen });
+      await User.updateOne({ _id: user._id }, { lastSeen: user.lastSeen });
     }
 
     return res.status(200).json(user);
