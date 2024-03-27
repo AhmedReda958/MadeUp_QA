@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useState, useEffect, Fragment } from "react";
 import { Transition } from "@headlessui/react";
+import { IonContent, IonPage } from "@ionic/react";
 
 const Header = ({ title, children }) => {
   const [isSticky, setIsSticky] = useState(false);
@@ -85,18 +86,22 @@ const Page = (props) => {
   useEffect(() => setAnimate(true), []);
 
   return (
-    <div className={`${className}`}>
+    <IonPage className={`${className}`}>
       {header && <Header title={title} />}
-      <Transition
-        as={"div"}
-        show={animate}
-        enter="transform transition duration-[.4s] ease-out"
-        enterFrom="opacity-0 "
-        enterTo="opacity-100 "
-      >
-        <div className="px-30">{!loading ? children : <LoadingSpinner />}</div>
-      </Transition>
-    </div>
+      <IonContent>
+        <Transition
+          as={"div"}
+          show={animate}
+          enter="transform transition duration-[.4s] ease-out"
+          enterFrom="opacity-0 "
+          enterTo="opacity-100 "
+        >
+          <div className="px-30">
+            {!loading ? children : <LoadingSpinner />}
+          </div>
+        </Transition>
+      </IonContent>
+    </IonPage>
   );
 };
 

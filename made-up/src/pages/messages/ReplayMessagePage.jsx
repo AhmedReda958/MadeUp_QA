@@ -3,24 +3,20 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { formatDate } from "@/utils/helpers";
 import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useState } from "react";
-import { Link,  , useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import Page from "@/components/ui/Page";
 import { addAlert } from "@/redux/slices/appSlice";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 
-function ReplayMessagePage() {
-  const navigate = () => {};
-  let [searchParams, setSearchParams] = useSearchParams();
-
+function ReplayMessagePage({ match, history }) {
   let [replayText, setReplayText] = useState("");
   let [replayLoading, setReplayLoading] = useState(false);
 
-  // todo:hide query from user browser
-  const id = searchParams.get("id");
+  const id = match.params.id;
 
-  if (!id) navigate("/messages");
+  // if (!id) history.push("/messages");
 
   const messageData = useAxios({ url: `/messages/message/${id}` });
   const message = messageData.response;
