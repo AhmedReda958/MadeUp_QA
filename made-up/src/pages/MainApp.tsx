@@ -16,7 +16,11 @@ import UserProfile from "@/pages/ProfilePage";
 import ReplayMessagePage from "@/pages/messages/ReplayMessagePage";
 import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messages/MessagesPage";
-import Tab1 from "./tab1";
+import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
+import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
+import ShowMessagePage from "@/pages/messages/ShowMessagePage";
+import ProfilePicPage from "@/pages/settings/ProfilePicPage";
+import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
 function MainApp() {
   const app = useSelector((state) => state.app);
@@ -57,7 +61,20 @@ function MainApp() {
             <Route path="/user/:username" exact component={UserProfile} />
             <Route path="/notifications" exact component={NotificationPage} />
             <Route path="/messages" exact component={MessagesPage} />
-            {/* <Route path="/messages/replay" component={ReplayMessagePage} /> */}
+            <Route path="/messages/replay/:id" component={ReplayMessagePage} />
+            <Route path="/settings" exact component={SettingsPage} />
+
+            <Route path="/message/:id" component={ShowMessagePage} />
+            <Route
+              path="/settings/profilePic"
+              component={ProfilePicPage}
+              exact
+            />
+            <Route
+              path="/settings/info"
+              component={PersonalInfoSettingsPage}
+              exact
+            />
           </IonRouterOutlet>
           <Toolbar />
         </main>

@@ -1,5 +1,5 @@
 import Page from "@/components/ui/Page";
-import { Link,  , useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useAxios from "@/utils/hooks/useAxios";
 import MessageItem from "@/components/MessageItem";
 import { Button } from "flowbite-react";
@@ -37,9 +37,9 @@ const MsgNotFound = () => {
   );
 };
 
-const ShowMessagePage = () => {
+const ShowMessagePage = ({ match }) => {
   const navigate = () => {};
-  const { id } = useParams();
+  const id = match.params.id;
 
   const messageData = useAxios({ url: `/messages/message/${id}` });
   const { response, error, loading } = messageData;
@@ -55,7 +55,7 @@ const ShowMessagePage = () => {
             to={"/" + response?.receiver.username}
             className="w-full *:w-full *:justify-between mt-10 rounded-2xl shadow-md"
           >
-            <ProfilePic data={response.receiver} className="w-8 h-8" />
+            <ProfilePic data={response?.receiver} className="w-8 h-8" />
             <div>
               Send Message to
               <span className="truncate"> @{response?.receiver.username}</span>

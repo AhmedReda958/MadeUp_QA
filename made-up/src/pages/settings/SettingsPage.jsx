@@ -21,7 +21,7 @@ const settingsList = [
     title: "Personal information",
     desc: "your name, user name and bio",
     icon: <UserIcon />,
-    link: "info",
+    link: "/settings/info",
   },
   {
     title: "Genral",
@@ -51,10 +51,10 @@ const settingsList = [
   },
 ];
 
-const SettingsPage = () => {
+const SettingsPage = ({ history }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
-  const navigate = () => {};
+  const navigate = (link) => history.go(link);
 
   const commingSoonAlert = () =>
     dispatch(
@@ -71,7 +71,7 @@ const SettingsPage = () => {
     <Page title={"Settings"} className="z-50">
       <div className="flex items-center flex-col">
         {/* edit profile pic */}
-        <Link to="profilePic" className="relative pointer">
+        <Link to="/profilePic" className="relative pointer">
           <ProfilePic data={userInfo} className="w-24 h-24 shadow " />
           {/* edit profile pic */}
           <div>

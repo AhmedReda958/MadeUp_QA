@@ -202,12 +202,12 @@ const MessageMenu = ({ type, message }) => {
 
 // allowed types => [message , post]
 const MessageItem = ({ message, type = "post" }) => {
-  const navigate = () => {};
+  const navigate = (url) => history.push(url);
 
-  const navigateToMessagePage = () => {
-    if (type === "message") navigate("/messages/replay?id=" + message._id);
-    else if (type === "post") navigate("/message/" + message._id);
-  };
+  const messageUrl =
+    type === "message"
+      ? "/messages/replay?id=" + message._id
+      : "/message/" + message._id;
 
   return (
     <div className="pt-5 ">
@@ -253,18 +253,18 @@ const MessageItem = ({ message, type = "post" }) => {
             </div>
           </div>
           {/* content */}
-          <div
-            className="p-2 text-altcolor font-semibold font-body-play"
+          <Link
+            className="p-2 text-altcolor font-semibold font-body-play block"
             dir="rtl"
-            onClick={navigateToMessagePage}
+            to={messageUrl}
           >
             {message.content}
-          </div>
+          </Link>
           <div className="pt-2 pb-3 flex justify-between items-center">
             <div className="text-xs">{formatDate(message.timestamp)}</div>
             {type == "message" ? (
               <Link
-                to={"/messages/replay?id=" + message._id}
+                to={"/messages/replay/" + message._id}
                 className="button-lg "
               >
                 Replay
@@ -323,13 +323,13 @@ const MessageItem = ({ message, type = "post" }) => {
                 </span>
               </div>
               {/* content */}
-              <div
-                onClick={navigateToMessagePage}
-                className="p-2 text-altcolor font-semibold font-body-play"
+              <Link
+                to={messageUrl}
+                className="p-2 text-altcolor font-semibold font-body-play block"
                 dir="rtl"
               >
                 {message.reply.content}
-              </div>
+              </Link>
               <div className="pt-2 pb-3 flex justify-between items-center">
                 <div className="text-xs">
                   {formatDate(message.reply.timestamp)}
