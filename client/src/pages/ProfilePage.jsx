@@ -265,6 +265,7 @@ const UserProfile = () => {
                   onClick={() =>
                     dispatch(
                       share({
+                        text: "رسل لي رسالة سرية دون أن أعرف من انت",
                         url: window.location.origin + "/" + userInfo.username,
                       })
                     )
