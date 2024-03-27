@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import Page from "@/components/ui/Page";
 import { addAlert } from "@/redux/slices/appSlice";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 
 function ReplayMessagePage() {
   const navigate = useNavigate();
@@ -91,9 +92,14 @@ function ReplayMessagePage() {
               {/* header */}
               <div className="pb-2">
                 <div className="flex items-baseline">
-                  <h5 className="text-altcolor font-semibold text-lg  truncate max-w-52">
-                    {message.sender ? message.sender.fullName : "Anonymous"}
-                  </h5>
+                  <div className="flex items-center">
+                    <h5 className="text-altcolor font-semibold text-lg  truncate max-w-52 ">
+                      {message.sender ? message.sender.fullName : "Anonymous"}
+                    </h5>
+                    {message.sender?.verified && (
+                      <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-alt" />
+                    )}
+                  </div>
                   {message.sender && (
                     <span className="ps-2 pt-1 text-sm w-1/4 truncate">
                       @{message.sender.username}

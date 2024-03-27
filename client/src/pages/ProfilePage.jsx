@@ -23,7 +23,7 @@ import { Button } from "flowbite-react";
 import axios from "axios";
 import { share } from "@/redux/slices/appSlice";
 import useAlert from "@/utils/hooks/useAlert";
-import { CameraIcon } from "@heroicons/react/24/solid";
+import { CameraIcon, CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { Helmet } from "react-helmet";
 import { isUserOnline } from "@/utils/userProfileHelpers";
 
@@ -234,25 +234,14 @@ const UserProfile = () => {
               </div>
             </div>
             <div className="ps-2 mt-1">
-              <h2 className="text-altcolor font-bold text-xl flex">
-                {response.fullName || response.username}
-                <span
-                  style={{
-                    marginTop: 5,
-                    marginBlockStart: 5,
-                    width: 22,
-                    height: 22,
-                    display: "flex",
-                    background: "#6c63ff",
-                    WebkitMaskSize: 22,
-                    WebkitMaskPosition: "center",
-                    WebkitMaskRepeat: "no-repeat",
-                    WebkitMaskImage:
-                      "url(https://onvo.me/media/svg/verify2.svg)",
-                    marginLeft: 2,
-                  }}
-                />
-              </h2>
+              <div className="flex items-center">
+                <h2 className="text-altcolor font-bold text-xl ">
+                  {response.fullName || response.username}
+                </h2>
+                {response.verified && (
+                  <CheckBadgeIcon className="w-6 h-6 ms-1 text-alt" />
+                )}
+              </div>
               <p className="text-body dark:text-secondary-alt text-lg mt-1 mb-2">
                 {response.bio}
               </p>

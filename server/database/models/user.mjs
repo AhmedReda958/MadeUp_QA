@@ -45,6 +45,11 @@ const userSchema = new Schema(
     lastSeen: {
       type: Date,
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+
     //   friends: [
     //     {
     //       type: mongoose.Schema.Types.ObjectId,

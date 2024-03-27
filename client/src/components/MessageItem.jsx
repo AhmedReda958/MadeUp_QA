@@ -7,7 +7,10 @@ import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import useAlert from "@/utils/hooks/useAlert";
 import { share } from "@/redux/slices/appSlice";
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import {
+  HeartIcon as HeartIconSolid,
+  CheckBadgeIcon,
+} from "@heroicons/react/24/solid";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import likeSound from "@/assets/sounds/wow.mp3";
 import unLikeSound from "@/assets/sounds/ohShit.mp3";
@@ -229,10 +232,15 @@ const MessageItem = ({ message, type = "post" }) => {
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
             <Link to={message.sender && "/" + message.sender.username}>
               <div className="flex">
-                <h5 className="text-altcolor font-semibold truncate max-w-36">
-                  {" "}
-                  {message.sender ? message.sender.fullName : "Anonymous"}
-                </h5>
+                <div className="flex items-center">
+                  <h5 className="text-altcolor font-semibold truncate max-w-36">
+                    {" "}
+                    {message.sender ? message.sender.fullName : "Anonymous"}
+                  </h5>
+                  {message.sender?.verified && (
+                    <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-alt" />
+                  )}
+                </div>
                 {message.sender && (
                   <span className="ps-1 pt-1 text-sm truncate max-w-20">
                     @{message.sender.username}
@@ -286,12 +294,17 @@ const MessageItem = ({ message, type = "post" }) => {
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link to={message.receiver && "/" + message.receiver.username}>
                   <div className="flex">
-                    <h5 className="text-altcolor font-semibold truncate max-w-36">
-                      {" "}
-                      {message.receiver
-                        ? message.receiver.fullName
-                        : "Anonymous"}
-                    </h5>
+                    <div className="flex items-center">
+                      <h5 className="text-altcolor font-semibold truncate max-w-36 ">
+                        {" "}
+                        {message.receiver
+                          ? message.receiver.fullName
+                          : "Anonymous"}
+                      </h5>
+                      {message.receiver?.verified && (
+                        <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-alt" />
+                      )}
+                    </div>
                     {message.receiver && (
                       <span className="ps-1 pt-1 text-sm truncate max-w-20">
                         @{message.receiver.username}
