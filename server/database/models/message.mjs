@@ -83,8 +83,9 @@ let userBriefProject = {
   fullName: 1,
   profilePicture: 1,
   lastSeen: 1,
+  verified: 1,
   // TODO: add those later on
-  // "hasStory", "verified", "online"
+  // "hasStory"
 };
 
 messageStages.briefUsers = [

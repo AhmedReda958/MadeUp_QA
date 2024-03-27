@@ -55,6 +55,8 @@ router.patch(
     try {
       const updatedProfile = req.body; // TODO: validate
 
+      delete updatedProfile.verified;
+
       const user = await User.findById(req.userId);
       if (!user) return res.status(409).json({ code: "CONFLICT" }); // TODO: handle, the user is logged in but not saved in the database
 
