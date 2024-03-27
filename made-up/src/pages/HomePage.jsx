@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import ProfilePic from "@/components/ProfilePic";
 import Page from "@/components/ui/Page";
@@ -65,7 +65,7 @@ const Feed = () => {
   const auth = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = () => {};
 
   useEffect(() => {
     dispatch(fetchFeed());

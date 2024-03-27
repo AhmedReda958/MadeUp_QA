@@ -2,10 +2,10 @@ import { useState, useEffect, Fragment } from "react";
 import { useSelector } from "react-redux";
 
 import useAlert from "@/utils/hooks/useAlert";
-import { Link, useNavigate } from "react-router-dom";
 import LoginFrom from "./LoginFrom";
 import RegisterFrom from "./RegisterFrom";
 import { Transition } from "@headlessui/react";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   // component animations
@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const app = useSelector((state) => state.app);
 
-  const navigate = useNavigate();
+  const navigate = () => {};
   const Alert = useAlert();
 
   const { logedin, loading, error, userToken } = useSelector(

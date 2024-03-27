@@ -1,5 +1,5 @@
 import React, { Fragment, memo, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ProfilePic from "./ProfilePic";
 import { formatDate } from "@/utils/helpers";
@@ -202,7 +202,7 @@ const MessageMenu = ({ type, message }) => {
 
 // allowed types => [message , post]
 const MessageItem = ({ message, type = "post" }) => {
-  const navigate = useNavigate();
+  const navigate = () => {};
 
   const navigateToMessagePage = () => {
     if (type === "message") navigate("/messages/replay?id=" + message._id);
@@ -349,7 +349,7 @@ const MessageItem = ({ message, type = "post" }) => {
 const LikeButton = memo(({ message }) => {
   const [liked, setLiked] = useState(message.liked);
   const [count, setCount] = useState(message.likes);
-  // const navigate = useNavigate();
+  // const navigate = ()=>{};
   // const logedIn = useSelector((state) => state.auth.logedIn);
 
   const likeHandler = async () => {

@@ -7,7 +7,7 @@ import AvatarEditor from "react-avatar-editor";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { CameraIcon } from "@heroicons/react/24/solid";
 import useAlert from "@/utils/hooks/useAlert";
-import { useNavigate } from "react-router-dom";
+import {} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/authSlice";
 
@@ -25,7 +25,7 @@ const ProfilePicPage = () => {
 
   // hooks and functions
   const Alert = useAlert();
-  const navigate = useNavigate();
+  const navigate = () => {};
   const dispatch = useDispatch();
 
   // select image

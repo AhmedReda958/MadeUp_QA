@@ -1,5 +1,5 @@
 import Page from "@/components/ui/Page";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link,  , useParams } from "react-router-dom";
 import useAxios from "@/utils/hooks/useAxios";
 import MessageItem from "@/components/MessageItem";
 import { Button } from "flowbite-react";
@@ -38,7 +38,7 @@ const MsgNotFound = () => {
 };
 
 const ShowMessagePage = () => {
-  const navigate = useNavigate();
+  const navigate = () => {};
   const { id } = useParams();
 
   const messageData = useAxios({ url: `/messages/message/${id}` });

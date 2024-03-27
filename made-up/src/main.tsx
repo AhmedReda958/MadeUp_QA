@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import App from ".";
 import { Provider } from "react-redux";
 import store from "@/redux/index.js";
 import { Flowbite } from "flowbite-react";

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import {} from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
   const logedin = localStorage.logedin;
-  const navigate = useNavigate();
+  const navigate = () => {};
 
   useEffect(() => {
     if (!logedin) {

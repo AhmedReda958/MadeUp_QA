@@ -3,7 +3,7 @@ import React from "react";
 import ProfilePic from "@/components/ProfilePic";
 import { useSelector, useDispatch } from "react-redux";
 import { addAlert, share } from "@/redux/slices/appSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   InboxArrowDownIcon,
@@ -54,7 +54,7 @@ const settingsList = [
 const SettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = () => {};
 
   const commingSoonAlert = () =>
     dispatch(

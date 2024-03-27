@@ -7,14 +7,14 @@ import { useSelector } from "react-redux";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {} from "react-router-dom";
 import useAlert from "@/utils/hooks/useAlert";
 import { FormTextInput, FormTextarea } from "@/components/ui/FormElements";
 
 const PersonalInfoSettingsPage = () => {
   const userInfo = useSelector((state) => state.auth.userInfo);
 
-  const navigate = useNavigate();
+  const navigate = () => {};
   const Alert = useAlert();
 
   const validationSchema = Yup.object({

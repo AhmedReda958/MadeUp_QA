@@ -3,7 +3,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { formatDate } from "@/utils/helpers";
 import useAxios from "@/utils/hooks/useAxios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link,  , useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import Page from "@/components/ui/Page";
@@ -11,7 +11,7 @@ import { addAlert } from "@/redux/slices/appSlice";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 
 function ReplayMessagePage() {
-  const navigate = useNavigate();
+  const navigate = () => {};
   let [searchParams, setSearchParams] = useSearchParams();
 
   let [replayText, setReplayText] = useState("");

@@ -6,7 +6,6 @@ import { FormTextInput } from "@/components/ui/FormElements";
 import { Button } from "flowbite-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, Fragment, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Transition } from "@headlessui/react";
 
 const LoginFrom = () => {
@@ -19,7 +18,7 @@ const LoginFrom = () => {
   );
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = () => {};
 
   const submitData = (values, { setSubmitting }) => {
     let loginData = determineLoginType(values);
