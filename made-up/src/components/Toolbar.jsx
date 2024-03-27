@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { getNotificationsCount } from "@/redux/actions/notificationsActions";
@@ -6,8 +6,6 @@ import { Transition } from "@headlessui/react";
 import { IonItem, IonNavLink, IonRouterLink } from "@ionic/react";
 
 const iconClasses = "far";
-const activeClasses = "text-primary";
-const pendingClasses = "pending";
 
 const Toolbar = () => {
   // make transition for the toolbar
@@ -83,7 +81,12 @@ const Toolbar = () => {
       >
         <div className=" relative bg-dark  dark:bg-gray-300/70 text-white dark:text-dark backdrop-blur-lg max-w-96 m-auto h-14 text-xl rounded-t-[20px] rounded-b-[30px] flex items-center justify-around px-4">
           {links.map((link, index) => (
-            <Link key={index} to={link.to}>
+            <NavLink
+              key={index}
+              to={logedin || link.to === "/" ? link.to : "/login"}
+              activeClassName="text-primary"
+              exact
+            >
               <div className=" relative">
                 {link.count > 0 && (
                   <span className=" absolute -top-1 -right-2 rounded-full bg-primary w-4 h-4 text-xs text-white text-center">
@@ -93,7 +96,7 @@ const Toolbar = () => {
 
                 <i className={`${iconClasses} ${link.icon}`}></i>
               </div>
-            </Link>
+            </NavLink>
           ))}
         </div>
       </Transition>

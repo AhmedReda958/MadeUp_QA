@@ -89,7 +89,7 @@ const Page = (props) => {
   return (
     <IonPage className={`${className}`}>
       {header && <Header title={title} />}
-      <IonContent>
+      <IonContent className="ion-padding">
         <Transition
           as={"div"}
           show={animate}
