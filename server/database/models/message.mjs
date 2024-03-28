@@ -5,7 +5,7 @@ const {
   models,
   Types: { ObjectId },
 } = mongoose;
-import globalStages from "#database/stages.mjs";
+import paginationStages from "#database/stages/pagination.mjs";
 import userBriefProject from "#database/models/user/brief-project.mjs";
 import events from "#tools/events.mjs";
 
@@ -162,7 +162,7 @@ messageSchema.statics.userInbox = function ({
       },
     },
     { $sort: { timestamp: -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
     {
@@ -181,7 +181,7 @@ messageSchema.statics.sentByUser = function ({
   let pipeline = [
     { $match: { sender: new ObjectId(userId) } },
     { $sort: { timestamp: -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     ...(briefUsers ? messageStages.briefUsers : []),
     {
       $project: Object.assign(messageProject, {
@@ -213,7 +213,7 @@ messageSchema.statics.answeredByUser = function ({
       $match: match,
     },
     { $sort: { "reply.timestamp": -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
     {
@@ -377,7 +377,7 @@ messageSchema.statics.likedBy = function ({
 }) {
   return this.aggregate([
     { $match: { likes: new ObjectId(userId) } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     ...(briefUsers ? messageStages.briefUsers : []),
     {
       $project: Object.assign(
@@ -406,7 +406,7 @@ messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
       $sample: { size: pagination.limit },
     },
     // { $sort: { timestamp: -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
     {
