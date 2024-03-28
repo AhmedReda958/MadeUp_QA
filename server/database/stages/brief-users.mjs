@@ -1,4 +1,4 @@
-import userBriefProject from "#database/models/user/brief-project.mjs";
+import { userBriefProject } from "#database/models/user/filters.mjs";
 /**
  * @param {any} usersRecord
  * @param {import("mongoose").PipelineStage} setStage

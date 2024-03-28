@@ -158,7 +158,7 @@ const UserProfile = () => {
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
   const user = useAxios(
-    { url: `/users?username=${username}` },
+    { url: `/users/username/${username}` },
     { params: { limit: 30 } }
   );
   const { response, error, loading } = user;

@@ -226,7 +226,6 @@ router
         break;
       case "PIN":
         var state = !!req.body.state;
-        console.log(message.pinned, state);
         if (!!message.pinned == state)
           return res
             .status(409)

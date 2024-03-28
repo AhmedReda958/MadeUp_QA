@@ -18,8 +18,10 @@ const useAxios = (
         callback(res);
       })
       .catch((err) => {
-        setError(err.response.data.code);
-        setStatusCode(err.response.status);
+        if (err.response) {
+          setError(err.response.data?.code || err.response.data);
+          setStatusCode(err.response.status);
+        }
         console.error(err.message);
       })
       .finally(() => {

@@ -9,7 +9,7 @@ import { CameraIcon } from "@heroicons/react/24/solid";
 import useAlert from "@/utils/hooks/useAlert";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setCredentials } from "@/redux/slices/authSlice";
+import { setProfilePicture } from "@/redux/slices/authSlice";
 
 const ProfilePicPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -44,20 +44,19 @@ const ProfilePicPage = () => {
     formData.append("image", file);
 
     // upload image to imgur
-    const CLIENT_ID = "ea5139e02ebfd90";
+    const CLIENT_ID = "ea5139e02ebfd90"; // TODO: configure
     setLoading(true);
     await axios
       .post("https://api.imgur.com/3/image", formData, {
         headers: {
-          Authorization: "Client-ID " + CLIENT_ID, // TODO: configure
+          Authorization: "Client-ID " + CLIENT_ID,
         },
       })
       .then(async function (response) {
         const { link, deletehash } = response.data.data;
         // delete previous image
-        if (!!userInfo.profilePicture?.deletehash) {
+        if (!!userInfo.profilePicture?.deletehash)
           await deleteImage(userInfo.profilePicture.deletehash);
-        }
         // apply new image
         await applyNewPic(link, deletehash);
         setLoading(false);
@@ -76,14 +75,12 @@ const ProfilePicPage = () => {
     if (loading) return;
 
     setLoading(true);
-    if (!!userInfo.profilePicture?.deletehash) {
+    if (!!userInfo.profilePicture?.deletehash)
       await deleteImage(userInfo.profilePicture.deletehash);
-    }
     await axios
-      .patch("users", { profilePicture: { link: "", deletehash: "" } }) // remove profile picture
+      .patch("users/me", { profilePicture: null }) // remove profile picture
       .then((res) => {
-        // update user info
-        dispatch(setCredentials(res.data));
+        dispatch(setProfilePicture(null));
         Alert({ title: "Profile picture removed", type: "success" });
         navigate(`/${userInfo.username}`); // navigate to user profile
       })
@@ -96,7 +93,6 @@ const ProfilePicPage = () => {
 
   // delete image from imgur
   const deleteImage = async (deletehash) => {
-    const CLIENT_ID = "ea5139e02ebfd90";
     await axios
       .delete(`https://api.imgur.com/3/image/${deletehash}`, {
         headers: {
@@ -111,10 +107,13 @@ const ProfilePicPage = () => {
 
   // apply new image to user
   const applyNewPic = async (link, deletehash) => {
+    let profilePicture = { link, deletehash };
     await axios
-      .patch("users", { profilePicture: { link, deletehash } })
+      .patch("users/me", { profilePicture })
       .then((res) => {
-        dispatch(setCredentials(res.data));
+        if (!res.data.updated.includes("profilePicture"))
+          throw new Error("Server denied profile picture update.");
+        dispatch(setProfilePicture(profilePicture));
         Alert({ title: "Profile updated", type: "success" });
         navigate(`/${userInfo.username}`);
       })
