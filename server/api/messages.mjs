@@ -274,8 +274,7 @@ router
       Object.assign(
         {
           messageId: req.params.messageId,
-          usersId: "usersId" in req.query,
-          usersBrief: "usersBrief" in req.query,
+          usersView: req.query.usersView?.toLowerCase()
         },
         req.pagination
       )
