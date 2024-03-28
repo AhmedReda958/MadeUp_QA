@@ -4,44 +4,9 @@ import { useState, useEffect } from "react";
 import { IonContent, IonHeader, IonPage } from "@ionic/react";
 
 const Header = ({ title, children }) => {
-  const [isSticky, setIsSticky] = useState(false);
-  const [isShown, setIsShown] = useState(true);
-
-  useEffect(() => {
-    const main = document.querySelector("#main-app");
-
-    const onScroll = () => {
-      let lastScroll = 0;
-      main.addEventListener("scroll", () => {
-        let currentScroll = main.scrollTop;
-
-        setIsSticky(currentScroll < lastScroll && currentScroll > 100);
-        setIsShown(currentScroll < lastScroll || currentScroll < 650);
-
-        lastScroll = currentScroll;
-      });
-    };
-
-    onScroll();
-
-    return () => {
-      main.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
   return (
-    <IonHeader
-      mode="ios"
-      className={`ion-no-border bg-maincolor  ${
-        isSticky && "fixed top-0 left-0 py-0 mb-0"
-      }`}
-    >
-      <div
-        className={`flex justify-between items-center ion-padding ${
-          isSticky &&
-          "m-auto  w-full  px-5 max-w-[768px] drop-shadow-sm bg-maincolor"
-        }`}
-      >
+    <IonHeader mode="ios" className="ion-no-border bg-maincolor">
+      <div className="flex justify-between items-center ion-padding">
         <div className="flex items-center">
           <h1 className="font-bold text-2xl font-logo text-black dark:text-white ps-1">
             MadeUp
