@@ -28,3 +28,31 @@ export default function briefUsersStages(usersRecord, setStage = {}) {
     },
   ];
 }
+
+/**
+ * @param {string[]} usersPaths 
+ */
+export function briefUsersReplacingSetStage(usersPaths) {
+  return Object.fromEntries([
+    ...usersPaths.map((user) => [
+      user,
+      {
+        $ifNull: [
+          {
+            $first: {
+              $filter: {
+                input: "$_users",
+                as: "user",
+                cond: {
+                  $eq: ["$$user._id", `$${user}`],
+                },
+                limit: 1,
+              },
+            },
+          },
+          `$${user}`,
+        ],
+      },
+    ]),
+  ]);
+}

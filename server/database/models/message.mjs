@@ -5,7 +5,10 @@ const {
   models,
   Types: { ObjectId },
 } = mongoose;
-import { paginationStages, briefUsersStages } from "#database/stages/index.mjs";
+import paginationStages from "#database/stages/pagination.mjs";
+import briefUsersStages, {
+  briefUsersReplacingSetStage,
+} from "#database/stages/brief-users.mjs";
 import events from "#tools/events.mjs";
 
 const messageSchema = new Schema({
@@ -79,28 +82,7 @@ const usersPaths = Object.keys(messageSchema.paths).filter(
 
 messageStages.briefUsers = briefUsersStages(
   usersPaths.map((user) => `$${user}`),
-  Object.fromEntries([
-    ...usersPaths.map((user) => [
-      user,
-      {
-        $ifNull: [
-          {
-            $first: {
-              $filter: {
-                input: "$_users",
-                as: "user",
-                cond: {
-                  $eq: ["$$user._id", `$${user}`],
-                },
-                limit: 1,
-              },
-            },
-          },
-          `$${user}`,
-        ],
-      },
-    ]),
-  ])
+  briefUsersReplacingSetStage(usersPaths)
 );
 
 messageStages.briefLikesUsers = briefUsersStages(
