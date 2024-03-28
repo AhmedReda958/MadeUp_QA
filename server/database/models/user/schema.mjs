@@ -94,7 +94,4 @@ const schema = new mongoose.Schema(definition, options);
 schema.index({ username: 1 }, { name: "username", unique: true });
 schema.index({ email: 1 }, { name: "email", unique: true });
 
-import methods from "./methods.mjs";
-Object.keys(methods).forEach(methodName => schema.method[methodName] = methods[methodName]);
-
 export default schema;

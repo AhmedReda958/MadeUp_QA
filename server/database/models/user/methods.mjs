@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
+import schema from "./schema.mjs";
 
-export default {
-  async comparePassword(candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
-  },
+schema.methods.comparePassword = function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
