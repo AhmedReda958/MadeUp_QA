@@ -328,7 +328,6 @@ messageSchema.statics.likedBy = function ({
   ]).exec();
 };
 
-// basic feed
 messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
   return this.aggregate([
     {
@@ -341,6 +340,7 @@ messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
       },
     },
     {
+      // TODO: following users algorithm
       $sample: { size: pagination.limit },
     },
     // { $sort: { timestamp: -1 } },

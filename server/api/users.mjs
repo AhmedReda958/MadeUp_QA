@@ -20,6 +20,7 @@ router.get("/", authMiddleware, async (req, res, next) => {
     // if (req.userId != user._id) // TODO: hide private info
     // update last seen for the loged in user
     if (req.userId === user._id.toString()) {
+      // TODO: enhance is online logic
       user.lastSeen = new Date();
       await User.updateOne({ _id: user._id }, { lastSeen: user.lastSeen });
     }
