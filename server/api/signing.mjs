@@ -1,7 +1,7 @@
 const { JWT_SECRET_KEY } = process.env;
 const SIGNING_EXPIRY = "30d"; // TODO: configure
 import DatabaseError from "#errors/database.mjs";
-import User from "#database/models/user.mjs";
+import User from "#database/models/user/index.mjs";
 import jwt from "jsonwebtoken";
 import { CHARSET, randomString } from "#utils/random.mjs";
 import express from "express";

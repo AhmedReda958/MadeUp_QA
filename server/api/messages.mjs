@@ -1,5 +1,5 @@
 import DatabaseError from "#errors/database.mjs";
-import User from "#database/models/user.mjs";
+import User from "#database/models/user/index.mjs";
 import Message from "#database/models/message.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {

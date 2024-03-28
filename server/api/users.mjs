@@ -1,4 +1,4 @@
-import User from "#database/models/user.mjs";
+import User from "#database/models/user/index.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,

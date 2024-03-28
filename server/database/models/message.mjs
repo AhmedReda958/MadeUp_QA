@@ -6,6 +6,7 @@ const {
   Types: { ObjectId },
 } = mongoose;
 import globalStages from "#database/stages.mjs";
+import userBriefProject from "#database/models/user/brief-project.mjs";
 import events from "#tools/events.mjs";
 
 const messageSchema = new Schema({
@@ -76,17 +77,6 @@ messageStages.hideSenderIfAnonymous = {
 let internalUsers = Object.keys(messageSchema.paths).filter(
   (path) => messageSchema.paths[path].options.ref == "User"
 );
-
-let userBriefProject = {
-  _id: 1,
-  username: 1,
-  fullName: 1,
-  profilePicture: 1,
-  lastSeen: 1,
-  verified: 1,
-  // TODO: add those later on
-  // "hasStory"
-};
 
 messageStages.briefUsers = [
   {
