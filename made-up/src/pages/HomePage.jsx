@@ -30,7 +30,7 @@ const HomePage = () => {
             </button>
             {auth.logedin && (
               <Link
-                to={`/${auth.userInfo.username}`}
+                to={`/user/${auth.userInfo.username}`}
                 className="ps-4 drop-shadow-xl"
               >
                 <ProfilePic
