@@ -206,8 +206,8 @@ const MessageItem = ({ message, type = "post" }) => {
 
   const messageUrl =
     type === "message"
-      ? "/messages/replay?id=" + message._id
-      : "/message/" + message._id;
+      ? "/messages/replay/" + message._id
+      : "/messages/" + message._id;
 
   return (
     <div className="pt-5 ">

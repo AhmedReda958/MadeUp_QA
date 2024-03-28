@@ -38,7 +38,7 @@ import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage"
 function MainApp() {
   const [selectedTab, setSelectedTab] = useState("home");
   const app = useSelector((state) => state.app);
-  const { userToken, logedin } = useSelector((state) => state.auth);
+  const { userToken, logedin, userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   // automatically authenticate user if token is found
   const autoAuth =
@@ -84,26 +84,29 @@ function MainApp() {
                 exact
                 render={() => <NotificationPage />}
               />
+              {/* messages */}
               <Route path="/messages" exact render={() => <MessagesPage />} />
-
               <Route
                 path="/messages/replay/:id"
                 component={ReplayMessagePage}
+                exact
               />
-              <Route path="/settings" exact component={SettingsPage} />
-
-              <Route path="/message/:id" component={ShowMessagePage} />
+              <Route path="/messages/:id" exact component={ShowMessagePage} />
               <Route
                 path="/settings/profilePic"
                 component={ProfilePicPage}
                 exact
               />
+              {/* settings */}
+              <Route path="/settings" exact component={SettingsPage} />
               <Route
                 path="/settings/info"
                 component={PersonalInfoSettingsPage}
                 exact
               />
             </IonRouterOutlet>
+
+            {/* tool bar */}
             <IonTabBar slot="bottom" translucent>
               <IonTabButton tab="home" href="/home">
                 <HomeIcon className="w-6 h-6" />
@@ -114,7 +117,7 @@ function MainApp() {
               <IonTabButton tab="messages" href="/messages">
                 <EnvelopeIcon className="w-6 h-6" />
               </IonTabButton>
-              <IonTabButton tab="profile" href="/user/:username">
+              <IonTabButton tab="profile" href={"/user/" + userInfo.username}>
                 <UserIcon className="w-6 h-6" />
               </IonTabButton>
             </IonTabBar>

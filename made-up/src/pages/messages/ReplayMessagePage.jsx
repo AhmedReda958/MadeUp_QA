@@ -16,7 +16,7 @@ function ReplayMessagePage({ match, history }) {
 
   const id = match.params.id;
 
-  // if (!id) history.push("/messages");
+  if (!id) history.push("/messages");
 
   const messageData = useAxios({ url: `/messages/message/${id}` });
   const message = messageData.response;

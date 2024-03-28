@@ -52,7 +52,7 @@ const ShowMessagePage = ({ match }) => {
           <Button
             color="dark"
             as={Link}
-            to={"/" + response?.receiver.username}
+            to={"/user/" + response?.receiver.username}
             className="w-full *:w-full *:justify-between mt-10 rounded-2xl shadow-md"
           >
             <ProfilePic data={response?.receiver} className="w-8 h-8" />
