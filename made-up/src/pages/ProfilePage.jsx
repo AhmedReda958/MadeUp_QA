@@ -168,7 +168,7 @@ const UserProfile = () => {
   const isOnline = isUserOnline(response?.lastSeen);
 
   return (
-    <Page header={false}>
+    <Page header={false} backTo="/home">
       {!loading ? (
         error ? (
           <UserNotFound />

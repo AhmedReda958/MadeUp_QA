@@ -107,7 +107,7 @@ const NotificationPage = () => {
   const isLoading = loading && notifications.length === 0;
 
   return (
-    <Page title={"Notification"} loading={isLoading}>
+    <Page title={"Notification"} backTo="/home" loading={isLoading}>
       {notifications.length > 0 ? (
         notifications.map((item) => {
           return <NotificationItem data={item} key={item._id} />;

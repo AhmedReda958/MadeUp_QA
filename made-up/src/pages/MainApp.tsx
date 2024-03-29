@@ -31,7 +31,7 @@ import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messages/MessagesPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
 import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
-import ShowMessagePage from "@/pages/messages/ShowMessagePage";
+import ShowMessagePage from "@/pages/messages/ShowMessagePage.tsx";
 import ProfilePicPage from "@/pages/settings/ProfilePicPage";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
@@ -73,7 +73,7 @@ function MainApp() {
           <IonTabs>
             <IonRouterOutlet>
               <Redirect exact path="/" to="/home" />
-              <Route path="/home" exact render={() => <HomePage />} />
+              <Route path="/home" render={() => <HomePage />} />
               <Route
                 path="/user/:username"
                 exact
@@ -86,24 +86,25 @@ function MainApp() {
               />
               {/* messages */}
               <Route path="/messages" exact render={() => <MessagesPage />} />
+              <Route path="/messages/replay/:id" exact>
+                {({ match }) => <ReplayMessagePage match={match} />}
+              </Route>
               <Route
-                path="/messages/replay/:id"
-                component={ReplayMessagePage}
+                path="/messages/:id"
+                render={({ match }) => <ShowMessagePage match={match} />}
                 exact
               />
-              <Route path="/messages/:id" exact component={ShowMessagePage} />
-              <Route
-                path="/settings/profilePic"
-                component={ProfilePicPage}
-                exact
-              />
+
               {/* settings */}
-              <Route path="/settings" exact component={SettingsPage} />
-              <Route
-                path="/settings/info"
-                component={PersonalInfoSettingsPage}
-                exact
-              />
+              <Route path="/settings" exact>
+                <SettingsPage />
+              </Route>
+              <Route path="/settings/info" exact>
+                <PersonalInfoSettingsPage />
+              </Route>
+              <Route path="/settings/profilePic" exact>
+                <ProfilePicPage />
+              </Route>
             </IonRouterOutlet>
 
             {/* tool bar */}

@@ -125,7 +125,7 @@ const ProfilePicPage = () => {
   };
 
   return (
-    <Page title="Profile Picture">
+    <Page title="Profile Picture" backTo="/settings">
       <form onSubmit={handleImageUpload}>
         <input
           type="file"

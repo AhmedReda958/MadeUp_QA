@@ -68,7 +68,7 @@ function ReplayMessagePage({ match, history }) {
   };
 
   return (
-    <Page title={"Replay"} loading={messageData.loading}>
+    <Page title={"Replay"} backTo="/messages" loading={messageData.loading}>
       {!messageData.loading ? (
         <div className=" h-full">
           <div className="flex mb-8 post_after after:mt-8">

@@ -50,7 +50,7 @@ const PersonalInfoSettingsPage = () => {
   };
 
   return (
-    <Page title="Profile Info">
+    <Page title="Profile Info" backTo="/settings">
       <div className="flex justify-center">
         <img
           src={profileInfoImg}

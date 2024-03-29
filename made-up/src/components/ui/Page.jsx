@@ -3,7 +3,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useState, useEffect } from "react";
 import { IonContent, IonHeader, IonPage } from "@ionic/react";
 
-const Header = ({ title, children }) => {
+const Header = ({ title, backTo = "/home", children }) => {
   return (
     <IonHeader mode="ios" className="ion-no-border bg-maincolor">
       <div className="flex justify-between items-center ion-padding">
@@ -22,7 +22,7 @@ const Header = ({ title, children }) => {
         ) : (
           //
           <Link
-            to={"../"}
+            to={backTo}
             className="pt-1 pe-3 cursor-pointer transition-all hover:text-primary duration-100 ease-in-out"
           >
             <i className="fa-solid fa-arrow-left"></i>
@@ -34,7 +34,14 @@ const Header = ({ title, children }) => {
 };
 
 const Page = (props) => {
-  const { title, children, className, loading = false, header = true } = props;
+  const {
+    title,
+    children,
+    backTo = "/home",
+    className,
+    loading = false,
+    header = true,
+  } = props;
 
   // component animations
   const [animate, setAnimate] = useState(false);
@@ -42,7 +49,7 @@ const Page = (props) => {
 
   return (
     <IonPage fullscreen={true} className={`${className}`}>
-      {header && <Header title={title} />}
+      {header && <Header title={title} backTo={backTo} />}
       <IonContent fullscreen className="ion-padding">
         <div className="px-30">{!loading ? children : <LoadingSpinner />}</div>
       </IonContent>

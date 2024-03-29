@@ -68,10 +68,10 @@ const SettingsPage = ({ history }) => {
     link ? navigate(link) : commingSoonAlert();
   };
   return (
-    <Page title={"Settings"} className="z-50">
+    <Page title={"Settings"} backTo="/home" className="z-50">
       <div className="flex items-center flex-col">
         {/* edit profile pic */}
-        <Link to="/profilePic" className="relative pointer">
+        <Link to="/settings/profilePic" className="relative pointer">
           <ProfilePic data={userInfo} className="w-24 h-24 shadow " />
           {/* edit profile pic */}
           <div>
@@ -84,10 +84,11 @@ const SettingsPage = ({ history }) => {
       </div>
       <div className="mt-3 py-2">
         {settingsList.map((item, index) => (
-          <div
+          <Link
             key={index}
             className="flex items-center  ps-2 pe-4 py-3 mb-3 rounded-xl bg-altcolor shadow cursor-pointer  hover:opacity-90 "
-            onClick={() => redirectToLink(item.link)}
+            to={item.link ? item.link : "#"}
+            onClick={() => !item.link && commingSoonAlert()}
           >
             <div className="px-2 me-1 *:w-8 *:h-8 text-altcolor">
               {item.icon}
@@ -99,7 +100,7 @@ const SettingsPage = ({ history }) => {
               </div>
               <ChevronRightIcon className="w-4 h-4" />
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </Page>

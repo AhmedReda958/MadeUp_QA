@@ -33,7 +33,7 @@ function MessagesPage() {
   const isLoading = messagesLoading && messages.length === 0;
 
   return (
-    <Page title={"Messages"} loading={isLoading}>
+    <Page title={"Messages"} backTo="/home" loading={isLoading}>
       {messages.length > 0 ? (
         <>
           {messages.map((message) => (
