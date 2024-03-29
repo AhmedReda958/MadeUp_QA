@@ -30,3 +30,4 @@ yarn-error.log*
 
 # envriorment variables
 .env
+resources/android/**/*
