@@ -158,8 +158,7 @@ const UserProfile = () => {
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
   const user = useAxios(
-    { url: `/users/username/${username}` },
-    { params: { limit: 30 } }
+    { url: `/users/username/${username}` }
   );
   const { response, error, loading } = user;
 
@@ -167,6 +166,20 @@ const UserProfile = () => {
   const Alert = useAlert();
 
   const isOnline = isUserOnline(response?.lastSeen);
+
+  const followHandler = async () => {
+    let action = !response.followed;
+    console.log(response.followed, action)
+    await axios[action ? "put" : "delete"](
+      `/users/${response?._id}/follow/`
+    ).then(response => {
+      Alert({type: "success", title: action ? "Followed" : "Unfollowed"});
+      window.location.reload(); // TODO: enhance                                 
+    }).catch(err => {
+      console.error(err.message);
+      Alert({type: "error", title: "Unable to " + (action ? "follow" : "unfollow")});
+    });
+  };
 
   return (
     <Page header={false}>
@@ -186,14 +199,13 @@ const UserProfile = () => {
               {userInfo.username != username ? (
                 <div
                   className="p-3 text-lg cursor-pointer text-primary dark:text-white "
-                  onClick={() =>
-                    Alert({
-                      title: "Coming soon!",
-                      type: "comingsoon",
-                    })
-                  }
+                  onClick={followHandler}
                 >
-                  <i className="fa fa-user-plus"></i>
+                  <i
+                    className={`fa fa-user-${response.followed ? "minus" : "plus"} ${
+                      response.followed && "text-red-600"
+                    }`}
+                  ></i>
                 </div>
               ) : (
                 <Link

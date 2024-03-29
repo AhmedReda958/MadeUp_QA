@@ -1,8 +1,10 @@
 import User from "#database/models/user/index.mjs";
+import Follow from "#database/models/follow/index.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,
 } from "#middlewares/authorization.mjs";
+import paginationMiddleware from "#middlewares/pagination.mjs";
 import {
   allowedUserUpdates,
   privateUserData,
@@ -56,11 +58,11 @@ router.all(
 );
 
 router.use(["/me", "/me/*"], authMiddleware, requiredAuthMiddleware);
-router.all("/me", async (req, res, next) => {
+router.all("/me", (req, res, next) => {
   req.url = "/" + req.userId;
   next("route");
 });
-router.all("/me/*", async (req, res, next) => {
+router.all("/me/*", (req, res, next) => {
   req.url = "/" + req.userId + req.url.slice(3);
   next("route");
 });
@@ -69,7 +71,7 @@ fetchFromUsernameRoutes.push(
   (req, urlPaths) => req.method == "GET" && urlPaths.length === 0
 );
 
-router.use("/:userId", authMiddleware);
+router.use(["/:userId", "/:userId/*"], authMiddleware);
 router
   .route("/:userId")
   .get(async (req, res, next) => {
@@ -79,13 +81,18 @@ router
         "myUser" in req
           ? req.myUser
           : isValidObjectId(userId)
-          ? await User.findById(userId, { _id: 1 })
+          ? await User.findById(userId)
           : null;
       if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
       let view = user.toObject();
-      if (req.userId != user._id)
+      if (req.userId != user._id) {
         for (let key of privateUserData) delete view[key];
+        view.followed = !!await Follow.followSince({
+          follower: req.userId,
+          following: userId,
+        });
+      }
 
       if (req.userId === user._id.toString())
         // TODO: enhance is online logic
@@ -131,5 +138,68 @@ router
       next(err);
     }
   });
+
+router.use("/:userId/follow", requiredAuthMiddleware);
+router
+  .route("/:userId/follow")
+  .get((req, res, next) => {
+    Follow.followSince({
+      follower: req.userId,
+      following: req.params.userId,
+    })
+      .then((timestamp) => {
+        if (!timestamp) return res.status(200).json({ followed: false });
+        res.status(200).send({ followed: true, timestamp });
+      })
+      .catch(next);
+  })
+  .put((req, res, next) => {
+    new Follow({
+      follower: req.userId,
+      following: req.params.userId,
+      timestamp: new Date(),
+    })
+      .save()
+      .then((follow) =>
+        res.status(200).json({ followed: true, timestamp: follow.timestamp })
+      )
+      .catch((err) => {
+        if (err.name === "MongoServerError" && err.code === 11000)
+          return res.status(400).json({ code: "ALREADY_FOLLOWED" });
+        next(err);
+      });
+  })
+  .delete((req, res, next) => {
+    Follow.deleteOne({
+      follower: req.userId,
+      following: req.params.userId,
+    })
+      .then((result) => {
+        if (result.deletedCount === 0)
+          return res.status(400).json({ code: "NOT_FOLLOWED" });
+        res.status(200).json({ followed: false });
+      })
+      .catch(next);
+  });
+
+router.get("/:userId/followers", paginationMiddleware, (req, res, next) => {
+  Follow.followers({
+    userId: req.params.userId,
+    pagination: req.pagination,
+    briefUsers: !("onlyids" in req.query),
+  })
+    .then((followers) => res.status(200).send(followers))
+    .catch(next);
+});
+
+router.get("/:userId/following", paginationMiddleware, (req, res, next) => {
+  Follow.following({
+    userId: req.params.userId,
+    pagination: req.pagination,
+    briefUsers: !("onlyids" in req.query),
+  })
+    .then((following) => res.status(200).send(following))
+    .catch(next);
+});
 
 export default router;

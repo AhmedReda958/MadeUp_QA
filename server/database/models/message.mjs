@@ -1,3 +1,4 @@
+// TODO: distinct structure like other models
 import mongoose, { isValidObjectId } from "mongoose";
 const {
   Schema,
