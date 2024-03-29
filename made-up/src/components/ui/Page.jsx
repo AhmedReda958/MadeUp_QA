@@ -5,8 +5,8 @@ import { IonContent, IonHeader, IonPage } from "@ionic/react";
 
 const Header = ({ title, backTo = "/home", children }) => {
   return (
-    <IonHeader mode="ios" className="ion-no-border bg-maincolor">
-      <div className="flex justify-between items-center ion-padding">
+    <IonHeader mode="ios" className="ion-padding-horizontal bg-maincolor">
+      <div className="flex justify-between items-center h-14">
         <div className="flex items-center">
           <h1 className="font-bold text-2xl font-logo text-black dark:text-white ps-1">
             MadeUp
