@@ -157,29 +157,36 @@ const UserProfile = () => {
 
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
-  const user = useAxios(
-    { url: `/users/username/${username}` }
-  );
+  const [followingProcess, setFollowingProcess] = useState(true);
+  const [followed, setFollowed] = useState(false);
+  const followHandler = async () => {
+    if (followingProcess) return;
+    setFollowingProcess(true);
+    let action = !followed;
+    await axios[action ? "put" : "delete"](`/users/${response?._id}/follow/`)
+      .then((response) => {
+        Alert({ type: "success", title: action ? "Followed" : "Unfollowed" });
+        setFollowed(action);
+      })
+      .catch((err) => {
+        console.error(err.message);
+        Alert({
+          type: "error",
+          title: "Unable to " + (action ? "follow" : "unfollow"),
+        });
+      }).finally(() => setFollowingProcess(false));
+  };
+
+  const user = useAxios({ url: `/users/username/${username}` }, (res) => {
+    if (res.status === 200) setFollowed(res.data.followed);
+    setFollowingProcess(false);
+  });
   const { response, error, loading } = user;
 
   const dispatch = useDispatch();
   const Alert = useAlert();
 
   const isOnline = isUserOnline(response?.lastSeen);
-
-  const followHandler = async () => {
-    let action = !response.followed;
-    console.log(response.followed, action)
-    await axios[action ? "put" : "delete"](
-      `/users/${response?._id}/follow/`
-    ).then(response => {
-      Alert({type: "success", title: action ? "Followed" : "Unfollowed"});
-      window.location.reload(); // TODO: enhance                                 
-    }).catch(err => {
-      console.error(err.message);
-      Alert({type: "error", title: "Unable to " + (action ? "follow" : "unfollow")});
-    });
-  };
 
   return (
     <Page header={false}>
@@ -202,8 +209,8 @@ const UserProfile = () => {
                   onClick={followHandler}
                 >
                   <i
-                    className={`fa fa-user-${response.followed ? "minus" : "plus"} ${
-                      response.followed && "text-red-600"
+                    className={`fa fa-user-${followed ? "minus" : "plus"} ${
+                      followed && "text-red-600"
                     }`}
                   ></i>
                 </div>
