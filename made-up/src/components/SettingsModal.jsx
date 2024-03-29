@@ -25,7 +25,7 @@ const SettingsModal = (props) => {
             className="hover:opacity-80 p-3 pt-4  flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt"
             onClick={() => {
               dispatch(setTheme());
-              // close();
+              close();
             }}
           >
             {isDarkTheme ? (
@@ -52,7 +52,7 @@ const SettingsModal = (props) => {
               className="hover:opacity-80 p-3 pt-4 flex items-center justify-start flex-col font-display cursor-pointer shadow-md shadow-dark-alt"
               onClick={() => {
                 dispatch(logout());
-                setOpenSettings(false);
+                close();
               }}
             >
               <i className="fa-solid fa-arrow-right-from-bracket text-3xl"></i>

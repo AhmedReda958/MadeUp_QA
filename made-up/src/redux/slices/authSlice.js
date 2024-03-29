@@ -25,9 +25,9 @@ const authSlice = createSlice({
     logout: (state) => {
       state.userInfo = {};
       state.logedin = false;
-      OneSignalDeferred.push(function () {
-        OneSignal.logout();
-      });
+      // OneSignalDeferred.push(function () {
+      //   OneSignal.logout();
+      // });
       localStorage.clear();
       window.location.reload();
     },

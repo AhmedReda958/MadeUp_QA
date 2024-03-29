@@ -5,7 +5,7 @@ import useAlert from "@/utils/hooks/useAlert";
 import LoginFrom from "./LoginFrom";
 import RegisterFrom from "./RegisterFrom";
 import { Transition } from "@headlessui/react";
-import { Link } from "react-router-dom";
+import { IonPage } from "@ionic/react";
 
 const LoginPage = () => {
   // component animations
@@ -33,21 +33,21 @@ const LoginPage = () => {
   }, [error]);
 
   return (
-    <Transition as={Fragment} show={animate}>
-      <div className={`${app.isDarkTheme ? "dark" : "light"}`}>
+    <IonPage>
+      <Transition as={Fragment} show={animate}>
         <main className="font-body min-h-screen min-w-screen  bg-dark-alt text-white bg-center bg-[url('/img/login.jpeg')] bg-cover bg-blend-multiply">
           <div className="relative container w-full min-h-screen no-scrollbar max-w-[768px] mx-auto md-7 overflow-y-auto scroll-smooth bg-center bg-[url('/img/login.jpeg')] bg-cover ">
             <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr    to-primary  from-gred-light  via-black opacity-80 mix-blend-soft-light"></div>
             <div className=" absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-black "></div>
             <div className="min-h-screen h-full  px-10 bg-transparent backdrop-blur-[6px] backdrop-brightness-50 ">
-              <header className="flex justify-between items-center py-8 mb-6">
+              <header className="flex justify-between items-center py-8 ">
                 <Transition.Child
                   as={Fragment}
                   enter="ease-out duration-300"
                   enterFrom="opacity-0 scale-95"
                   enterTo="opacity-100 scale-100"
                 >
-                  <h2 className=" text-2xl font-bold text-white ">
+                  <h2 className=" text-3xl font-bold text-white ">
                     {isLoginFrom ? "Login" : "Sign up"}
                   </h2>
                 </Transition.Child>
@@ -58,12 +58,7 @@ const LoginPage = () => {
                   enterFrom="opacity-0 -translate-x-10"
                   enterTo="opacity-100 scale-100 translate-x-0"
                 >
-                  <Link
-                    to="/"
-                    className="pt-1 pe-3 cursor-pointer  transition-all hover:text-primary duration-100 ease-in-out"
-                  >
-                    <i className="fa-solid fa-arrow-right"></i>
-                  </Link>
+                  <span className="font-display text-md">العربية</span>
                 </Transition.Child>
               </header>
               <h1 className=" font-logo text-white text-center text-5xl mb-10 pt-24">
@@ -122,11 +117,15 @@ const LoginPage = () => {
                   </Transition.Child>
                 </div>
               </div>
+              {/* version */}
             </div>
           </div>
+          <div className=" absolute bottom-2 text-center w-full text-gray-500 text-sm">
+            {"Version " + import.meta.env.VITE_VERSION}
+          </div>
         </main>
-      </div>
-    </Transition>
+      </Transition>
+    </IonPage>
   );
 };
 
