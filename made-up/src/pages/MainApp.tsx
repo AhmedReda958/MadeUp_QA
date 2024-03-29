@@ -99,12 +99,15 @@ function MainApp() {
               <Route path="/settings" exact>
                 <SettingsPage />
               </Route>
-              <Route path="/settings/info" exact>
-                <PersonalInfoSettingsPage />
-              </Route>
-              <Route path="/settings/profilePic" exact>
-                <ProfilePicPage />
-              </Route>
+              <Route
+                path="/settings/info"
+                component={PersonalInfoSettingsPage}
+              ></Route>
+              <Route
+                path="/settings/profilePic"
+                exact
+                component={ProfilePicPage}
+              ></Route>
             </IonRouterOutlet>
 
             {/* tool bar */}

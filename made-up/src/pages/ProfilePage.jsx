@@ -252,8 +252,9 @@ const UserProfile = () => {
                   <i className="fa fa-edit mx-1"></i>
                 </Button>
                 <Button
-                  color="gray"
+                  color="light"
                   size="sm"
+                  as={"a"}
                   onClick={() =>
                     dispatch(
                       share({

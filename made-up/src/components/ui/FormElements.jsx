@@ -49,7 +49,7 @@ const FormTextarea = ({ label, ...props }) => {
         />
       </div>
       <Textarea
-        className=" resize-none overflow-hidden"
+        className="resize-none overflow-hidden min-h-10"
         ref={textareaRef}
         {...field}
         {...props}

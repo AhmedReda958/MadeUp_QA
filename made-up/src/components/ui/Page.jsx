@@ -48,7 +48,7 @@ const Page = (props) => {
   useEffect(() => setAnimate(true), []);
 
   return (
-    <IonPage fullscreen={true} className={`${className}`}>
+    <IonPage fullscreen={"true"} className={`${className}`}>
       {header && <Header title={title} backTo={backTo} />}
       <IonContent fullscreen className="ion-padding">
         <div className="px-30">{!loading ? children : <LoadingSpinner />}</div>
