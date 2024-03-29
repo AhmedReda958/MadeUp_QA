@@ -10,8 +10,9 @@ import useAlert from "@/utils/hooks/useAlert";
 import {} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/authSlice";
+import { IonAlert } from "@ionic/react";
 
-const ProfilePicPage = () => {
+const ProfilePicPage = ({ history }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -35,6 +36,10 @@ const ProfilePicPage = () => {
     setShowEditor(true);
   };
 
+  // cancel edit
+  const cancelEdit = () => {
+    history.goBack();
+  };
   // upload image to imgur then apply to user
   const handleImageUpload = async (event) => {
     event.preventDefault();
@@ -188,6 +193,31 @@ const ProfilePicPage = () => {
             >
               Save
             </Button>
+            <Button
+              color="gray"
+              id="cancel-alert"
+              className="w-full mt-4 text cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <IonAlert
+              trigger="cancel-alert"
+              header="Are you sure?"
+              message="You will lose all changes"
+              mode="ios"
+              buttons={[
+                {
+                  text: "No",
+                  role: "cancel",
+                },
+                {
+                  text: "Yes",
+                  cssClass: "danger",
+                  role: "confirm",
+                  handler: cancelEdit,
+                },
+              ]}
+            ></IonAlert>
           </>
         ) : (
           <div>

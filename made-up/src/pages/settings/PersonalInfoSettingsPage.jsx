@@ -10,8 +10,9 @@ import axios from "axios";
 import {} from "react-router-dom";
 import useAlert from "@/utils/hooks/useAlert";
 import { FormTextInput, FormTextarea } from "@/components/ui/FormElements";
+import { IonAlert, useIonAlert } from "@ionic/react";
 
-const PersonalInfoSettingsPage = () => {
+const PersonalInfoSettingsPage = ({ history }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
 
   const navigate = () => {};
@@ -45,8 +46,7 @@ const PersonalInfoSettingsPage = () => {
   };
 
   const cancelEdit = () => {
-    Alert({ title: "Changes not saved" });
-    navigate(-1);
+    history.goBack();
   };
 
   return (
@@ -97,9 +97,28 @@ const PersonalInfoSettingsPage = () => {
               placeholder="Your bio"
             />
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <Button color="gray" onClick={cancelEdit}>
+              <Button color="gray" id="cancel-alert">
                 Cancel
               </Button>
+              <IonAlert
+                trigger="cancel-alert"
+                header="Are you sure?"
+                message="You will lose all changes"
+                mode="ios"
+                buttons={[
+                  {
+                    text: "No",
+                    role: "cancel",
+                  },
+                  {
+                    text: "Yes",
+                    cssClass: "danger",
+                    role: "confirm",
+                    handler: cancelEdit,
+                  },
+                ]}
+              ></IonAlert>
+
               <Button color="primary" type="submit">
                 Save
               </Button>

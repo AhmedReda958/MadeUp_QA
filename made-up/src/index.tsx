@@ -9,6 +9,7 @@ import MainApp from "@/pages/MainApp";
 /* Theme variables */
 import "./theme/variables.css";
 import "./theme/global.css";
+import "./theme/ionic-overrides.css";
 
 setupIonicReact();
 
