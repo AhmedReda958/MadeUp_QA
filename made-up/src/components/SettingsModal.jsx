@@ -8,10 +8,10 @@ import { Link } from "react-router-dom";
 
 const SettingsModal = (props) => {
   const { opened, close } = props;
-
   const { isDarkTheme } = useSelector((state) => state.app);
   const { logedin } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
   return (
     <Modal opened={opened} close={() => close()}>
       <div className=" grid grid-cols-2 gap-8 gap-x-12 text-white *:w-24 *:h-24 *:rounded-xl *:bg-dark *:dark:bg-dark-alt ">

@@ -37,7 +37,6 @@ import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage"
 
 function MainApp() {
   const [selectedTab, setSelectedTab] = useState("home");
-  const app = useSelector((state) => state.app);
   const { userToken, logedin, userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   // automatically authenticate user if token is found
@@ -64,71 +63,69 @@ function MainApp() {
   }, []);
 
   return (
-    <div className={app.isDarkTheme ? "dark" : "light"}>
-      <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
-        <main
-          id="main-app"
-          className="relative container w-full h-screen no-scrollbar max-w-[768px] mx-auto p-4 px-5 md-7 overflow-y-auto scroll-smooth"
-        >
-          <IonTabs>
-            <IonRouterOutlet>
-              <Redirect exact path="/" to="/home" />
-              <Route path="/home" render={() => <HomePage />} />
-              <Route
-                path="/user/:username"
-                exact
-                render={() => <UserProfile />}
-              />
-              <Route
-                path="/notifications"
-                exact
-                render={() => <NotificationPage />}
-              />
-              {/* messages */}
-              <Route path="/messages" exact render={() => <MessagesPage />} />
-              <Route path="/messages/replay/:id" exact>
-                {({ match }) => <ReplayMessagePage match={match} />}
-              </Route>
-              <Route
-                path="/messages/:id"
-                render={({ match }) => <ShowMessagePage match={match} />}
-                exact
-              />
+    <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
+      <main
+        id="main-app"
+        className="relative container w-full h-screen no-scrollbar max-w-[768px] mx-auto p-4 px-5 md-7 overflow-y-auto scroll-smooth"
+      >
+        <IonTabs>
+          <IonRouterOutlet>
+            <Redirect exact path="/" to="/home" />
+            <Route path="/home" render={() => <HomePage />} />
+            <Route
+              path="/user/:username"
+              exact
+              render={() => <UserProfile />}
+            />
+            <Route
+              path="/notifications"
+              exact
+              render={() => <NotificationPage />}
+            />
+            {/* messages */}
+            <Route path="/messages" exact render={() => <MessagesPage />} />
+            <Route path="/messages/replay/:id" exact>
+              {({ match }) => <ReplayMessagePage match={match} />}
+            </Route>
+            <Route
+              path="/messages/:id"
+              render={({ match }) => <ShowMessagePage match={match} />}
+              exact
+            />
 
-              {/* settings */}
-              <Route path="/settings" exact>
-                <SettingsPage />
-              </Route>
-              <Route
-                path="/settings/info"
-                component={PersonalInfoSettingsPage}
-              ></Route>
-              <Route
-                path="/settings/profilePic"
-                exact
-                component={ProfilePicPage}
-              ></Route>
-            </IonRouterOutlet>
+            {/* settings */}
+            <Route path="/settings" exact>
+              <SettingsPage />
+            </Route>
+            <Route
+              path="/settings/info"
+              component={PersonalInfoSettingsPage}
+            ></Route>
+            <Route
+              path="/settings/profilePic"
+              exact
+              component={ProfilePicPage}
+            ></Route>
+          </IonRouterOutlet>
 
-            {/* tool bar */}
-            <IonTabBar slot="bottom" translucent>
-              <IonTabButton tab="home" href="/home">
-                <HomeIcon className="w-6 h-6" />
-              </IonTabButton>
-              <IonTabButton tab="notifications" href="/notifications">
-                <BellIcon className="w-6 h-6" />
-              </IonTabButton>
-              <IonTabButton tab="messages" href="/messages">
-                <EnvelopeIcon className="w-6 h-6" />
-              </IonTabButton>
-              <IonTabButton tab="profile" href={"/user/" + userInfo.username}>
-                <UserIcon className="w-6 h-6" />
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </main>
-        <ShareDialog />
-      </div>
+          {/* tool bar */}
+          <IonTabBar slot="bottom" translucent>
+            <IonTabButton tab="home" href="/home">
+              <HomeIcon className="w-6 h-6" />
+            </IonTabButton>
+            <IonTabButton tab="notifications" href="/notifications">
+              <BellIcon className="w-6 h-6" />
+            </IonTabButton>
+            <IonTabButton tab="messages" href="/messages">
+              <EnvelopeIcon className="w-6 h-6" />
+            </IonTabButton>
+            <IonTabButton tab="profile" href={"/user/" + userInfo.username}>
+              <UserIcon className="w-6 h-6" />
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </main>
+      <ShareDialog />
     </div>
   );
 }

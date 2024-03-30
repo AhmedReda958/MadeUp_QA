@@ -10,6 +10,9 @@ import MainApp from "@/pages/MainApp";
 import "./theme/variables.css";
 import "./theme/global.css";
 import "./theme/ionic-overrides.css";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setTheme } from "@/redux/slices/appSlice";
 
 setupIonicReact({
   mode: "ios",
@@ -17,6 +20,17 @@ setupIonicReact({
 
 const App: React.FC = () => {
   const logedin = localStorage.getItem("logedin");
+  const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    document.body.classList.toggle("dark", isDarkTheme);
+
+    prefersDark.addEventListener("change", (e) => {
+      document.body.classList.toggle("dark", e.matches);
+    });
+  }, []);
   return (
     <IonApp>
       <IonReactRouter>

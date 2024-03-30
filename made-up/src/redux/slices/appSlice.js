@@ -5,7 +5,11 @@ import {
   markAsSeen,
 } from "../actions/notificationsActions";
 
-const isDarkTheme = localStorage.darkMode === "true" || false;
+const isDarkTheme = localStorage.getItem("darkMode") === "true" ? true : false;
+
+const initializeDarkTheme = (isDark) => {
+  document.body.classList.toggle("dark", isDark);
+};
 
 const initialState = {
   isDarkTheme,
@@ -25,6 +29,7 @@ const appSlice = createSlice({
     setTheme: (state) => {
       state.isDarkTheme = !state.isDarkTheme;
       localStorage.setItem("darkMode", state.isDarkTheme);
+      initializeDarkTheme(state.isDarkTheme);
     },
     addNotification: (state, action) => {
       state.notifications = [...state.notifications, action.payload];
