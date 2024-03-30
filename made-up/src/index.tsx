@@ -1,6 +1,7 @@
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import OneSignal from "onesignal-cordova-plugin";
 
 // pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -28,6 +29,22 @@ const App: React.FC = () => {
   const logedin = localStorage.getItem("logedin");
   const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
   const dispatch = useDispatch();
+
+  //*  notifications
+  // Replace YOUR_ONESIGNAL_APP_ID with your OneSignal App ID
+  const appId = import.meta.env.VITE_ONESIGNAL_APP_ID;
+  console.log("OneSignal App ID : " + appId);
+
+  OneSignal.initialize(appId);
+
+  OneSignal.Notifications.addEventListener("click", async (e) => {
+    let clickData = await e.notification;
+    console.log("Notification Clicked : " + clickData);
+  });
+
+  OneSignal.Notifications.requestPermission(true).then((success: Boolean) => {
+    console.log("Notification permission granted " + success);
+  });
 
   useEffect(() => {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");

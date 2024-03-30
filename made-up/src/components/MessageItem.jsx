@@ -12,8 +12,6 @@ import {
   CheckBadgeIcon,
 } from "@heroicons/react/24/solid";
 import { HeartIcon } from "@heroicons/react/24/outline";
-import likeSound from "@/assets/sounds/wow.mp3";
-import unLikeSound from "@/assets/sounds/ohShit.mp3";
 
 import axios from "axios";
 
