@@ -4,11 +4,16 @@ import {
   getNotificationsCount,
   markAsSeen,
 } from "../actions/notificationsActions";
+import {
+  setStatusBarStyleDark,
+  setStatusBarStyleLight,
+} from "@/utils/native/statusbar";
 
 const isDarkTheme = localStorage.getItem("darkMode") === "true" ? true : false;
 
 const initializeDarkTheme = (isDark) => {
   document.body.classList.toggle("dark", isDark);
+  isDark ? setStatusBarStyleDark() : setStatusBarStyleLight();
 };
 
 const initialState = {
