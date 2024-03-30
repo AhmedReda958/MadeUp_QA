@@ -16,6 +16,9 @@ import { setTheme } from "@/redux/slices/appSlice";
 
 setupIonicReact({
   mode: "ios",
+  swipeBackEnabled: true, // enable swipe to go back
+  statusTap: true, // enable tap to scroll to top
+  hardwareBackButton: true, // enable hardware back button
 });
 
 const App: React.FC = () => {
