@@ -11,7 +11,9 @@ import "./theme/variables.css";
 import "./theme/global.css";
 import "./theme/ionic-overrides.css";
 
-setupIonicReact();
+setupIonicReact({
+  mode: "ios",
+});
 
 const App: React.FC = () => {
   const logedin = localStorage.getItem("logedin");
