@@ -1,5 +1,10 @@
 import { Redirect, Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
+import {
+  IonApp,
+  IonRouterOutlet,
+  isPlatform,
+  setupIonicReact,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import OneSignal from "onesignal-cordova-plugin";
 
@@ -19,13 +24,11 @@ setupIonicReact({
   hardwareBackButton: true, // enable hardware back button
 });
 
-const App: React.FC = () => {
-  const logedin = localStorage.getItem("logedin");
+const initializeOneSignal = () => {
+  if (!isPlatform("cordova")) return;
 
-  //*  notifications
   // Replace YOUR_ONESIGNAL_APP_ID with your OneSignal App ID
   const appId = import.meta.env.VITE_ONESIGNAL_APP_ID;
-  console.log("OneSignal App ID : " + appId);
 
   OneSignal.initialize(appId);
 
@@ -37,6 +40,12 @@ const App: React.FC = () => {
   OneSignal.Notifications.requestPermission(true).then((success: Boolean) => {
     console.log("Notification permission granted " + success);
   });
+};
+
+const App: React.FC = () => {
+  const logedin = localStorage.getItem("logedin");
+
+  //*  notifications
 
   return (
     <IonApp>
