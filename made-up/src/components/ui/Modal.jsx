@@ -5,7 +5,7 @@ const Modal = ({ children, opened, close }) => {
   return (
     <Transition as={Fragment} show={opened}>
       <div
-        className={`fixed top-0 left-0 z-50 w-screen h-screen backdrop-blur-sm ${
+        className={`fixed top-0 left-0 z-50 w-full h-full backdrop-blur-sm ${
           !opened && "hidden"
         }`}
       >
@@ -16,7 +16,7 @@ const Modal = ({ children, opened, close }) => {
           enterTo="opacity-100 "
         >
           <div
-            className="w-screen h-screen bg-black opacity-80"
+            className="absolute w-full h-full bg-light dark:bg-black opacity-30 dark:opacity-80"
             onClick={() => close()}
           ></div>
         </Transition.Child>
