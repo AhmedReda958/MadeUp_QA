@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from "react-redux";
-import Toolbar from "@/components/Toolbar";
 import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect, useState } from "react";
 import { setCredentials } from "@/redux/slices/authSlice";
@@ -13,6 +12,12 @@ import {
   IonTabs,
 } from "@ionic/react";
 import { Redirect, Route } from "react-router";
+
+// helpers
+import {
+  setStatusBarStyleDark,
+  setStatusBarStyleLight,
+} from "@/utils/native/statusbar";
 
 // icons
 import {
@@ -36,9 +41,10 @@ import ProfilePicPage from "@/pages/settings/ProfilePicPage";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
 function MainApp() {
-  const [selectedTab, setSelectedTab] = useState("home");
   const { userToken, logedin, userInfo } = useSelector((state) => state.auth);
+  const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
   const dispatch = useDispatch();
+
   // automatically authenticate user if token is found
   const autoAuth =
     userToken &&
@@ -46,20 +52,27 @@ function MainApp() {
       // perform a refetch every 15mins
       pollingInterval: 900000,
     });
-  // const { data, isFetching } = autoAuth;
-
   useEffect(() => {
     if (autoAuth?.data) {
       dispatch(setCredentials(autoAuth.data));
-      // login to OneSignal
-      //   OneSignalDeferred.push(function () {
-      //     OneSignal.login(autoAuth.data._id);
-      //   });
     }
   }, [autoAuth?.data, dispatch]);
 
+  // check for internet connection
   useEffect(() => {
     checkInternetConnection();
+  }, []);
+
+  // dark theme
+  useEffect(() => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    document.body.classList.toggle("dark", isDarkTheme);
+    isDarkTheme ? setStatusBarStyleDark() : setStatusBarStyleLight();
+
+    prefersDark.addEventListener("change", (e) => {
+      document.body.classList.toggle("dark", e.matches);
+      e.matches ? setStatusBarStyleDark() : setStatusBarStyleLight();
+    });
   }, []);
 
   return (
