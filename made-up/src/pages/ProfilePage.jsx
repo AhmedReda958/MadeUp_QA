@@ -26,6 +26,9 @@ import useAlert from "@/utils/hooks/useAlert";
 import { CameraIcon, CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { isUserOnline } from "@/utils/userProfileHelpers";
 
+// ionic
+import { useIonViewWillEnter } from "@ionic/react";
+
 const EmptyPage = () => {
   return (
     <div className=" relative">

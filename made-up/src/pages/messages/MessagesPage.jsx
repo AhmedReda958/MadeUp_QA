@@ -7,6 +7,9 @@ import { markAsSeen } from "@/redux/actions/notificationsActions";
 import { fetchMessages } from "@/redux/slices/contentSlice";
 import mailboxImg from "@/assets/imgs/mailbox.svg";
 
+// ionic
+import { useIonViewWillEnter } from "@ionic/react";
+
 function MessagesPage() {
   const dispatch = useDispatch();
   const { unseen } = useSelector((state) => state.app);
@@ -14,10 +17,10 @@ function MessagesPage() {
     (state) => state.content.messages.received
   );
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     fetchMessagesData();
     markMessagesAsSeen();
-  }, []);
+  });
 
   const fetchMessagesData = () => {
     dispatch(fetchMessages());

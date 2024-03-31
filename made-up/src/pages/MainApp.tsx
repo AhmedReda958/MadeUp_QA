@@ -84,19 +84,19 @@ function MainApp() {
         <IonTabs>
           <IonRouterOutlet>
             <Redirect exact path="/" to="/home" />
-            <Route path="/home" render={() => <HomePage />} />
-            <Route
-              path="/user/:username"
-              exact
-              render={() => <UserProfile />}
-            />
-            <Route
-              path="/notifications"
-              exact
-              render={() => <NotificationPage />}
-            />
+            <Route path="/home">
+              <HomePage />
+            </Route>
+            <Route path="/user/:username" exact>
+              {({ match }) => <UserProfile match={match} />}
+            </Route>
+            <Route path="/notifications" exact>
+              <NotificationPage />
+            </Route>
             {/* messages */}
-            <Route path="/messages" exact render={() => <MessagesPage />} />
+            <Route path="/messages">
+              <MessagesPage />
+            </Route>
             <Route path="/messages/replay/:id" exact>
               {({ match }) => <ReplayMessagePage match={match} />}
             </Route>
