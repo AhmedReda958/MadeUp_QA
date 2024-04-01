@@ -237,7 +237,7 @@ const UserProfile = () => {
                   {response.fullName || response.username}
                 </h2>
                 {response.verified && (
-                  <CheckBadgeIcon className="w-6 h-6 ms-1 text-alt" />
+                  <CheckBadgeIcon className="w-6 h-6 ms-1 text-primary" />
                 )}
               </div>
               <p className="text-body dark:text-secondary-alt text-lg mt-1 mb-2">

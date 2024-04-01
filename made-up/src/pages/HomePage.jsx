@@ -23,7 +23,7 @@ const HomePage = () => {
   const [openSettings, setOpenSettings] = useState(false);
   const auth = useSelector((state) => state.auth);
 
-  const [present, dismiss] = useIonLoading();
+  // const [present, dismiss] = useIonLoading();
 
   // useIonViewWillEnter(() => {
   //   present({

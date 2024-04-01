@@ -93,7 +93,7 @@ function ReplayMessagePage({ match, history }) {
                       {message.sender ? message.sender.fullName : "Anonymous"}
                     </h5>
                     {message.sender?.verified && (
-                      <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-alt" />
+                      <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-primary" />
                     )}
                   </div>
                   {message.sender && (
