@@ -33,6 +33,18 @@ const Header = ({ title, backTo = "/home", children }) => {
   );
 };
 
+// close link
+const CloseLink = ({ close }) => {
+  return (
+    <div
+      className="pt-1 pe-3 cursor-pointer transition-all hover:text-primary duration-100 ease-in-out"
+      onClick={close}
+    >
+      <i className="fa fa-times text-2xl"></i>
+    </div>
+  );
+};
+
 const Page = (props) => {
   const {
     title,
@@ -58,4 +70,5 @@ const Page = (props) => {
 };
 
 Page.Header = Header;
+Page.CloseLink = CloseLink;
 export default Page;
