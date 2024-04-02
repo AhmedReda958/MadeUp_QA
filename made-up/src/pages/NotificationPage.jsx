@@ -1,12 +1,9 @@
-import Page from "@/components/ui/Page";
-import { useState, useCallback, useMemo, useEffect, Fragment } from "react";
-import axios from "axios";
-import sleepImg from "@/assets/imgs/sleep.svg";
-import { BellAlertIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Fragment, useMemo } from "react";
 
 // assets
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import sleepImg from "@/assets/imgs/sleep.svg";
+import { BellAlertIcon } from "@heroicons/react/24/outline";
 
 // utils
 import useAlert from "@/utils/hooks/useAlert";
@@ -31,8 +28,9 @@ import {
 } from "@ionic/react";
 
 // components
-import { Dialog, Menu, Transition } from "@headlessui/react";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { Menu, Transition } from "@headlessui/react";
+import Page from "@/components/ui/Page";
+import { Link } from "react-router-dom";
 
 const EmptyPage = () => {
   return (
@@ -157,10 +155,7 @@ const NotificationPage = () => {
             })}
           </div>
         ) : (
-          <>
-            {isLoading && <LoadingSpinner />}
-            <EmptyPage />
-          </>
+          <EmptyPage />
         )}
       </div>
 

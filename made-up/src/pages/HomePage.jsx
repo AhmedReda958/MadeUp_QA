@@ -113,8 +113,12 @@ const Feed = () => {
         {!isLoading ? (
           messages.length > 0 ? (
             <>
-              {messages.map((message) => (
-                <MessageItem key={message._id} message={message} type="post" />
+              {messages.map((message, index) => (
+                <MessageItem
+                  key={message._id + index}
+                  message={message}
+                  type="post"
+                />
               ))}
             </>
           ) : (

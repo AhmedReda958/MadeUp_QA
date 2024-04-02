@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
 // components
 import Page from "@/components/ui/Page";
 import MessageItem from "@/components/MessageItem";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 // redux
 import { useSelector, useDispatch } from "react-redux";
@@ -71,7 +70,6 @@ function MessagesPage() {
           </div>
         ) : (
           <div>
-            {isLoading && <LoadingSpinner />}
             <img
               src={mailboxImg}
               className="max-w-60 m-auto mt-20 opacity-70 "

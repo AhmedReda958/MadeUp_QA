@@ -136,8 +136,8 @@ const ProfileMessages = ({ userId }) => {
               <div>Likes 0</div>
               <div>Score 0</div>
             </div>
-            {messages.map((message) => (
-              <MessageItem key={message._id} message={message} />
+            {messages.map((message, index) => (
+              <MessageItem key={message._id + index} message={message} />
             ))}
           </>
         ) : (

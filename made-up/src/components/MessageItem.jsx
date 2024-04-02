@@ -215,7 +215,7 @@ const MessageItem = ({ message, type = "post" }) => {
       >
         {/* profile pic */}
         <div className="me-1 cursor-pointer">
-          <Link to={message.sender && "/user/" + message.sender.username}>
+          <Link to={message.sender ? "/user/" + message.sender.username : ""}>
             <ProfilePic
               data={message.sender}
               className="w-14 h-14"
@@ -278,7 +278,9 @@ const MessageItem = ({ message, type = "post" }) => {
       {type === "post" && (
         <div className="flex mt-4">
           <div className="me-3 cursor-pointer">
-            <Link to={message.receiver && "/user/" + message.receiver.username}>
+            <Link
+              to={message.receiver ? "/user/" + message.receiver.username : ""}
+            >
               <ProfilePic
                 data={message.receiver}
                 className="w-14 h-14"
@@ -291,7 +293,9 @@ const MessageItem = ({ message, type = "post" }) => {
               {/* header */}
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link
-                  to={message.receiver && "/user/" + message.receiver.username}
+                  to={
+                    message.receiver ? "/user/" + message.receiver.username : ""
+                  }
                 >
                   <div className="flex">
                     <div className="flex items-center">
