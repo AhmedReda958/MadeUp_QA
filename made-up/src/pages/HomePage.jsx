@@ -92,10 +92,6 @@ const Feed = () => {
   const dispatch = useDispatch();
   const navigate = () => {};
 
-  useEffect(() => {
-    dispatch(fetchFeed());
-  }, []);
-
   const { data, loading } = useSelector((state) => state.content.feed);
   const messages = data;
   const isLoading = messages.length === 0 && loading;

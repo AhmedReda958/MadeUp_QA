@@ -15,7 +15,7 @@ import mailboxImg from "@/assets/imgs/mailbox.svg";
 
 // ionic
 import {
-  useIonViewWillEnter,
+  useIonViewDidEnter,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonRefresher,
@@ -30,10 +30,9 @@ function MessagesPage() {
     (state) => state.content.messages.received
   );
 
-  useEffect(() => {
-    fetchMessagesData();
+  useIonViewDidEnter(() => {
     markMessagesAsSeen();
-  }, []);
+  });
 
   const fetchMessagesData = () => {
     dispatch(fetchMessages());

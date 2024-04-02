@@ -23,7 +23,7 @@ import {
 
 // ionic
 import {
-  useIonViewWillEnter,
+  useIonViewDidEnter,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonRefresher,
@@ -116,10 +116,9 @@ const NotificationPage = () => {
   const dispatch = useDispatch();
   const { data, loading } = useSelector((state) => state.content.notifications);
 
-  useEffect(() => {
-    getNotifications();
+  useIonViewDidEnter(() => {
     markNotificationsAsSeen();
-  }, []);
+  });
 
   const markNotificationsAsSeen = () => {
     if (unseen.notifications > 0) {
