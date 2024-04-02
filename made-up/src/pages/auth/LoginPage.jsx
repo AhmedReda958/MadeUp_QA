@@ -6,6 +6,7 @@ import LoginFrom from "./LoginFrom";
 import RegisterFrom from "./RegisterFrom";
 import { Transition } from "@headlessui/react";
 import { IonPage } from "@ionic/react";
+import { setStatusBarStyleDark } from "@/utils/native/statusbar";
 
 const LoginPage = () => {
   // component animations
@@ -14,8 +15,6 @@ const LoginPage = () => {
 
   // login and register switch
   const [isLoginFrom, setIsloginFrom] = useState(true);
-
-  const app = useSelector((state) => state.app);
 
   const navigate = () => {};
   const Alert = useAlert();
@@ -31,6 +30,11 @@ const LoginPage = () => {
   useEffect(() => {
     if (error) Alert({ type: "error", title: "Wrong username or password" });
   }, [error]);
+
+  // set status bar style
+  useEffect(() => {
+    setStatusBarStyleDark();
+  }, []);
 
   return (
     <IonPage>

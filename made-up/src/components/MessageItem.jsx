@@ -204,7 +204,7 @@ const MessageItem = ({ message, type = "post" }) => {
 
   const messageUrl =
     type === "message"
-      ? "/messages/replay/" + message._id
+      ? "/messages/anwser/" + message._id
       : "/messages/" + message._id;
 
   return (
@@ -236,7 +236,7 @@ const MessageItem = ({ message, type = "post" }) => {
                     {message.sender ? message.sender.fullName : "Anonymous"}
                   </h5>
                   {message.sender?.verified && (
-                    <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-alt" />
+                    <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-primary" />
                   )}
                 </div>
                 {message.sender && (
@@ -262,10 +262,10 @@ const MessageItem = ({ message, type = "post" }) => {
             <div className="text-xs">{formatDate(message.timestamp)}</div>
             {type == "message" ? (
               <Link
-                to={"/messages/replay/" + message._id}
+                to={"/messages/anwser/" + message._id}
                 className="button-lg "
               >
-                Replay
+                Anwser
                 <i className="fa fa-share ps-2 "></i>
               </Link>
             ) : (
@@ -302,7 +302,7 @@ const MessageItem = ({ message, type = "post" }) => {
                           : "Anonymous"}
                       </h5>
                       {message.receiver?.verified && (
-                        <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-alt" />
+                        <CheckBadgeIcon className="w-5 h-5 ms-[2px] text-primary" />
                       )}
                     </div>
                     {message.receiver && (

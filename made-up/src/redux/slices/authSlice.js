@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUser } from "../actions/authActions";
 import OneSignal from "onesignal-cordova-plugin";
+import { isPlatform } from "@ionic/react";
 
 // initialize userToken from local storage
 const userToken = localStorage.getItem("userToken")
@@ -45,8 +46,10 @@ const authSlice = createSlice({
         state.userInfo = payload.user;
         state.userToken = payload.token;
         // OneSignal
-        OneSignal.login(payload.user._id);
-        OneSignal.User.addEmail(payload.user.email);
+        if (isPlatform("cordova")) {
+          OneSignal.login(payload.user._id);
+          OneSignal.User.addEmail(payload.user.email);
+        }
         // redirect to home
         window.location.pathname = "/";
       })
@@ -65,8 +68,10 @@ const authSlice = createSlice({
         state.userInfo = payload.user;
         state.userToken = payload.token;
         // OneSignal
-        OneSignal.login(payload.user._id);
-        OneSignal.User.addEmail(payload.user.email);
+        if (isPlatform("cordova")) {
+          OneSignal.login(payload.user._id);
+          OneSignal.User.addEmail(payload.user.email);
+        }
         // redirect to home
         window.location.pathname = "/";
       })

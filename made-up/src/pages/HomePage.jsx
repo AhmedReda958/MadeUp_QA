@@ -12,9 +12,29 @@ import postsImg from "@/assets/imgs/onlinefriends.svg";
 import { share } from "@/redux/slices/appSlice";
 import { fetchFeed } from "@/redux/slices/contentSlice";
 
+// ionic
+import {
+  useIonViewDidEnter,
+  useIonLoading,
+  useIonViewWillEnter,
+} from "@ionic/react";
+
 const HomePage = () => {
   const [openSettings, setOpenSettings] = useState(false);
   const auth = useSelector((state) => state.auth);
+
+  // const [present, dismiss] = useIonLoading();
+
+  // useIonViewWillEnter(() => {
+  //   present({
+  //     message: "Loading...",
+  //     duration: 500,
+  //   });
+  // });
+
+  // useIonViewDidEnter(() => {
+  //   dismiss();
+  // });
 
   return (
     <>
@@ -67,9 +87,9 @@ const Feed = () => {
   const dispatch = useDispatch();
   const navigate = () => {};
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     dispatch(fetchFeed());
-  }, []);
+  });
 
   const { data, loading } = useSelector((state) => state.content.feed);
   const messages = data;

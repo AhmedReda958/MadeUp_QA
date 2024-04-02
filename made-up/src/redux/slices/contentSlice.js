@@ -11,7 +11,7 @@ export const fetchFeed = createAsyncThunk(
       const response = await axios.get("/feed", {
         params: {
           page: currentPage,
-          limit: 40,
+          limit: 10,
         },
       });
       return response.data;

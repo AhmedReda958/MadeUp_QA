@@ -1,10 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
-import Toolbar from "@/components/Toolbar";
 import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect, useState } from "react";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { checkInternetConnection } from "@/utils/handleConnection";
-import ShareDialog from "@/components/ui/ShareDialog";
 import {
   IonPage,
   IonRouterOutlet,
@@ -13,6 +11,12 @@ import {
   IonTabs,
 } from "@ionic/react";
 import { Redirect, Route } from "react-router";
+
+// helpers
+import {
+  setStatusBarStyleDark,
+  setStatusBarStyleLight,
+} from "@/utils/native/statusbar";
 
 // icons
 import {
@@ -26,7 +30,7 @@ import {
 import HomePage from "@/pages/HomePage";
 import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
-import ReplayMessagePage from "@/pages/messages/ReplayMessagePage";
+import ReplyMessagePage from "@/pages/messages/ReplyMessagePage";
 import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messages/MessagesPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
@@ -36,9 +40,10 @@ import ProfilePicPage from "@/pages/settings/ProfilePicPage";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
 function MainApp() {
-  const [selectedTab, setSelectedTab] = useState("home");
   const { userToken, logedin, userInfo } = useSelector((state) => state.auth);
+  const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
   const dispatch = useDispatch();
+
   // automatically authenticate user if token is found
   const autoAuth =
     userToken &&
@@ -46,20 +51,27 @@ function MainApp() {
       // perform a refetch every 15mins
       pollingInterval: 900000,
     });
-  // const { data, isFetching } = autoAuth;
-
   useEffect(() => {
     if (autoAuth?.data) {
       dispatch(setCredentials(autoAuth.data));
-      // login to OneSignal
-      //   OneSignalDeferred.push(function () {
-      //     OneSignal.login(autoAuth.data._id);
-      //   });
     }
   }, [autoAuth?.data, dispatch]);
 
+  // check for internet connection
   useEffect(() => {
     checkInternetConnection();
+  }, []);
+
+  // dark theme
+  useEffect(() => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    document.body.classList.toggle("dark", isDarkTheme);
+    isDarkTheme ? setStatusBarStyleDark() : setStatusBarStyleLight();
+
+    prefersDark.addEventListener("change", (e) => {
+      document.body.classList.toggle("dark", e.matches);
+      e.matches ? setStatusBarStyleDark() : setStatusBarStyleLight();
+    });
   }, []);
 
   return (
@@ -71,21 +83,21 @@ function MainApp() {
         <IonTabs>
           <IonRouterOutlet>
             <Redirect exact path="/" to="/home" />
-            <Route path="/home" render={() => <HomePage />} />
-            <Route
-              path="/user/:username"
-              exact
-              render={() => <UserProfile />}
-            />
-            <Route
-              path="/notifications"
-              exact
-              render={() => <NotificationPage />}
-            />
+            <Route path="/home">
+              <HomePage />
+            </Route>
+            <Route path="/user/:username" exact>
+              {({ match }) => <UserProfile match={match} />}
+            </Route>
+            <Route path="/notifications" exact>
+              <NotificationPage />
+            </Route>
             {/* messages */}
-            <Route path="/messages" exact render={() => <MessagesPage />} />
-            <Route path="/messages/replay/:id" exact>
-              {({ match }) => <ReplayMessagePage match={match} />}
+            <Route path="/messages" exact>
+              <MessagesPage />
+            </Route>
+            <Route path="/messages/anwser/:id" exact>
+              {({ match }) => <ReplyMessagePage match={match} />}
             </Route>
             <Route
               path="/messages/:id"
@@ -125,7 +137,6 @@ function MainApp() {
           </IonTabBar>
         </IonTabs>
       </main>
-      <ShareDialog />
     </div>
   );
 }

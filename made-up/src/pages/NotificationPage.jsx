@@ -13,6 +13,9 @@ import { share } from "@/redux/slices/appSlice";
 import { markAsSeen } from "@/redux/actions/notificationsActions";
 import { fetchNotifications } from "@/redux/slices/contentSlice";
 
+// ionic
+import { useIonViewWillEnter } from "@ionic/react";
+
 const EmptyPage = () => {
   return (
     <div>
@@ -94,13 +97,13 @@ const NotificationPage = () => {
   const { unseen } = useSelector((state) => state.app);
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     dispatch(fetchNotifications());
 
     if (unseen.notifications > 0) {
       dispatch(markAsSeen({ type: "notifications" }));
     }
-  }, []);
+  });
 
   const { data, loading } = useSelector((state) => state.content.notifications);
   const notifications = data;

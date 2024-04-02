@@ -67,7 +67,7 @@ export default function SearchBar() {
                     value={user}
                   >
                     {({ selected, active }) => (
-                      <Link to={`/${user.username}`}>
+                      <Link to={`/user/${user.username}`}>
                         <div className="flex gap-2">
                           <div>
                             <ProfilePic

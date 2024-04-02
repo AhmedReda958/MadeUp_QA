@@ -1,7 +1,16 @@
 import { Redirect, Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
+import {
+  IonApp,
+  IonRouterOutlet,
+  isPlatform,
+  setupIonicReact,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import OneSignal from "onesignal-cordova-plugin";
+
+//components
+import ShareDialog from "@/components/ui/ShareDialog";
+import AlertDialog from "@/components/ui/AlertDialog";
 
 // pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -11,12 +20,6 @@ import MainApp from "@/pages/MainApp";
 import "./theme/variables.css";
 import "./theme/global.css";
 import "./theme/ionic-overrides.css";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setStatusBarStyleDark,
-  setStatusBarStyleLight,
-} from "@/utils/native/statusbar";
 
 setupIonicReact({
   mode: "ios",
@@ -25,15 +28,11 @@ setupIonicReact({
   hardwareBackButton: true, // enable hardware back button
 });
 
-const App: React.FC = () => {
-  const logedin = localStorage.getItem("logedin");
-  const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
-  const dispatch = useDispatch();
+const initializeOneSignal = () => {
+  if (!isPlatform("cordova")) return;
 
-  //*  notifications
   // Replace YOUR_ONESIGNAL_APP_ID with your OneSignal App ID
   const appId = import.meta.env.VITE_ONESIGNAL_APP_ID;
-  console.log("OneSignal App ID : " + appId);
 
   OneSignal.initialize(appId);
 
@@ -45,16 +44,13 @@ const App: React.FC = () => {
   OneSignal.Notifications.requestPermission(true).then((success: Boolean) => {
     console.log("Notification permission granted " + success);
   });
+};
 
-  useEffect(() => {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-    document.body.classList.toggle("dark", isDarkTheme);
-    isDarkTheme ? setStatusBarStyleDark() : setStatusBarStyleLight();
+const App: React.FC = () => {
+  const logedin = localStorage.getItem("logedin");
 
-    prefersDark.addEventListener("change", (e) => {
-      document.body.classList.toggle("dark", e.matches);
-    });
-  }, []);
+  //*  notifications
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -65,6 +61,9 @@ const App: React.FC = () => {
           />
         </IonRouterOutlet>
       </IonReactRouter>
+      {/* dilogs */}
+      <ShareDialog />
+      <AlertDialog />
     </IonApp>
   );
 };
