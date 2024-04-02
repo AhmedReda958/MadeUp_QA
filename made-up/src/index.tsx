@@ -8,6 +8,10 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import OneSignal from "onesignal-cordova-plugin";
 
+//components
+import ShareDialog from "@/components/ui/ShareDialog";
+import AlertDialog from "@/components/ui/AlertDialog";
+
 // pages
 import LoginPage from "@/pages/auth/LoginPage";
 import MainApp from "@/pages/MainApp";
@@ -57,6 +61,9 @@ const App: React.FC = () => {
           />
         </IonRouterOutlet>
       </IonReactRouter>
+      {/* dilogs */}
+      <ShareDialog />
+      <AlertDialog />
     </IonApp>
   );
 };

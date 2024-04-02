@@ -3,7 +3,6 @@ import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect, useState } from "react";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { checkInternetConnection } from "@/utils/handleConnection";
-import ShareDialog from "@/components/ui/ShareDialog";
 import {
   IonPage,
   IonRouterOutlet,
@@ -138,7 +137,6 @@ function MainApp() {
           </IonTabBar>
         </IonTabs>
       </main>
-      <ShareDialog />
     </div>
   );
 }
