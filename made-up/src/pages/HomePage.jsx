@@ -92,9 +92,9 @@ const Feed = () => {
   const dispatch = useDispatch();
   const navigate = () => {};
 
-  useIonViewDidEnter(() => {
+  useEffect(() => {
     dispatch(fetchFeed());
-  });
+  }, []);
 
   const { data, loading } = useSelector((state) => state.content.feed);
   const messages = data;

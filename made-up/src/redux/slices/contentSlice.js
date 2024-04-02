@@ -153,7 +153,11 @@ const contentSlice = createSlice({
       //* Fetch notifications fulfilled
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.notifications.loading = false;
-        state.notifications.data = action.payload;
+        state.notifications.data = [
+          ...state.notifications.data,
+          ...action.payload,
+        ];
+        state.notifications.page += 1;
       })
       //! Fetch notifications rejected
       .addCase(fetchNotifications.rejected, (state, action) => {
