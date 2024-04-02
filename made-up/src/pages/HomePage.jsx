@@ -19,7 +19,10 @@ import {
   useIonViewWillEnter,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/react";
+import { refreshFeed } from "../redux/slices/contentSlice";
 
 const HomePage = () => {
   const [openSettings, setOpenSettings] = useState(false);
@@ -97,53 +100,66 @@ const Feed = () => {
   const messages = data;
   const isLoading = messages.length === 0 && loading;
 
+  const handleRefresh = (e) => {
+    dispatch(refreshFeed());
+    dispatch(fetchFeed());
+    setTimeout(() => e.detail.complete(), 300);
+  };
+
   return (
-    <div>
-      {!isLoading ? (
-        messages.length > 0 ? (
-          <>
-            {messages.map((message) => (
-              <MessageItem key={message._id} message={message} type="post" />
-            ))}
-          </>
+    <>
+      {/* // refresher */}
+      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+        <IonRefresherContent></IonRefresherContent>
+      </IonRefresher>
+      {/* // content */}
+      <div className="ion-content-scroll-host">
+        {!isLoading ? (
+          messages.length > 0 ? (
+            <>
+              {messages.map((message) => (
+                <MessageItem key={message._id} message={message} type="post" />
+              ))}
+            </>
+          ) : (
+            <div>
+              <img
+                src={postsImg}
+                className="w-[270px] m-auto mt-20 opacity-90 "
+                alt=""
+                draggable="false"
+              />
+              <div className="pt-12 ps-3 text m-auto w-80">
+                <p className="text-center">
+                  You don't have any users you follow, to show messages in your
+                  timeline follow some friends to see their answers or
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <span
+                  className="text-primary underline text-center w-full"
+                  onClick={() => {
+                    auth.logedin
+                      ? dispatch(
+                          share({
+                            url:
+                              window.location.origin +
+                              "/" +
+                              auth.userInfo.username,
+                          })
+                        )
+                      : navigate("/login");
+                  }}
+                >
+                  Share your Account
+                </span>
+              </div>
+            </div>
+          )
         ) : (
-          <div>
-            <img
-              src={postsImg}
-              className="w-[270px] m-auto mt-20 opacity-90 "
-              alt=""
-              draggable="false"
-            />
-            <div className="pt-12 ps-3 text m-auto w-80">
-              <p className="text-center">
-                You don't have any users you follow, to show messages in your
-                timeline follow some friends to see their answers or
-              </p>
-            </div>
-            <div className="flex justify-center">
-              <span
-                className="text-primary underline text-center w-full"
-                onClick={() => {
-                  auth.logedin
-                    ? dispatch(
-                        share({
-                          url:
-                            window.location.origin +
-                            "/" +
-                            auth.userInfo.username,
-                        })
-                      )
-                    : navigate("/login");
-                }}
-              >
-                Share your Account
-              </span>
-            </div>
-          </div>
-        )
-      ) : (
-        <LoadingSpinner />
-      )}
+          <LoadingSpinner />
+        )}
+      </div>
       {/* infinte scroll */}
       <IonInfiniteScroll
         onIonInfinite={(ev) => {
@@ -153,7 +169,7 @@ const Feed = () => {
       >
         <IonInfiniteScrollContent></IonInfiniteScrollContent>
       </IonInfiniteScroll>
-    </div>
+    </>
   );
 };
 export default HomePage;

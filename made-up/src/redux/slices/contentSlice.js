@@ -73,41 +73,57 @@ export const fetchMessages = createAsyncThunk(
   }
 );
 
-const contentSlice = createSlice({
-  name: "content",
-  initialState: {
-    feed: {
+const initialState = {
+  feed: {
+    data: [],
+    loading: false,
+    refresh: false,
+    error: null,
+    page: 1,
+  },
+  notifications: {
+    data: [],
+    loading: false,
+    refresh: false,
+    error: null,
+    page: 1,
+  },
+  messages: {
+    received: {
       data: [],
       loading: false,
       refresh: false,
       error: null,
       page: 1,
     },
-    notifications: {
+    sent: {
       data: [],
       loading: false,
       refresh: false,
       error: null,
       page: 1,
-    },
-    messages: {
-      received: {
-        data: [],
-        loading: false,
-        refresh: false,
-        error: null,
-        page: 1,
-      },
-      sent: {
-        data: [],
-        loading: false,
-        refresh: false,
-        error: null,
-        page: 1,
-      },
     },
   },
-  reducers: {},
+};
+
+const contentSlice = createSlice({
+  name: "content",
+  initialState,
+  reducers: {
+    // Add reducers here
+    refreshFeed: (state) => {
+      state.feed = initialState.feed;
+    },
+    refreshNotifications: (state) => {
+      state.notifications = initialState.notifications;
+    },
+    refreshReceivedMessages: (state) => {
+      state.messages.received = initialState.messages.received;
+    },
+    refreshSentMessages: (state) => {
+      state.messages.sent = initialState.messages.sent;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // feed ====================================================================
@@ -167,5 +183,12 @@ const contentSlice = createSlice({
       });
   },
 });
+
+export const {
+  refreshFeed,
+  refreshNotifications,
+  refreshReceivedMessages,
+  refreshSentMessages,
+} = contentSlice.actions;
 
 export default contentSlice.reducer;
