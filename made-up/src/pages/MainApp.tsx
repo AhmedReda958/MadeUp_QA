@@ -30,7 +30,7 @@ import {
 import HomePage from "@/pages/HomePage";
 import NotificationPage from "@/pages/NotificationPage";
 import UserProfile from "@/pages/ProfilePage";
-import ReplayMessagePage from "@/pages/messages/ReplayMessagePage";
+import ReplyMessagePage from "@/pages/messages/ReplyMessagePage";
 import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messages/MessagesPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
@@ -93,11 +93,11 @@ function MainApp() {
               <NotificationPage />
             </Route>
             {/* messages */}
-            <Route path="/messages">
+            <Route path="/messages" exact>
               <MessagesPage />
             </Route>
-            <Route path="/messages/replay/:id" exact>
-              {({ match }) => <ReplayMessagePage match={match} />}
+            <Route path="/messages/anwser/:id" exact>
+              {({ match }) => <ReplyMessagePage match={match} />}
             </Route>
             <Route
               path="/messages/:id"

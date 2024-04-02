@@ -10,9 +10,9 @@ import Page from "@/components/ui/Page";
 import { addAlert } from "@/redux/slices/appSlice";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 
-function ReplayMessagePage({ match, history }) {
-  let [replayText, setReplayText] = useState("");
-  let [replayLoading, setReplayLoading] = useState(false);
+function replyMessagePage({ match, history }) {
+  let [replyText, setreplyText] = useState("");
+  let [replyLoading, setreplyLoading] = useState(false);
 
   const id = match.params.id;
 
@@ -22,10 +22,10 @@ function ReplayMessagePage({ match, history }) {
   const message = messageData.response;
 
   // todo add validation
-  const handleReplayChange = (e) => {
+  const handlereplyChange = (e) => {
     e.target.style.height = "";
     e.target.style.height = e.target.scrollHeight + "px";
-    setReplayText(e.target.value);
+    setreplyText(e.target.value);
   };
 
   const dispatch = useDispatch();
@@ -47,12 +47,12 @@ function ReplayMessagePage({ match, history }) {
     );
   };
 
-  const sendReplay = () => {
-    setReplayLoading(true);
+  const sendreply = () => {
+    setreplyLoading(true);
     axios
       .post(`/messages/message/${message._id}`, {
         privately: false,
-        content: replayText,
+        content: replyText,
       })
       .then((res) => {
         onSuccess();
@@ -63,12 +63,12 @@ function ReplayMessagePage({ match, history }) {
         onFailure();
       })
       .finally(() => {
-        setReplayLoading(false);
+        setreplyLoading(false);
       });
   };
 
   return (
-    <Page title={"Replay"} backTo="/messages" loading={messageData.loading}>
+    <Page title={"Anwser"} backTo="/messages" loading={messageData.loading}>
       {!messageData.loading ? (
         <div className=" h-full">
           <div className="flex mb-8 post_after after:mt-8">
@@ -116,7 +116,7 @@ function ReplayMessagePage({ match, history }) {
               </div>
             </div>
           </div>
-          {/* replay */}
+          {/* reply */}
           <div className="flex">
             <div className="me-4 drop-shadow-2xl">
               <ProfilePic data={message.receiver} className="w-14 h-14" />
@@ -132,8 +132,8 @@ function ReplayMessagePage({ match, history }) {
                 type="text"
                 dir="rtl"
                 className="font-body-play resize-none overflow-hidden bg-inherit w-full border-none focus:ring-0 dark:placeholder-body-alt placeholder-body text-body dark:text-body-alt "
-                onChange={handleReplayChange}
-                placeholder="Type your replay"
+                onChange={handlereplyChange}
+                placeholder="Type your reply"
               />
             </div>
           </div>
@@ -144,10 +144,10 @@ function ReplayMessagePage({ match, history }) {
           <div className="">
             <button
               className="drop-shadow-xl mt-10  float-end button-lg"
-              onClick={() => sendReplay()}
-              disabled={replayLoading || replayText.length < 6}
+              onClick={() => sendreply()}
+              disabled={replyLoading || replyText.length < 6}
             >
-              Replay
+              Answer
               <i class="ps-2 fa-solid fa-paper-plane"></i>
             </button>
           </div>
@@ -159,4 +159,4 @@ function ReplayMessagePage({ match, history }) {
   );
 }
 
-export default ReplayMessagePage;
+export default replyMessagePage;
