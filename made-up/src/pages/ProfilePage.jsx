@@ -27,7 +27,11 @@ import { CameraIcon, CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { isUserOnline } from "@/utils/userProfileHelpers";
 
 // ionic
-import { useIonViewWillEnter } from "@ionic/react";
+import {
+  useIonViewWillEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+} from "@ionic/react";
 
 const EmptyPage = () => {
   return (
@@ -87,34 +91,35 @@ const ProfileMessages = ({ userId }) => {
   const [loading, setLoading] = useState(false);
   const [messagesData, setMessagesData] = useState([]);
   const [error, setError] = useState();
+  const [page, setPage] = useState(1);
 
-  const getMessages = useCallback(
-    () =>
-      axios
-        .get(`messages/user/${userId}`, {
-          params: {
-            page: 1,
-            limit: 10,
-          },
-        })
-        .then((res) => {
-          setMessagesData(res.data);
-        })
-        .catch((err) => {
-          console.error(err.message);
-          setError(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        }),
-    [userId]
-  );
+  const getMessages = () =>
+    axios
+      .get(`messages/user/${userId}`, {
+        params: {
+          page,
+          limit: 10,
+        },
+      })
+      .then((res) => {
+        setMessagesData((prev) => [...prev, ...res.data]);
+        // console.log(res.data, messagesData);
+        setPage((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.error(err.message);
+        setError(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
   // getMessages();
   useEffect(() => {
     getMessages();
   }, [userId]);
 
-  const messages = useMemo(() => messagesData, [messagesData, userId]);
+  const messages = useMemo(() => messagesData, [messagesData]);
 
   return (
     <div>
@@ -150,6 +155,20 @@ const ProfileMessages = ({ userId }) => {
       ) : (
         <LoadingSpinner />
       )}
+      {/* infinte scroll */}
+      <IonInfiniteScroll
+        onIonInfinite={(ev) => {
+          if (messagesData.length % 10 !== 0) {
+            // 10 is the limit
+            ev.target.disabled = true;
+            return;
+          }
+          getMessages();
+          setTimeout(() => ev.target.complete(), 500);
+        }}
+      >
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
     </div>
   );
 };

@@ -8,7 +8,11 @@ import { fetchMessages } from "@/redux/slices/contentSlice";
 import mailboxImg from "@/assets/imgs/mailbox.svg";
 
 // ionic
-import { useIonViewWillEnter } from "@ionic/react";
+import {
+  useIonViewWillEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+} from "@ionic/react";
 
 function MessagesPage() {
   const dispatch = useDispatch();
@@ -60,6 +64,20 @@ function MessagesPage() {
           </div>
         </div>
       )}
+      {/* infinte scroll */}
+      <IonInfiniteScroll
+        onIonInfinite={(ev) => {
+          if (messagesData.length % 10 !== 0) {
+            // 10 is the limit
+            ev.target.disabled = true;
+            return;
+          }
+          fetchMessagesData();
+          setTimeout(() => ev.target.complete(), 500);
+        }}
+      >
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
     </Page>
   );
 }

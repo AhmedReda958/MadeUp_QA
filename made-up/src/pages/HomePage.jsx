@@ -17,6 +17,8 @@ import {
   useIonViewDidEnter,
   useIonLoading,
   useIonViewWillEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
 } from "@ionic/react";
 
 const HomePage = () => {
@@ -142,6 +144,15 @@ const Feed = () => {
       ) : (
         <LoadingSpinner />
       )}
+      {/* infinte scroll */}
+      <IonInfiniteScroll
+        onIonInfinite={(ev) => {
+          dispatch(fetchFeed({ newData: false }));
+          setTimeout(() => ev.target.complete(), 500);
+        }}
+      >
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
     </div>
   );
 };

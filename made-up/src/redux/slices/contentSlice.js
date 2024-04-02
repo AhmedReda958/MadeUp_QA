@@ -11,7 +11,7 @@ export const fetchFeed = createAsyncThunk(
       const response = await axios.get("/feed", {
         params: {
           page: currentPage,
-          limit: 10,
+          limit: 20,
         },
       });
       return response.data;
@@ -59,7 +59,7 @@ export const fetchMessages = createAsyncThunk(
       const response = await axios.get("/messages/inbox", {
         params: {
           page: currentPage,
-          limit: 30,
+          limit: 10,
         },
       });
       return response.data;
@@ -119,7 +119,8 @@ const contentSlice = createSlice({
       //* Fetch feed fulfilled
       .addCase(fetchFeed.fulfilled, (state, action) => {
         state.feed.loading = false;
-        state.feed.data = action.payload;
+        state.feed.data = [...state.feed.data, ...action.payload];
+        state.feed.page += 1;
       })
       //! Fetch feed rejected
       .addCase(fetchFeed.rejected, (state, action) => {
@@ -153,7 +154,11 @@ const contentSlice = createSlice({
       //* Fetch messages fulfilled
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.messages.received.loading = false;
-        state.messages.received.data = action.payload;
+        state.messages.received.data = [
+          ...state.messages.received.data,
+          ...action.payload,
+        ];
+        state.messages.received.page += 1;
       })
       //! Fetch messages rejected
       .addCase(fetchMessages.rejected, (state, action) => {

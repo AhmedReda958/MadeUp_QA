@@ -14,7 +14,11 @@ import { markAsSeen } from "@/redux/actions/notificationsActions";
 import { fetchNotifications } from "@/redux/slices/contentSlice";
 
 // ionic
-import { useIonViewWillEnter } from "@ionic/react";
+import {
+  useIonViewWillEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+} from "@ionic/react";
 
 const EmptyPage = () => {
   return (
@@ -118,6 +122,20 @@ const NotificationPage = () => {
       ) : (
         <EmptyPage />
       )}
+      {/* infinte scroll */}
+      <IonInfiniteScroll
+        onIonInfinite={(ev) => {
+          if (notifications.length % 10 !== 0) {
+            // 10 is the limit
+            ev.target.disabled = true;
+            return;
+          }
+          dispatch(fetchNotifications());
+          setTimeout(() => ev.target.complete(), 500);
+        }}
+      >
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
     </Page>
   );
 };
