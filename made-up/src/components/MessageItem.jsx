@@ -39,7 +39,8 @@ const MessageMenu = ({ type, message }) => {
             (message.reply.private ? "Published" : "Hidden") + " the message",
           type: "success",
         });
-        window.location.reload(); // TODO: just remove the message item
+        // delete the message from the dom
+        document.querySelector(`.message-${message._id}`).remove();
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -57,7 +58,8 @@ const MessageMenu = ({ type, message }) => {
       .patch("/messages/message/" + message._id, { action: "cancel" })
       .then((res) => {
         Alert({ title: "Canceled the reply", type: "success" });
-        window.location.reload(); // TODO: just remove the message item
+        // delete the message from the dom
+        document.querySelector(`.message-${message._id}`).remove();
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -77,7 +79,7 @@ const MessageMenu = ({ type, message }) => {
           title: (message.pinned ? "Unpinned" : "Pinned") + " the message",
           type: "success",
         });
-        window.location.reload(); // TODO: just remove the message item
+        message.pinned = !message.pinned;
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -98,6 +100,7 @@ const MessageMenu = ({ type, message }) => {
       .catch((err) => {
         console.error(err.response.data);
         Alert({ title: "Unable to deleted the message", type: "error" });
+        document.querySelector(`.message-${message._id}`).remove();
       });
   };
 
@@ -278,7 +281,7 @@ const MessageItem = ({ message, type = "post" }) => {
       : "/messages/" + message._id;
 
   return (
-    <div className="pt-5 ">
+    <div className={`pt-5 ${"message-" + message._id}`}>
       {/* message */}
       <div
         className={`flex mb-2 ${type === "post" && "post_after after:ms-7"}`}
