@@ -220,7 +220,9 @@ const UserProfile = () => {
             </Page.Header>
             <div className="flex">
               <Link
-                to={userInfo.username === username && "/settings/profilePic"}
+                to={
+                  userInfo.username === username ? "/settings/profilePic" : "#"
+                }
                 className="relative pointer"
               >
                 <ProfilePic data={response} className="w-24 h-24" />

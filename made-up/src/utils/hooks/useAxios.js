@@ -18,9 +18,10 @@ const useAxios = (
         callback(res);
       })
       .catch((err) => {
-        setError(err.response.data.code);
-        setStatusCode(err.response.status);
+        setError(err?.response?.data.code);
+        setStatusCode(err?.response?.status);
         console.error(err.message);
+        console.error(err);
       })
       .finally(() => {
         setloading(false);

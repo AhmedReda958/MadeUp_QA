@@ -215,7 +215,7 @@ const MessageItem = ({ message, type = "post" }) => {
       >
         {/* profile pic */}
         <div className="me-1 cursor-pointer">
-          <Link to={message.sender ? "/user/" + message.sender.username : ""}>
+          <Link to={message.sender ? "/user/" + message.sender.username : "#"}>
             <ProfilePic
               data={message.sender}
               className="w-14 h-14"
@@ -228,7 +228,9 @@ const MessageItem = ({ message, type = "post" }) => {
         <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer">
           {/* header */}
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
-            <Link to={message.sender ? "/user/" + message.sender.username : ""}>
+            <Link
+              to={message.sender ? "/user/" + message.sender.username : "#"}
+            >
               <div className="flex">
                 <div className="flex items-center">
                   <h5 className="text-altcolor font-semibold truncate max-w-36">
@@ -279,7 +281,7 @@ const MessageItem = ({ message, type = "post" }) => {
         <div className="flex mt-4">
           <div className="me-3 cursor-pointer">
             <Link
-              to={message.receiver ? "/user/" + message.receiver.username : ""}
+              to={message.receiver ? "/user/" + message.receiver.username : "#"}
             >
               <ProfilePic
                 data={message.receiver}
@@ -294,7 +296,9 @@ const MessageItem = ({ message, type = "post" }) => {
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link
                   to={
-                    message.receiver ? "/user/" + message.receiver.username : ""
+                    message.receiver
+                      ? "/user/" + message.receiver.username
+                      : "#"
                   }
                 >
                   <div className="flex">
