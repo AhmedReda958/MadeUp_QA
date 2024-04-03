@@ -15,8 +15,11 @@ import { HeartIcon } from "@heroicons/react/24/outline";
 
 import axios from "axios";
 
+import { useIonAlert } from "@ionic/react";
+
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
+  const [presentAlert] = useIonAlert();
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
 
@@ -36,7 +39,8 @@ const MessageMenu = ({ type, message }) => {
             (message.reply.private ? "Published" : "Hidden") + " the message",
           type: "success",
         });
-        window.location.reload(); // TODO: just remove the message item
+        // delete the message from the dom
+        document.querySelector(`.message-${message._id}`).remove();
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -54,7 +58,8 @@ const MessageMenu = ({ type, message }) => {
       .patch("/messages/message/" + message._id, { action: "cancel" })
       .then((res) => {
         Alert({ title: "Canceled the reply", type: "success" });
-        window.location.reload(); // TODO: just remove the message item
+        // delete the message from the dom
+        document.querySelector(`.message-${message._id}`).remove();
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -63,7 +68,6 @@ const MessageMenu = ({ type, message }) => {
   };
 
   const togglePin = () => {
-    console.log(message.pinned, !message.pinned);
     axios
       .patch(
         "/messages/message/" + message._id,
@@ -75,7 +79,7 @@ const MessageMenu = ({ type, message }) => {
           title: (message.pinned ? "Unpinned" : "Pinned") + " the message",
           type: "success",
         });
-        window.location.reload(); // TODO: just remove the message item
+        message.pinned = !message.pinned;
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -96,6 +100,7 @@ const MessageMenu = ({ type, message }) => {
       .catch((err) => {
         console.error(err.response.data);
         Alert({ title: "Unable to deleted the message", type: "error" });
+        document.querySelector(`.message-${message._id}`).remove();
       });
   };
 
@@ -116,36 +121,29 @@ const MessageMenu = ({ type, message }) => {
         >
           <Menu.Items className="absolute z-30 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="p-1">
+              {/* share */}
+              {type === "post" && (
+                <Menu.Item>
+                  <button
+                    onClick={() =>
+                      dispatch(
+                        share({
+                          text:
+                            message.content + " - " + message?.reply.content,
+                          url: location.origin + "/message/" + message._id,
+                        })
+                      )
+                    }
+                    className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                  >
+                    <i className="fa fa-share text-primary pe-3"></i>
+                    Share answer
+                  </button>
+                </Menu.Item>
+              )}
               {type == "post" && msgOwner === userInfo.username && (
                 <>
-                  <Menu.Item>
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          share({
-                            text:
-                              message.content + " - " + message?.reply.content,
-                            url: location.origin + "/message/" + message._id,
-                          })
-                        )
-                      }
-                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                    >
-                      <i className="fa fa-share text-primary pe-3"></i>
-                      Share answer
-                    </button>
-                  </Menu.Item>
-
-                  <Menu.Item>
-                    <button
-                      onClick={cancelReply}
-                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                    >
-                      <i className="fa fa-ban text-gray-500 pe-3"></i>
-                      Cancel answer
-                    </button>
-                  </Menu.Item>
-
+                  {/* pin */}
                   <Menu.Item>
                     <button
                       onClick={togglePin}
@@ -155,9 +153,61 @@ const MessageMenu = ({ type, message }) => {
                       {message.pinned ? "Unpin from " : "Pin in "} Profile
                     </button>
                   </Menu.Item>
+
+                  {/* cancel reply */}
                   <Menu.Item>
                     <button
-                      onClick={togglePrivateReply}
+                      onClick={() =>
+                        presentAlert({
+                          header: "Cancel Anwser",
+                          message:
+                            "Are you sure you want to cancel your Anwser for this message?",
+                          buttons: [
+                            {
+                              text: "Cancel",
+                              role: "cancel",
+                            },
+                            {
+                              text: "OK",
+                              role: "confirm",
+                              cssClass: "danger",
+                              handler: () => {
+                                cancelReply();
+                              },
+                            },
+                          ],
+                        })
+                      }
+                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                    >
+                      <i className="fa fa-ban text-gray-500 pe-3"></i>
+                      Cancel answer
+                    </button>
+                  </Menu.Item>
+
+                  {/*hide reply */}
+                  <Menu.Item>
+                    <button
+                      onClick={() =>
+                        presentAlert({
+                          header: "Hide from profile",
+                          message:
+                            "Are you sure you want to hide this message?",
+                          buttons: [
+                            {
+                              text: "Cancel",
+                              role: "cancel",
+                            },
+                            {
+                              text: "OK",
+                              role: "confirm",
+                              handler: () => {
+                                togglePrivateReply();
+                              },
+                            },
+                          ],
+                        })
+                      }
                       className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                     >
                       <i className="fa fa-eye-slash text-gray-500 pe-3"></i>
@@ -168,6 +218,8 @@ const MessageMenu = ({ type, message }) => {
                   </Menu.Item>
                 </>
               )}
+
+              {/* report */}
               <Menu.Item>
                 <button
                   onClick={() =>
@@ -179,10 +231,32 @@ const MessageMenu = ({ type, message }) => {
                   Report
                 </button>
               </Menu.Item>
+
+              {/* delete  */}
               {(type === "message") | (msgOwner === userInfo.username) ? (
                 <Menu.Item>
                   <button
-                    onClick={deleteMessage}
+                    onClick={() =>
+                      presentAlert({
+                        header: "Delete message",
+                        message:
+                          "Are you sure you want to delete this message?",
+                        buttons: [
+                          {
+                            text: "Cancel",
+                            role: "cancel",
+                          },
+                          {
+                            text: "OK",
+                            role: "confirm",
+                            cssClass: "danger",
+                            handler: () => {
+                              deleteMessage();
+                            },
+                          },
+                        ],
+                      })
+                    }
                     className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                   >
                     <i className="fa fa-trash text-red-500 pe-3"></i>
@@ -208,14 +282,14 @@ const MessageItem = ({ message, type = "post" }) => {
       : "/messages/" + message._id;
 
   return (
-    <div className="pt-5 ">
+    <div className={`pt-5 ${"message-" + message._id}`}>
       {/* message */}
       <div
         className={`flex mb-2 ${type === "post" && "post_after after:ms-7"}`}
       >
         {/* profile pic */}
         <div className="me-1 cursor-pointer">
-          <Link to={message.sender && "/user/" + message.sender.username}>
+          <Link to={message.sender ? "/user/" + message.sender.username : "#"}>
             <ProfilePic
               data={message.sender}
               className="w-14 h-14"
@@ -226,9 +300,17 @@ const MessageItem = ({ message, type = "post" }) => {
         </div>
 
         <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer">
+          {/* pin icon */}
+          {message.pinned && (
+            <div className="absolute -top-3 -right-1 p-1 text-alt">
+              <i className="fa fa-thumb-tack  rotate-[30deg] text-2xl"></i>
+            </div>
+          )}
           {/* header */}
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
-            <Link to={message.sender ? "/user/" + message.sender.username : ""}>
+            <Link
+              to={message.sender ? "/user/" + message.sender.username : "#"}
+            >
               <div className="flex">
                 <div className="flex items-center">
                   <h5 className="text-altcolor font-semibold truncate max-w-36">
@@ -278,7 +360,9 @@ const MessageItem = ({ message, type = "post" }) => {
       {type === "post" && (
         <div className="flex mt-4">
           <div className="me-3 cursor-pointer">
-            <Link to={message.receiver && "/user/" + message.receiver.username}>
+            <Link
+              to={message.receiver ? "/user/" + message.receiver.username : "#"}
+            >
               <ProfilePic
                 data={message.receiver}
                 className="w-14 h-14"
@@ -291,7 +375,11 @@ const MessageItem = ({ message, type = "post" }) => {
               {/* header */}
               <div className="flex justify-between pt-3 pb-1 cursor-pointer">
                 <Link
-                  to={message.receiver && "/user/" + message.receiver.username}
+                  to={
+                    message.receiver
+                      ? "/user/" + message.receiver.username
+                      : "#"
+                  }
                 >
                   <div className="flex">
                     <div className="flex items-center">
@@ -312,9 +400,6 @@ const MessageItem = ({ message, type = "post" }) => {
                     )}
                   </div>
                 </Link>
-                <div>
-                  <MessageMenu type={type} message={message} />
-                </div>
               </div>
               <div className="flex items-baseline text-sm leading-6 -mt-3">
                 Replying to

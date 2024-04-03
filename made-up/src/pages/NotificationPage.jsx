@@ -1,20 +1,36 @@
-import Page from "@/components/ui/Page";
-import { useState, useCallback, useMemo, useEffect, Fragment } from "react";
-import axios from "axios";
+import { Fragment, useMemo } from "react";
+
+// assets
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import sleepImg from "@/assets/imgs/sleep.svg";
 import { BellAlertIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { formatDate } from "@/utils/helpers";
-import { Dialog, Menu, Transition } from "@headlessui/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+
+// utils
 import useAlert from "@/utils/hooks/useAlert";
+import { formatDate } from "@/utils/helpers";
+
+// redux
+import { useDispatch, useSelector } from "react-redux";
 import { share } from "@/redux/slices/appSlice";
 import { markAsSeen } from "@/redux/actions/notificationsActions";
-import { fetchNotifications } from "@/redux/slices/contentSlice";
+import {
+  fetchNotifications,
+  refreshNotifications,
+} from "@/redux/slices/contentSlice";
 
 // ionic
-import { useIonViewWillEnter } from "@ionic/react";
+import {
+  useIonViewDidEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonRefresher,
+  IonRefresherContent,
+} from "@ionic/react";
+
+// components
+import { Menu, Transition } from "@headlessui/react";
+import Page from "@/components/ui/Page";
+import { Link } from "react-router-dom";
 
 const EmptyPage = () => {
   return (
@@ -96,28 +112,67 @@ const NotificationItem = ({ data }) => {
 const NotificationPage = () => {
   const { unseen } = useSelector((state) => state.app);
   const dispatch = useDispatch();
+  const { data, loading } = useSelector((state) => state.content.notifications);
 
-  useIonViewWillEnter(() => {
-    dispatch(fetchNotifications());
+  useIonViewDidEnter(() => {
+    markNotificationsAsSeen();
+  });
 
+  const markNotificationsAsSeen = () => {
     if (unseen.notifications > 0) {
       dispatch(markAsSeen({ type: "notifications" }));
     }
-  });
+  };
 
-  const { data, loading } = useSelector((state) => state.content.notifications);
-  const notifications = data;
+  const getNotifications = () => {
+    dispatch(fetchNotifications());
+  };
+
+  const handleRefresh = (e) => {
+    setTimeout(() => {
+      dispatch(refreshNotifications());
+      dispatch(fetchNotifications());
+      e.detail.complete();
+    }, 500);
+  };
+
+  const notifications = useMemo(() => data, [data]);
   const isLoading = loading && notifications.length === 0;
 
   return (
-    <Page title={"Notification"} backTo="/home" loading={isLoading}>
-      {notifications.length > 0 ? (
-        notifications.map((item) => {
-          return <NotificationItem data={item} key={item._id} />;
-        })
-      ) : (
-        <EmptyPage />
-      )}
+    <Page title={"Notification"} backTo="/home">
+      {/* // refresher */}
+      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+        <IonRefresherContent></IonRefresherContent>
+      </IonRefresher>
+
+      {/* content */}
+      <div>
+        {notifications.length > 0 ? (
+          <div>
+            {notifications.map((item) => {
+              return <NotificationItem data={item} key={item._id} />;
+            })}
+          </div>
+        ) : (
+          <EmptyPage />
+        )}
+      </div>
+
+      {/* infinte scroll */}
+      <IonInfiniteScroll
+        onIonInfinite={(ev) => {
+          if (notifications.length > 9) {
+            // 10 is the limit
+            ev.target.disabled = true;
+            return;
+          }
+          getNotifications();
+          setTimeout(() => ev.target.complete(), 500);
+        }}
+      >
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
     </Page>
   );
 };

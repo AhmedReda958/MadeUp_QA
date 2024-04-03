@@ -1,14 +1,24 @@
-import { useSelector, useDispatch } from "react-redux";
-import { useGetUserDetailsQuery } from "@/redux/services/authServices";
 import { useEffect, useState } from "react";
-import { setCredentials } from "@/redux/slices/authSlice";
 import { checkInternetConnection } from "@/utils/handleConnection";
+
+// redux
+import { useSelector, useDispatch } from "react-redux";
+import { setCredentials } from "@/redux/slices/authSlice";
+import { useGetUserDetailsQuery } from "@/redux/services/authServices";
+import {
+  fetchFeed,
+  fetchNotifications,
+  fetchMessages,
+} from "@/redux/slices/contentSlice";
+
+//ionic
 import {
   IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
   IonTabs,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import { Redirect, Route } from "react-router";
 
@@ -74,6 +84,13 @@ function MainApp() {
     });
   }, []);
 
+  // fetch data on app load
+  useIonViewWillEnter(() => {
+    dispatch(fetchFeed());
+    dispatch(fetchNotifications());
+    dispatch(fetchMessages());
+  });
+
   return (
     <div className="font-body min-h-screen min-w-screen  bg-light text-body-alt dark:bg-dark dark:text-secondary-alt">
       <main
@@ -97,7 +114,9 @@ function MainApp() {
               <MessagesPage />
             </Route>
             <Route path="/messages/anwser/:id" exact>
-              {({ match }) => <ReplyMessagePage match={match} />}
+              {({ match, history }) => (
+                <ReplyMessagePage match={match} history={history} />
+              )}
             </Route>
             <Route
               path="/messages/:id"

@@ -11,7 +11,7 @@ export const fetchFeed = createAsyncThunk(
       const response = await axios.get("/feed", {
         params: {
           page: currentPage,
-          limit: 10,
+          limit: 20,
         },
       });
       return response.data;
@@ -59,7 +59,7 @@ export const fetchMessages = createAsyncThunk(
       const response = await axios.get("/messages/inbox", {
         params: {
           page: currentPage,
-          limit: 30,
+          limit: 10,
         },
       });
       return response.data;
@@ -73,41 +73,57 @@ export const fetchMessages = createAsyncThunk(
   }
 );
 
-const contentSlice = createSlice({
-  name: "content",
-  initialState: {
-    feed: {
+const initialState = {
+  feed: {
+    data: [],
+    loading: false,
+    refresh: false,
+    error: null,
+    page: 1,
+  },
+  notifications: {
+    data: [],
+    loading: false,
+    refresh: false,
+    error: null,
+    page: 1,
+  },
+  messages: {
+    received: {
       data: [],
       loading: false,
       refresh: false,
       error: null,
       page: 1,
     },
-    notifications: {
+    sent: {
       data: [],
       loading: false,
       refresh: false,
       error: null,
       page: 1,
-    },
-    messages: {
-      received: {
-        data: [],
-        loading: false,
-        refresh: false,
-        error: null,
-        page: 1,
-      },
-      sent: {
-        data: [],
-        loading: false,
-        refresh: false,
-        error: null,
-        page: 1,
-      },
     },
   },
-  reducers: {},
+};
+
+const contentSlice = createSlice({
+  name: "content",
+  initialState,
+  reducers: {
+    // Add reducers here
+    refreshFeed: (state) => {
+      state.feed = initialState.feed;
+    },
+    refreshNotifications: (state) => {
+      state.notifications = initialState.notifications;
+    },
+    refreshReceivedMessages: (state) => {
+      state.messages.received = initialState.messages.received;
+    },
+    refreshSentMessages: (state) => {
+      state.messages.sent = initialState.messages.sent;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // feed ====================================================================
@@ -119,7 +135,8 @@ const contentSlice = createSlice({
       //* Fetch feed fulfilled
       .addCase(fetchFeed.fulfilled, (state, action) => {
         state.feed.loading = false;
-        state.feed.data = action.payload;
+        state.feed.data = [...state.feed.data, ...action.payload];
+        state.feed.page += 1;
       })
       //! Fetch feed rejected
       .addCase(fetchFeed.rejected, (state, action) => {
@@ -136,7 +153,11 @@ const contentSlice = createSlice({
       //* Fetch notifications fulfilled
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.notifications.loading = false;
-        state.notifications.data = action.payload;
+        state.notifications.data = [
+          ...state.notifications.data,
+          ...action.payload,
+        ];
+        state.notifications.page += 1;
       })
       //! Fetch notifications rejected
       .addCase(fetchNotifications.rejected, (state, action) => {
@@ -153,7 +174,11 @@ const contentSlice = createSlice({
       //* Fetch messages fulfilled
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.messages.received.loading = false;
-        state.messages.received.data = action.payload;
+        state.messages.received.data = [
+          ...state.messages.received.data,
+          ...action.payload,
+        ];
+        state.messages.received.page += 1;
       })
       //! Fetch messages rejected
       .addCase(fetchMessages.rejected, (state, action) => {
@@ -162,5 +187,12 @@ const contentSlice = createSlice({
       });
   },
 });
+
+export const {
+  refreshFeed,
+  refreshNotifications,
+  refreshReceivedMessages,
+  refreshSentMessages,
+} = contentSlice.actions;
 
 export default contentSlice.reducer;

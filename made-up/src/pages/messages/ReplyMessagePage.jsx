@@ -56,7 +56,7 @@ function replyMessagePage({ match, history }) {
       })
       .then((res) => {
         onSuccess();
-        navigate(-1);
+        history.push("/messages");
       })
       .catch((err) => {
         console.log("error: " + err.code);
