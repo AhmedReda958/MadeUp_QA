@@ -296,6 +296,12 @@ const MessageItem = ({ message, type = "post" }) => {
         </div>
 
         <div className="bg-altcolor w-full  px-4 rounded-2xl shadow-md cursor-pointer">
+          {/* pin icon */}
+          {message.pinned && (
+            <div className="absolute -top-3 -right-1 p-1 text-alt">
+              <i className="fa fa-thumb-tack  rotate-[30deg] text-2xl"></i>
+            </div>
+          )}
           {/* header */}
           <div className="flex justify-between pt-3 pb-1 cursor-pointer">
             <Link
