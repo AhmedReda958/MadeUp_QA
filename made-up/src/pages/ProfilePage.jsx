@@ -29,8 +29,11 @@ import { isUserOnline } from "@/utils/userProfileHelpers";
 // ionic
 import {
   useIonViewWillEnter,
+  useIonViewDidEnter,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/react";
 
 const EmptyPage = () => {
@@ -87,11 +90,12 @@ const UserNotFound = () => {
   );
 };
 
-const ProfileMessages = ({ userId }) => {
+const ProfileMessages = ({ userId, getUserData }) => {
   const [loading, setLoading] = useState(false);
   const [messagesData, setMessagesData] = useState([]);
   const [error, setError] = useState();
   const [page, setPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getMessages = () =>
     axios
@@ -115,14 +119,28 @@ const ProfileMessages = ({ userId }) => {
       });
 
   // getMessages();
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     getMessages();
   }, [userId]);
+
+  const handleRefresh = (e) => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getUserData();
+      getMessages();
+      setRefreshing(false);
+      e.detail.complete();
+    }, 500);
+  };
 
   const messages = useMemo(() => messagesData, [messagesData]);
 
   return (
     <div>
+      {/* // refresher */}
+      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+        <IonRefresherContent></IonRefresherContent>
+      </IonRefresher>
       {!loading ? (
         error ? (
           error
@@ -136,6 +154,8 @@ const ProfileMessages = ({ userId }) => {
               <div>Likes 0</div>
               <div>Score 0</div>
             </div>
+            {/* refresh loading */}
+            {refreshing && <LoadingSpinner />}
             {messages.map((message, index) => (
               <MessageItem key={message._id + index} message={message} />
             ))}
@@ -149,6 +169,8 @@ const ProfileMessages = ({ userId }) => {
               <div>Likes 0</div>
               <div>Score 0</div>
             </div>
+            {/* refresh loading */}
+            {refreshing && <LoadingSpinner />}
             <EmptyPage />
           </>
         )
@@ -178,128 +200,145 @@ const UserProfile = () => {
 
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
-  const user = useAxios(
-    { url: `/users?username=${username}` },
-    { params: { limit: 30 } }
-  );
-  const { response, error, loading } = user;
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState();
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(`/users?username=${username}`);
+      setUser(response.data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useIonViewWillEnter(() => {
+    getUserData();
+  }, [username]);
 
   const dispatch = useDispatch();
   const Alert = useAlert();
 
-  const isOnline = isUserOnline(response?.lastSeen);
+  const isOnline = isUserOnline(user?.lastSeen);
 
   return (
     <Page header={false} backTo="/home">
-      {!loading ? (
-        error ? (
-          <UserNotFound />
-        ) : (
-          <>
-            <Page.Header title={"@" + response.username}>
-              {userInfo.username != username ? (
-                <div
-                  className="p-3 text-lg cursor-pointer text-primary dark:text-white "
-                  onClick={() =>
-                    Alert({
-                      title: "Coming soon!",
-                      type: "comingsoon",
-                    })
-                  }
-                >
-                  <i className="fa fa-user-plus"></i>
-                </div>
-              ) : (
-                <Link
-                  to="/settings"
-                  className="w-10 h-10 flex items-center justify-center rounded-full rounded-tr text-lg cursor-pointer text-white bg-primary"
-                >
-                  <i className="fa fa-gear"></i>
-                </Link>
-              )}
-            </Page.Header>
-            <div className="flex">
-              <Link
-                to={
-                  userInfo.username === username ? "/settings/profilePic" : "#"
-                }
-                className="relative pointer"
-              >
-                <ProfilePic data={response} className="w-24 h-24" />
-                {userInfo.username === username ? (
-                  <div>
-                    <CameraIcon className="w-7 h-7 text-alt bg-dark dark:bg-dark-alt  rounded-full absolute bottom-1 right-0 p-1 cursor-pointer" />
+      <div className="relative">
+        {!loading ? (
+          error ? (
+            <UserNotFound />
+          ) : (
+            <>
+              <Page.Header title={"@" + user.username}>
+                {userInfo.username != username ? (
+                  <div
+                    className="p-3 text-lg cursor-pointer text-primary dark:text-white "
+                    onClick={() =>
+                      Alert({
+                        title: "Coming soon!",
+                        type: "comingsoon",
+                      })
+                    }
+                  >
+                    <i className="fa fa-user-plus"></i>
                   </div>
                 ) : (
-                  // check if online
-                  <>
-                    {isOnline && (
-                      <div className="absolute bottom-2 -right-10 flex items-center gap-1">
-                        <div className="w-5 h-5 bg-green-500 rounded-full  border-2 border-green-200"></div>
-                        <span className="text-sm text-green-500">online</span>
-                      </div>
-                    )}
-                  </>
+                  <Link
+                    to="/settings"
+                    className="w-10 h-10 flex items-center justify-center rounded-full rounded-tr text-lg cursor-pointer text-white bg-primary"
+                  >
+                    <i className="fa fa-gear"></i>
+                  </Link>
                 )}
-              </Link>
-
-              <div className="text-altcolor font-bold text-center grow flex items-center justify-around">
-                <div>
-                  <div>0</div> followers
-                </div>
-                <div>
-                  <div>0</div> following
-                </div>
-              </div>
-            </div>
-            <div className="ps-2 mt-1">
-              <div className="flex items-center">
-                <h2 className="text-altcolor font-bold text-xl ">
-                  {response.fullName || response.username}
-                </h2>
-                {response.verified && (
-                  <CheckBadgeIcon className="w-6 h-6 ms-1 text-primary" />
-                )}
-              </div>
-              <p className="text-body dark:text-secondary-alt text-lg mt-1 mb-2">
-                {response.bio}
-              </p>
-            </div>
-
-            {userInfo.username != username ? (
-              <SendMessageFrom userId={response._id} />
-            ) : (
-              <div className="mt-3 mb-2 flex justify-between gap-3 *:flex-1 *:font-bold ">
-                {/* edit profile and share profile  buttons*/}
-                <Button color="gray" size="sm" as={Link} to="/settings/info">
-                  Edit Profile
-                  <i className="fa fa-edit mx-1"></i>
-                </Button>
-                <Button
-                  color="light"
-                  size="sm"
-                  as={"a"}
-                  onClick={() =>
-                    dispatch(
-                      share({
-                        text: "ارسل لي رسالة سرية دون أن أعرف من انت",
-                        url: window.location.origin + "/" + userInfo.username,
-                      })
-                    )
+              </Page.Header>
+              <div className="flex">
+                <Link
+                  to={
+                    userInfo.username === username
+                      ? "/settings/profilePic"
+                      : "#"
                   }
+                  className="relative pointer"
                 >
-                  Share Profile
-                  <i className="fa fa-share-alt mx-2"></i>
-                </Button>
-              </div>
-            )}
+                  <ProfilePic data={user} className="w-24 h-24" />
+                  {userInfo.username === username ? (
+                    <div>
+                      <CameraIcon className="w-7 h-7 text-alt bg-dark dark:bg-dark-alt  rounded-full absolute bottom-1 right-0 p-1 cursor-pointer" />
+                    </div>
+                  ) : (
+                    // check if online
+                    <>
+                      {isOnline && (
+                        <div className="absolute bottom-2 -right-10 flex items-center gap-1">
+                          <div className="w-5 h-5 bg-green-500 rounded-full  border-2 border-green-200"></div>
+                          <span className="text-sm text-green-500">online</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Link>
 
-            <ProfileMessages userId={response._id} />
-          </>
-        )
-      ) : (
-        <LoadingSpinner />
-      )}
+                <div className="text-altcolor font-bold text-center grow flex items-center justify-around">
+                  <div>
+                    <div>0</div> followers
+                  </div>
+                  <div>
+                    <div>0</div> following
+                  </div>
+                </div>
+              </div>
+              <div className="ps-2 mt-1">
+                <div className="flex items-center">
+                  <h2 className="text-altcolor font-bold text-xl ">
+                    {user.fullName || user.username}
+                  </h2>
+                  {user.verified && (
+                    <CheckBadgeIcon className="w-6 h-6 ms-1 text-primary" />
+                  )}
+                </div>
+                <p className="text-body dark:text-secondary-alt text-lg mt-1 mb-2">
+                  {user.bio}
+                </p>
+              </div>
+
+              {userInfo.username != username ? (
+                <SendMessageFrom userId={user._id} />
+              ) : (
+                <div className="mt-3 mb-2 flex justify-between gap-3 *:flex-1 *:font-bold ">
+                  {/* edit profile and share profile  buttons*/}
+                  <Button color="gray" size="sm" as={Link} to="/settings/info">
+                    Edit Profile
+                    <i className="fa fa-edit mx-1"></i>
+                  </Button>
+                  <Button
+                    color="light"
+                    size="sm"
+                    as={"a"}
+                    onClick={() =>
+                      dispatch(
+                        share({
+                          text: "ارسل لي رسالة سرية دون أن أعرف من انت",
+                          url: window.location.origin + "/" + userInfo.username,
+                        })
+                      )
+                    }
+                  >
+                    Share Profile
+                    <i className="fa fa-share-alt mx-2"></i>
+                  </Button>
+                </div>
+              )}
+
+              <ProfileMessages userId={user._id} getUserData={getUserData} />
+            </>
+          )
+        ) : (
+          <LoadingSpinner />
+        )}
+      </div>
     </Page>
   );
 };
