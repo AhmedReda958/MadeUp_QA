@@ -248,7 +248,7 @@ const UserProfile = () => {
                 ) : (
                   <Link
                     to="/settings"
-                    className="w-10 h-10 flex items-center justify-center rounded-full rounded-tr text-lg cursor-pointer text-white bg-primary"
+                    className="-me-4 flex items-center justify-center rounded-full text-lg cursor-pointer text-gray-500 dark:text-gray-400 p-2"
                   >
                     <i className="fa fa-gear"></i>
                   </Link>

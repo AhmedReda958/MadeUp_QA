@@ -121,27 +121,28 @@ const MessageMenu = ({ type, message }) => {
         >
           <Menu.Items className="absolute z-30 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
             <div className="p-1">
+              {/* share */}
+              {type === "post" && (
+                <Menu.Item>
+                  <button
+                    onClick={() =>
+                      dispatch(
+                        share({
+                          text:
+                            message.content + " - " + message?.reply.content,
+                          url: location.origin + "/message/" + message._id,
+                        })
+                      )
+                    }
+                    className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                  >
+                    <i className="fa fa-share text-primary pe-3"></i>
+                    Share answer
+                  </button>
+                </Menu.Item>
+              )}
               {type == "post" && msgOwner === userInfo.username && (
                 <>
-                  {/* share */}
-                  <Menu.Item>
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          share({
-                            text:
-                              message.content + " - " + message?.reply.content,
-                            url: location.origin + "/message/" + message._id,
-                          })
-                        )
-                      }
-                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                    >
-                      <i className="fa fa-share text-primary pe-3"></i>
-                      Share answer
-                    </button>
-                  </Menu.Item>
-
                   {/* pin */}
                   <Menu.Item>
                     <button
@@ -399,9 +400,6 @@ const MessageItem = ({ message, type = "post" }) => {
                     )}
                   </div>
                 </Link>
-                <div>
-                  <MessageMenu type={type} message={message} />
-                </div>
               </div>
               <div className="flex items-baseline text-sm leading-6 -mt-3">
                 Replying to
