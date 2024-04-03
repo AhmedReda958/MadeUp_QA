@@ -114,7 +114,9 @@ function MainApp() {
               <MessagesPage />
             </Route>
             <Route path="/messages/anwser/:id" exact>
-              {({ match }) => <ReplyMessagePage match={match} />}
+              {({ match, history }) => (
+                <ReplyMessagePage match={match} history={history} />
+              )}
             </Route>
             <Route
               path="/messages/:id"
