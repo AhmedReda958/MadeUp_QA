@@ -10,6 +10,7 @@ import {
   fetchNotifications,
   fetchMessages,
 } from "@/redux/slices/contentSlice";
+import { getNotificationsCount } from "@/redux/actions/notificationsActions";
 
 //ionic
 import {
@@ -53,6 +54,21 @@ function MainApp() {
   const { userToken, logedin, userInfo } = useSelector((state) => state.auth);
   const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
   const dispatch = useDispatch();
+
+  // notifications count
+  const { unseen } = useSelector((state) => state.app);
+
+  useIonViewWillEnter(() => {
+    // get notifications every 1m
+    const counter = setInterval(() => {
+      if (logedin) dispatch(getNotificationsCount());
+    }, 1000 * 60 * 1);
+    dispatch(getNotificationsCount());
+
+    return () => {
+      clearInterval(counter);
+    };
+  }, []);
 
   // automatically authenticate user if token is found
   const autoAuth =
@@ -145,9 +161,19 @@ function MainApp() {
               <HomeIcon className="w-6 h-6" />
             </IonTabButton>
             <IonTabButton tab="notifications" href="/notifications">
+              {unseen.notificaions > 0 && (
+                <span className=" absolute top-2 right-6  rounded-full bg-primary w-4 h-4 text-xs text-white text-center">
+                  {unseen.notifications}
+                </span>
+              )}
               <BellIcon className="w-6 h-6" />
             </IonTabButton>
             <IonTabButton tab="messages" href="/messages">
+              {unseen.messages > 0 && (
+                <span className=" absolute top-2 right-6 rounded-full bg-primary w-4 h-4 text-xs text-white text-center">
+                  {unseen.messages}
+                </span>
+              )}
               <EnvelopeIcon className="w-6 h-6" />
             </IonTabButton>
             <IonTabButton tab="profile" href={"/user/" + userInfo.username}>

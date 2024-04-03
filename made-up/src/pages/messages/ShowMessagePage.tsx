@@ -51,7 +51,11 @@ const ShowMessagePage: React.FC<ShowMessagePageProps> = ({ match }) => {
   const { response, error, loading } = messageData;
 
   return (
-    <Page title={!error ? "Message" : "Not found"} backTo="/" loading={loading}>
+    <Page
+      title={!error ? "Message" : "Not found"}
+      backTo="/home"
+      loading={loading}
+    >
       {!error ? (
         <>
           <MessageItem message={response} type="post" />

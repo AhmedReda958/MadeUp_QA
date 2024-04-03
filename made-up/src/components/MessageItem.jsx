@@ -95,7 +95,8 @@ const MessageMenu = ({ type, message }) => {
       .delete("/messages/message/" + message._id)
       .then((res) => {
         Alert({ title: "Deleted the message", type: "success" });
-        window.location.reload(); // TODO: just remove the message item
+        // delete the message from the dom
+        document.querySelector(`.message-${message._id}`).remove();
       })
       .catch((err) => {
         console.error(err.response.data);
