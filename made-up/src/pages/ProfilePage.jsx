@@ -28,7 +28,6 @@ import { isUserOnline } from "@/utils/userProfileHelpers";
 
 // ionic
 import {
-  useIonViewWillEnter,
   useIonViewDidEnter,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
@@ -97,7 +96,8 @@ const ProfileMessages = ({ userId, getUserData }) => {
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
 
-  const getMessages = () =>
+  const getMessages = () => {
+    setLoading(true);
     axios
       .get(`messages/user/${userId}`, {
         params: {
@@ -117,9 +117,10 @@ const ProfileMessages = ({ userId, getUserData }) => {
       .finally(() => {
         setLoading(false);
       });
+  };
 
   // getMessages();
-  useIonViewWillEnter(() => {
+  useIonViewDidEnter(() => {
     getMessages();
   }, [userId]);
 
@@ -215,7 +216,7 @@ const UserProfile = () => {
     }
   };
 
-  useIonViewWillEnter(() => {
+  useIonViewDidEnter(() => {
     getUserData();
   }, [username]);
 
