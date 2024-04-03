@@ -15,8 +15,11 @@ import { HeartIcon } from "@heroicons/react/24/outline";
 
 import axios from "axios";
 
+import { useIonAlert } from "@ionic/react";
+
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
+  const [presentAlert] = useIonAlert();
   const userInfo = useSelector((state) => state.auth.userInfo);
   const dispatch = useDispatch();
 
@@ -63,7 +66,6 @@ const MessageMenu = ({ type, message }) => {
   };
 
   const togglePin = () => {
-    console.log(message.pinned, !message.pinned);
     axios
       .patch(
         "/messages/message/" + message._id,
@@ -118,6 +120,7 @@ const MessageMenu = ({ type, message }) => {
             <div className="p-1">
               {type == "post" && msgOwner === userInfo.username && (
                 <>
+                  {/* share */}
                   <Menu.Item>
                     <button
                       onClick={() =>
@@ -136,16 +139,7 @@ const MessageMenu = ({ type, message }) => {
                     </button>
                   </Menu.Item>
 
-                  <Menu.Item>
-                    <button
-                      onClick={cancelReply}
-                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
-                    >
-                      <i className="fa fa-ban text-gray-500 pe-3"></i>
-                      Cancel answer
-                    </button>
-                  </Menu.Item>
-
+                  {/* pin */}
                   <Menu.Item>
                     <button
                       onClick={togglePin}
@@ -155,9 +149,61 @@ const MessageMenu = ({ type, message }) => {
                       {message.pinned ? "Unpin from " : "Pin in "} Profile
                     </button>
                   </Menu.Item>
+
+                  {/* cancel reply */}
                   <Menu.Item>
                     <button
-                      onClick={togglePrivateReply}
+                      onClick={() =>
+                        presentAlert({
+                          header: "Cancel Anwser",
+                          message:
+                            "Are you sure you want to cancel your Anwser for this message?",
+                          buttons: [
+                            {
+                              text: "Cancel",
+                              role: "cancel",
+                            },
+                            {
+                              text: "OK",
+                              role: "confirm",
+                              cssClass: "danger",
+                              handler: () => {
+                                cancelReply();
+                              },
+                            },
+                          ],
+                        })
+                      }
+                      className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
+                    >
+                      <i className="fa fa-ban text-gray-500 pe-3"></i>
+                      Cancel answer
+                    </button>
+                  </Menu.Item>
+
+                  {/*hide reply */}
+                  <Menu.Item>
+                    <button
+                      onClick={() =>
+                        presentAlert({
+                          header: "Hide from profile",
+                          message:
+                            "Are you sure you want to hide this message?",
+                          buttons: [
+                            {
+                              text: "Cancel",
+                              role: "cancel",
+                            },
+                            {
+                              text: "OK",
+                              role: "confirm",
+                              handler: () => {
+                                togglePrivateReply();
+                              },
+                            },
+                          ],
+                        })
+                      }
                       className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                     >
                       <i className="fa fa-eye-slash text-gray-500 pe-3"></i>
@@ -168,6 +214,8 @@ const MessageMenu = ({ type, message }) => {
                   </Menu.Item>
                 </>
               )}
+
+              {/* report */}
               <Menu.Item>
                 <button
                   onClick={() =>
@@ -179,10 +227,32 @@ const MessageMenu = ({ type, message }) => {
                   Report
                 </button>
               </Menu.Item>
+
+              {/* delete  */}
               {(type === "message") | (msgOwner === userInfo.username) ? (
                 <Menu.Item>
                   <button
-                    onClick={deleteMessage}
+                    onClick={() =>
+                      presentAlert({
+                        header: "Delete message",
+                        message:
+                          "Are you sure you want to delete this message?",
+                        buttons: [
+                          {
+                            text: "Cancel",
+                            role: "cancel",
+                          },
+                          {
+                            text: "OK",
+                            role: "confirm",
+                            cssClass: "danger",
+                            handler: () => {
+                              deleteMessage();
+                            },
+                          },
+                        ],
+                      })
+                    }
                     className="text-gray-900 group flex w-full items-center rounded-md px-2 py-2 text-sm"
                   >
                     <i className="fa fa-trash text-red-500 pe-3"></i>
