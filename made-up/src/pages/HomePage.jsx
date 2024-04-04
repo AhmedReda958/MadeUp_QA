@@ -23,23 +23,24 @@ import {
   IonRefresherContent,
 } from "@ionic/react";
 import { refreshFeed } from "../redux/slices/contentSlice";
+import { getNotificationsCount } from "@/redux/actions/notificationsActions";
 
 const HomePage = () => {
   const [openSettings, setOpenSettings] = useState(false);
   const auth = useSelector((state) => state.auth);
 
-  // const [present, dismiss] = useIonLoading();
+  const dispatch = useDispatch();
+  useIonViewDidEnter(() => {
+    // get notifications every 3m
+    const counter = setInterval(() => {
+      if (auth.logedin) dispatch(getNotificationsCount());
+    }, 1000 * 60 * 3);
+    dispatch(getNotificationsCount());
 
-  // useIonViewWillEnter(() => {
-  //   present({
-  //     message: "Loading...",
-  //     duration: 500,
-  //   });
-  // });
-
-  // useIonViewDidEnter(() => {
-  //   dismiss();
-  // });
+    return () => {
+      clearInterval(counter);
+    };
+  }, []);
 
   return (
     <>
@@ -143,7 +144,7 @@ const Feed = () => {
                       ? dispatch(
                           share({
                             url:
-                              window.location.origin +
+                              import.meta.env.VITE_HOST +
                               "/" +
                               auth.userInfo.username,
                           })

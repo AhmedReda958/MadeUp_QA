@@ -28,6 +28,7 @@ import {
   setStatusBarStyleDark,
   setStatusBarStyleLight,
 } from "@/utils/native/statusbar";
+import sounds from "@/utils/assets/sounds";
 
 // icons
 import {
@@ -46,7 +47,7 @@ import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messages/MessagesPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
 import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
-import ShowMessagePage from "@/pages/messages/ShowMessagePage.tsx";
+import ShowMessagePage from "@/pages/messages/ShowMessagePage";
 import ProfilePicPage from "@/pages/settings/ProfilePicPage";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
@@ -58,17 +59,12 @@ function MainApp() {
   // notifications count
   const { unseen } = useSelector((state) => state.app);
 
-  useIonViewWillEnter(() => {
-    // get notifications every 1m
-    const counter = setInterval(() => {
-      if (logedin) dispatch(getNotificationsCount());
-    }, 1000 * 60 * 1);
-    dispatch(getNotificationsCount());
-
-    return () => {
-      clearInterval(counter);
-    };
-  }, []);
+  // check for notification count
+  useEffect(() => {
+    // todo: play sound only if the unseen count is greater than the previous count
+    if ((unseen.notifications > 0) | (unseen.messages > 0))
+      sounds.notification.play();
+  }, [unseen]);
 
   // automatically authenticate user if token is found
   const autoAuth =

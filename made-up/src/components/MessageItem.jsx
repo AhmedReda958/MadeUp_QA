@@ -16,6 +16,7 @@ import { HeartIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 import { useIonAlert } from "@ionic/react";
+import sounds from "@/utils/assets/sounds";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
@@ -131,7 +132,10 @@ const MessageMenu = ({ type, message }) => {
                         share({
                           text:
                             message.content + " - " + message?.reply.content,
-                          url: location.origin + "/message/" + message._id,
+                          url:
+                            import.meta.env.VITE_HOST +
+                            "/message/" +
+                            message._id,
                         })
                       )
                     }
@@ -443,8 +447,7 @@ const LikeButton = memo(({ message }) => {
     //   navigate("/login");
     //   return;
     // }
-    // const audio = new Audio(liked ? unLikeSound : likeSound);
-    // audio.play();
+    !liked && sounds.like.play();
     let action = !liked;
     let variation = action ? 1 : -1;
     setLiked(action);

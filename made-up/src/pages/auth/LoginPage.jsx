@@ -124,7 +124,7 @@ const LoginPage = () => {
               {/* version */}
             </div>
           </div>
-          <div className=" absolute bottom-2 text-center w-full text-gray-500 text-sm">
+          <div className=" fixed bottom-2 text-center w-full text-gray-500 text-sm">
             {"Version " + import.meta.env.VITE_VERSION}
           </div>
         </main>
