@@ -27,7 +27,12 @@ const authSlice = createSlice({
     logout: (state) => {
       state.userInfo = {};
       state.logedin = false;
-      OneSignal.logout();
+      // notify OneSignal
+      if (isPlatform("cordova")) {
+        OneSignal.logout();
+      }
+
+      // remove userToken from local storage
       localStorage.clear();
       window.location.reload();
     },
@@ -45,6 +50,7 @@ const authSlice = createSlice({
         localStorage.setItem("logedin", true);
         state.userInfo = payload.user;
         state.userToken = payload.token;
+
         // OneSignal
         if (isPlatform("cordova")) {
           OneSignal.login(payload.user._id);

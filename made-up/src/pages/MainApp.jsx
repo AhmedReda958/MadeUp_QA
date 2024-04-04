@@ -10,6 +10,7 @@ import {
   fetchNotifications,
   fetchMessages,
 } from "@/redux/slices/contentSlice";
+import { getNotificationsCount } from "@/redux/actions/notificationsActions";
 
 //ionic
 import {
@@ -27,6 +28,7 @@ import {
   setStatusBarStyleDark,
   setStatusBarStyleLight,
 } from "@/utils/native/statusbar";
+import sounds from "@/utils/assets/sounds";
 
 // icons
 import {
@@ -45,7 +47,7 @@ import SettingsPage from "@/pages/settings/SettingsPage";
 import MessagesPage from "@/pages/messages/MessagesPage";
 import { NotFoundPage } from "@/pages/ErrorHandle/NotFoundPage";
 import OfflinePage from "@/pages/ErrorHandle/OfflinePage";
-import ShowMessagePage from "@/pages/messages/ShowMessagePage.tsx";
+import ShowMessagePage from "@/pages/messages/ShowMessagePage";
 import ProfilePicPage from "@/pages/settings/ProfilePicPage";
 import PersonalInfoSettingsPage from "@/pages/settings/PersonalInfoSettingsPage";
 
@@ -53,6 +55,16 @@ function MainApp() {
   const { userToken, logedin, userInfo } = useSelector((state) => state.auth);
   const isDarkTheme = useSelector((state) => state.app.isDarkTheme);
   const dispatch = useDispatch();
+
+  // notifications count
+  const { unseen } = useSelector((state) => state.app);
+
+  // check for notification count
+  useEffect(() => {
+    // todo: play sound only if the unseen count is greater than the previous count
+    if ((unseen.notifications > 0) | (unseen.messages > 0))
+      sounds.notification.play();
+  }, [unseen]);
 
   // automatically authenticate user if token is found
   const autoAuth =
@@ -145,9 +157,19 @@ function MainApp() {
               <HomeIcon className="w-6 h-6" />
             </IonTabButton>
             <IonTabButton tab="notifications" href="/notifications">
+              {unseen.notificaions > 0 && (
+                <span className=" absolute top-2 right-6  rounded-full bg-primary w-4 h-4 text-xs text-white text-center">
+                  {unseen.notifications}
+                </span>
+              )}
               <BellIcon className="w-6 h-6" />
             </IonTabButton>
             <IonTabButton tab="messages" href="/messages">
+              {unseen.messages > 0 && (
+                <span className=" absolute top-2 right-6 rounded-full bg-primary w-4 h-4 text-xs text-white text-center">
+                  {unseen.messages}
+                </span>
+              )}
               <EnvelopeIcon className="w-6 h-6" />
             </IonTabButton>
             <IonTabButton tab="profile" href={"/user/" + userInfo.username}>

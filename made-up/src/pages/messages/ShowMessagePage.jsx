@@ -5,12 +5,6 @@ import MessageItem from "@/components/MessageItem";
 import { Button } from "flowbite-react";
 import notFoundImg from "@/assets/imgs/theSearch.svg";
 import ProfilePic from "@/components/ProfilePic";
-import React from "react";
-
-interface ShowMessagePageProps
-  extends RouteComponentProps<{
-    id: string;
-  }> {}
 
 const MsgNotFound = () => {
   return (
@@ -43,15 +37,18 @@ const MsgNotFound = () => {
   );
 };
 
-const ShowMessagePage: React.FC<ShowMessagePageProps> = ({ match }) => {
-  console.log(match);
+const ShowMessagePage = ({ match }) => {
   const id = match.params.id;
 
   const messageData = useAxios({ url: `/messages/message/${id}` });
   const { response, error, loading } = messageData;
 
   return (
-    <Page title={!error ? "Message" : "Not found"} backTo="/" loading={loading}>
+    <Page
+      title={!error ? "Message" : "Not found"}
+      backTo="/home"
+      loading={loading}
+    >
       {!error ? (
         <>
           <MessageItem message={response} type="post" />

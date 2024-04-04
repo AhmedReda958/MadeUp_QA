@@ -1,7 +1,7 @@
 import { logout } from "@/redux/slices/authSlice";
 import { Transition } from "@headlessui/react";
 import Modal from "@/components/ui/Modal";
-import { setTheme, share } from "@/redux/slices/appSlice";
+import { setTheme } from "@/redux/slices/appSlice";
 import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";

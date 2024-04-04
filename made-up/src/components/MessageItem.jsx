@@ -16,6 +16,7 @@ import { HeartIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 import { useIonAlert } from "@ionic/react";
+import sounds from "@/utils/assets/sounds";
 
 const MessageMenu = ({ type, message }) => {
   const Alert = useAlert();
@@ -95,7 +96,8 @@ const MessageMenu = ({ type, message }) => {
       .delete("/messages/message/" + message._id)
       .then((res) => {
         Alert({ title: "Deleted the message", type: "success" });
-        window.location.reload(); // TODO: just remove the message item
+        // delete the message from the dom
+        document.querySelector(`.message-${message._id}`).remove();
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -130,7 +132,10 @@ const MessageMenu = ({ type, message }) => {
                         share({
                           text:
                             message.content + " - " + message?.reply.content,
-                          url: location.origin + "/message/" + message._id,
+                          url:
+                            import.meta.env.VITE_HOST +
+                            "/message/" +
+                            message._id,
                         })
                       )
                     }
@@ -442,8 +447,7 @@ const LikeButton = memo(({ message }) => {
     //   navigate("/login");
     //   return;
     // }
-    // const audio = new Audio(liked ? unLikeSound : likeSound);
-    // audio.play();
+    !liked && sounds.like.play();
     let action = !liked;
     let variation = action ? 1 : -1;
     setLiked(action);

@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import underConstractionImg from "@/assets/imgs/underConstraction.svg";
+import sounds from "@/utils/assets/sounds";
 
 export default function AlertDialog() {
   const alerts = useSelector((state) => state.app.alerts);
@@ -12,11 +13,28 @@ export default function AlertDialog() {
     if (alerts.length > 0) {
       setAlert(alerts[alerts.length - 1]);
       setIsOpen(true);
+      playSound(alerts[alerts.length - 1].type);
       // setTimeout(() => {
       //   setIsOpen(false);
-      // }, 3000);
+      // }, 1000);
     }
   }, [alerts]);
+
+  const playSound = (type) => {
+    switch (type) {
+      case "success":
+        sounds.success.play();
+        break;
+      case "error":
+        sounds.error.play();
+        break;
+      case "warn":
+        sounds.warn.play();
+        break;
+      default:
+        break;
+    }
+  };
 
   function closeModal() {
     setIsOpen(false);

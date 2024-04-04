@@ -20,6 +20,7 @@ import MainApp from "@/pages/MainApp";
 import "./theme/variables.css";
 import "./theme/global.css";
 import "./theme/ionic-overrides.css";
+import { useEffect } from "react";
 
 setupIonicReact({
   mode: "ios",
@@ -50,6 +51,9 @@ const App: React.FC = () => {
   const logedin = localStorage.getItem("logedin");
 
   //*  notifications
+  useEffect(() => {
+    initializeOneSignal();
+  }, []);
 
   return (
     <IonApp>
