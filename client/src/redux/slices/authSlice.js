@@ -22,6 +22,10 @@ const authSlice = createSlice({
       state.userInfo = payload;
       state.logedin = true;
     },
+    setProfilePicture: (state, profilePicture) => {
+      if (!state.logedin) return;
+      state.userInfo.profilePicture = profilePicture;
+    },
     logout: (state) => {
       state.userInfo = {};
       state.logedin = false;
@@ -69,6 +73,6 @@ const authSlice = createSlice({
       });
   },
 });
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, setProfilePicture, logout } = authSlice.actions;
 
 export default authSlice.reducer;

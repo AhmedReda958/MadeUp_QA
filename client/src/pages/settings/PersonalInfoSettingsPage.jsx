@@ -35,7 +35,7 @@ const PersonalInfoSettingsPage = () => {
 
   const submitData = (values, { setSubmitting }) => {
     axios
-      .patch("users", values)
+      .patch("users/me", values)
       .then((res) => Alert({ title: "Profile updated", type: "success" }))
       .catch((error) => console.log(error))
       .finally(() => {
