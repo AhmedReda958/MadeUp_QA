@@ -1,34 +1,17 @@
-import User from "#database/models/user.mjs";
+import User from "#database/models/user/index.mjs";
+import Follow from "#database/models/follow/index.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,
 } from "#middlewares/authorization.mjs";
+import paginationMiddleware from "#middlewares/pagination.mjs";
+import {
+  allowedUserUpdates,
+  privateUserData,
+} from "#database/models/user/filters.mjs";
 
 import express from "express";
 const router = express.Router();
-
-router.get("/", authMiddleware, async (req, res, next) => {
-  try {
-    let { userId, username } = req.query;
-    if (req.userId && !("userId" in req.query || "username" in req.query))
-      userId = req.userId;
-    let user = isValidObjectId(userId)
-      ? await User.findById(userId)
-      : await User.findOne({ username: username?.toLowerCase() });
-    if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
-
-    // if (req.userId != user._id) // TODO: hide private info
-    // update last seen for the loged in user
-    if (req.userId === user._id.toString()) {
-      user.lastSeen = new Date();
-      await User.updateOne({ _id: user._id }, { lastSeen: user.lastSeen });
-    }
-
-    return res.status(200).json(user);
-  } catch (err) {
-    next(err);
-  }
-});
 
 router.get("/find", async (req, res, next) => {
   try {
@@ -47,29 +30,176 @@ router.get("/find", async (req, res, next) => {
   }
 });
 
-router.patch(
-  "/",
+const fetchFromUsernameRoutes = [];
+router.all(
+  ["/username/:username", "/username/:username/*"],
   authMiddleware,
-  requiredAuthMiddleware,
   async (req, res, next) => {
     try {
-      const updatedProfile = req.body; // TODO: validate
-
-      delete updatedProfile.verified;
-
-      const user = await User.findById(req.userId);
-      if (!user) return res.status(409).json({ code: "CONFLICT" }); // TODO: handle, the user is logged in but not saved in the database
-
-      if (req.userId != user._id)
-        return res.status(403).json({ code: "FORBIDDEN" });
-      Object.assign(user, updatedProfile);
-
-      await user.save();
-      return res.status(200).json(user);
+      let urlPaths = req.url
+        .split("/")
+        .filter((path) => path !== "")
+        .slice(2);
+      let project;
+      if (!fetchFromUsernameRoutes.some((route) => route(req, urlPaths)))
+        project = { _id: 1 };
+      req.myUser = await User.findOne(
+        { username: req.params.username.toLowerCase() },
+        project
+      );
+      if (!req.myUser) return res.status(404).json({ code: "USER_NOT_FOUND" });
+      urlPaths.unshift("", req.myUser._id);
+      req.url = urlPaths.join("/");
+      next("route");
     } catch (err) {
       next(err);
     }
   }
 );
+
+router.use(["/me", "/me/*"], authMiddleware, requiredAuthMiddleware);
+router.all("/me", (req, res, next) => {
+  req.url = "/" + req.userId;
+  next("route");
+});
+router.all("/me/*", (req, res, next) => {
+  req.url = "/" + req.userId + req.url.slice(3);
+  next("route");
+});
+
+fetchFromUsernameRoutes.push(
+  (req, urlPaths) => req.method == "GET" && urlPaths.length === 0
+);
+
+router.use(["/:userId", "/:userId/*"], authMiddleware);
+router
+  .route("/:userId")
+  .get(async (req, res, next) => {
+    try {
+      let { userId } = req.params;
+      let user =
+        "myUser" in req
+          ? req.myUser
+          : isValidObjectId(userId)
+          ? await User.findById(userId)
+          : null;
+      if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
+
+      let view = user.toObject();
+      if (req.userId != user._id) {
+        for (let key of privateUserData) delete view[key];
+        view.followed = !!await Follow.followSince({
+          follower: req.userId,
+          following: userId,
+        });
+      }
+
+      if (req.userId === user._id.toString())
+        // TODO: enhance is online logic
+        await User.updateOne({ _id: user._id }, { lastSeen: new Date() });
+
+      return res.status(200).json(view);
+    } catch (err) {
+      next(err);
+    }
+  })
+  .patch(requiredAuthMiddleware, async (req, res, next) => {
+    try {
+      let { userId } = req.params;
+      if (!isValidObjectId(userId))
+        return res.status(404).json({ code: "INVALID_USER" });
+
+      if (req.userId != userId)
+        return res.status(403).json({ code: "FORBIDDEN" });
+
+      let demandedUpdates = Object.keys(req.body);
+      if (demandedUpdates.length === 0)
+        return res.status(400).json({ code: "NO_UPDATES" });
+      demandedUpdates = demandedUpdates.filter((key) =>
+        allowedUserUpdates.includes(key)
+      );
+      if (demandedUpdates.length === 0)
+        return res.status(400).json({ code: "NO_ALLOWED_UPDATES" });
+
+      await User.updateOne(
+        { _id: userId },
+        demandedUpdates.reduce(
+          (updates, key) => {
+            let value = req.body[key];
+            (value == null ? updates.$unset : updates.$set)[key] = value;
+            return updates;
+          },
+          { $set: {}, $unset: {} }
+        )
+      );
+
+      return res.status(200).json({ updated: demandedUpdates });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+router.use("/:userId/follow", requiredAuthMiddleware);
+router
+  .route("/:userId/follow")
+  .get((req, res, next) => {
+    Follow.followSince({
+      follower: req.userId,
+      following: req.params.userId,
+    })
+      .then((timestamp) => {
+        if (!timestamp) return res.status(200).json({ followed: false });
+        res.status(200).send({ followed: true, timestamp });
+      })
+      .catch(next);
+  })
+  .put((req, res, next) => {
+    new Follow({
+      follower: req.userId,
+      following: req.params.userId,
+      timestamp: new Date(),
+    })
+      .save()
+      .then((follow) =>
+        res.status(200).json({ followed: true, timestamp: follow.timestamp })
+      )
+      .catch((err) => {
+        if (err.name === "MongoServerError" && err.code === 11000)
+          return res.status(400).json({ code: "ALREADY_FOLLOWED" });
+        next(err);
+      });
+  })
+  .delete((req, res, next) => {
+    Follow.deleteOne({
+      follower: req.userId,
+      following: req.params.userId,
+    })
+      .then((result) => {
+        if (result.deletedCount === 0)
+          return res.status(400).json({ code: "NOT_FOLLOWED" });
+        res.status(200).json({ followed: false });
+      })
+      .catch(next);
+  });
+
+router.get("/:userId/followers", paginationMiddleware, (req, res, next) => {
+  Follow.followers({
+    userId: req.params.userId,
+    pagination: req.pagination,
+    briefUsers: !("onlyids" in req.query),
+  })
+    .then((followers) => res.status(200).send(followers))
+    .catch(next);
+});
+
+router.get("/:userId/following", paginationMiddleware, (req, res, next) => {
+  Follow.following({
+    userId: req.params.userId,
+    pagination: req.pagination,
+    briefUsers: !("onlyids" in req.query),
+  })
+    .then((following) => res.status(200).send(following))
+    .catch(next);
+});
 
 export default router;

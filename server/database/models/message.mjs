@@ -1,3 +1,4 @@
+// TODO: distinct structure like other models
 import mongoose, { isValidObjectId } from "mongoose";
 const {
   Schema,
@@ -5,7 +6,10 @@ const {
   models,
   Types: { ObjectId },
 } = mongoose;
-import globalStages from "#database/stages.mjs";
+import paginationStages from "#database/stages/pagination.mjs";
+import briefUsersStages, {
+  briefUsersReplacingSetStage,
+} from "#database/stages/brief-users.mjs";
 import events from "#tools/events.mjs";
 
 const messageSchema = new Schema({
@@ -73,65 +77,49 @@ messageStages.hideSenderIfAnonymous = {
   },
 };
 
-let internalUsers = Object.keys(messageSchema.paths).filter(
+const usersPaths = Object.keys(messageSchema.paths).filter(
   (path) => messageSchema.paths[path].options.ref == "User"
 );
 
-let userBriefProject = {
-  _id: 1,
-  username: 1,
-  fullName: 1,
-  profilePicture: 1,
-  lastSeen: 1,
-  verified: 1,
-  // TODO: add those later on
-  // "hasStory"
-};
+messageStages.briefUsers = briefUsersStages(
+  usersPaths.map((user) => `$${user}`),
+  briefUsersReplacingSetStage(usersPaths)
+);
 
-messageStages.briefUsers = [
+messageStages.briefLikesUsers = briefUsersStages(
+  { $ifNull: ["$likes", []] },
   {
-    $lookup: {
-      from: "users",
-      as: "_users",
-      let: { users: internalUsers.map((user) => `$${user}`) },
-      pipeline: [
+    users: {
+      $ifNull: [
         {
-          $match: {
-            $expr: {
-              $in: ["$_id", "$$users"],
+          $map: {
+            input: "$likes",
+            as: "userId",
+            in: {
+              $ifNull: [
+                {
+                  $first: {
+                    $filter: {
+                      input: "$_users",
+                      as: "user",
+                      cond: {
+                        $eq: ["$$user._id", "$$userId"],
+                      },
+                      limit: 1,
+                    },
+                  },
+                },
+                { _id: "$$userId" },
+              ],
             },
           },
         },
-        { $project: userBriefProject },
+        [],
       ],
     },
-  },
-  {
-    $set: Object.fromEntries([
-      ...internalUsers.map((user) => [
-        user,
-        {
-          $ifNull: [
-            {
-              $first: {
-                $filter: {
-                  input: "$_users",
-                  as: "user",
-                  cond: {
-                    $eq: ["$$user._id", `$${user}`],
-                  },
-                  limit: 1,
-                },
-              },
-            },
-            `$${user}`,
-          ],
-        },
-      ]),
-      ["_users", "$$REMOVE"],
-    ]),
-  },
-];
+    likes: "$$REMOVE",
+  }
+);
 
 messageStages.likesCount = {
   $cond: {
@@ -172,7 +160,7 @@ messageSchema.statics.userInbox = function ({
       },
     },
     { $sort: { timestamp: -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
     {
@@ -191,7 +179,7 @@ messageSchema.statics.sentByUser = function ({
   let pipeline = [
     { $match: { sender: new ObjectId(userId) } },
     { $sort: { timestamp: -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     ...(briefUsers ? messageStages.briefUsers : []),
     {
       $project: Object.assign(messageProject, {
@@ -223,7 +211,7 @@ messageSchema.statics.answeredByUser = function ({
       $match: match,
     },
     { $sort: { "reply.timestamp": -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
     {
@@ -264,14 +252,8 @@ messageSchema.statics.fetch = function ({ messageId, briefUsers, viewer }) {
     .then((docs) => docs.at(0));
 };
 
-messageSchema.statics.likes = function ({
-  messageId,
-  usersId,
-  usersBrief,
-  page,
-  limit,
-}) {
-  let pipeline = [
+messageSchema.statics.likes = function ({ messageId, usersView, page, limit }) {
+  return this.aggregate([
     { $match: { _id: new ObjectId(messageId) } },
     {
       $project: Object.assign(
@@ -279,7 +261,7 @@ messageSchema.statics.likes = function ({
           _id: 0,
           total: messageStages.likesCount,
         },
-        usersId || usersBrief
+        ["ids", "brief"].includes(usersView)
           ? {
               likes: {
                 $slice: [
@@ -292,61 +274,8 @@ messageSchema.statics.likes = function ({
           : null
       ),
     },
-  ];
-  if (usersBrief)
-    pipeline.push(
-      {
-        $lookup: {
-          from: "users",
-          as: "users",
-          let: { users: { $ifNull: ["$likes", []] } },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ["$_id", "$$users"],
-                },
-              },
-            },
-            { $project: userBriefProject },
-          ],
-        },
-      },
-      {
-        $set: {
-          users: {
-            $ifNull: [
-              {
-                $map: {
-                  input: "$likes",
-                  as: "userId",
-                  in: {
-                    $ifNull: [
-                      {
-                        $first: {
-                          $filter: {
-                            input: "$users",
-                            as: "user",
-                            cond: {
-                              $eq: ["$$user._id", "$$userId"],
-                            },
-                            limit: 1,
-                          },
-                        },
-                      },
-                      { _id: "$$userId" },
-                    ],
-                  },
-                },
-              },
-              [],
-            ],
-          },
-          likes: "$$REMOVE",
-        },
-      }
-    );
-  return this.aggregate(pipeline)
+    ...(usersView == "brief" ? messageStages.briefLikesUsers : []),
+  ])
     .exec()
     .then((docs) => docs.at(0));
 };
@@ -387,7 +316,7 @@ messageSchema.statics.likedBy = function ({
 }) {
   return this.aggregate([
     { $match: { likes: new ObjectId(userId) } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     ...(briefUsers ? messageStages.briefUsers : []),
     {
       $project: Object.assign(
@@ -400,7 +329,6 @@ messageSchema.statics.likedBy = function ({
   ]).exec();
 };
 
-// basic feed
 messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
   return this.aggregate([
     {
@@ -413,10 +341,11 @@ messageSchema.statics.userFeed = function ({ userId, pagination, briefUsers }) {
       },
     },
     {
+      // TODO: following users algorithm
       $sample: { size: pagination.limit },
     },
     // { $sort: { timestamp: -1 } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     messageStages.hideSenderIfAnonymous,
     ...(briefUsers ? messageStages.briefUsers : []),
     {

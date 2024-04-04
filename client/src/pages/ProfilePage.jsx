@@ -157,10 +157,30 @@ const UserProfile = () => {
 
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
-  const user = useAxios(
-    { url: `/users?username=${username}` },
-    { params: { limit: 30 } }
-  );
+  const [followingProcess, setFollowingProcess] = useState(true);
+  const [followed, setFollowed] = useState(false);
+  const followHandler = async () => {
+    if (followingProcess) return;
+    setFollowingProcess(true);
+    let action = !followed;
+    await axios[action ? "put" : "delete"](`/users/${response?._id}/follow/`)
+      .then((response) => {
+        Alert({ type: "success", title: action ? "Followed" : "Unfollowed" });
+        setFollowed(action);
+      })
+      .catch((err) => {
+        console.error(err.message);
+        Alert({
+          type: "error",
+          title: "Unable to " + (action ? "follow" : "unfollow"),
+        });
+      }).finally(() => setFollowingProcess(false));
+  };
+
+  const user = useAxios({ url: `/users/username/${username}` }, (res) => {
+    if (res.status === 200) setFollowed(res.data.followed);
+    setFollowingProcess(false);
+  });
   const { response, error, loading } = user;
 
   const dispatch = useDispatch();
@@ -186,14 +206,13 @@ const UserProfile = () => {
               {userInfo.username != username ? (
                 <div
                   className="p-3 text-lg cursor-pointer text-primary dark:text-white "
-                  onClick={() =>
-                    Alert({
-                      title: "Coming soon!",
-                      type: "comingsoon",
-                    })
-                  }
+                  onClick={followHandler}
                 >
-                  <i className="fa fa-user-plus"></i>
+                  <i
+                    className={`fa fa-user-${followed ? "minus" : "plus"} ${
+                      followed && "text-red-600"
+                    }`}
+                  ></i>
                 </div>
               ) : (
                 <Link

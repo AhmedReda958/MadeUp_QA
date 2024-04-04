@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const { Schema, model, models, Types } = mongoose;
-import globalStages from "#database/stages.mjs";
+import paginationStages from "#database/stages/pagination.mjs";
 
 const notificationSchema = new Schema({
   user: {
@@ -29,7 +29,7 @@ const notificationSchema = new Schema({
 notificationSchema.statics.forUser = function (userId, pagination) {
   return this.aggregate([
     { $match: { user: new Types.ObjectId(userId) } },
-    ...globalStages.pagination(pagination),
+    ...paginationStages(pagination),
     { $project: { user: 0 } },
   ]);
 };

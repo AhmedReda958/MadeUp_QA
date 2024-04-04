@@ -1,5 +1,5 @@
 import DatabaseError from "#errors/database.mjs";
-import User from "#database/models/user.mjs";
+import User from "#database/models/user/index.mjs";
 import Message from "#database/models/message.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
@@ -226,7 +226,6 @@ router
         break;
       case "PIN":
         var state = !!req.body.state;
-        console.log(message.pinned, state);
         if (!!message.pinned == state)
           return res
             .status(409)
@@ -274,8 +273,7 @@ router
       Object.assign(
         {
           messageId: req.params.messageId,
-          usersId: "usersId" in req.query,
-          usersBrief: "usersBrief" in req.query,
+          usersView: req.query.usersView?.toLowerCase()
         },
         req.pagination
       )
