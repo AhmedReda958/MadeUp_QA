@@ -1,7 +1,0 @@
-{
-  "name": "MadeUp",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react-vite"
-}
