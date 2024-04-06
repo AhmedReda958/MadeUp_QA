@@ -6,6 +6,8 @@ import authMiddleware, {
 import express from "express";
 const router = express.Router();
 
+// TODO: replace with websocket
+
 // get unseen notifications count
 router.get(
   "/unseen-count",
