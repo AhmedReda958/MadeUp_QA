@@ -80,8 +80,8 @@ const definition = {
 const options = {
   toJSON: {
     transform(doc, ret) {
+      delete ret.__v;
       delete ret.password;
-      delete ret.email; // ! Temporally
     },
   },
 };

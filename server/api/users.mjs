@@ -85,14 +85,9 @@ router
           : null;
       if (!user) return res.status(404).json({ code: "USER_NOT_FOUND" });
 
-      let view = user.toObject();
-      if (req.userId != user._id) {
+      let view = user.toJSON();
+      if (req.userId != user._id)
         for (let key of privateUserData) delete view[key];
-        view.followed = !!await Follow.followSince({
-          follower: req.userId,
-          following: userId,
-        });
-      }
 
       if (req.userId === user._id.toString())
         // TODO: enhance is online logic
@@ -199,6 +194,12 @@ router.get("/:userId/following", paginationMiddleware, (req, res, next) => {
     briefUsers: !("onlyids" in req.query),
   })
     .then((following) => res.status(200).send(following))
+    .catch(next);
+});
+
+router.get("/:userId/follows", paginationMiddleware, (req, res, next) => {
+  Follow.follows({ userId: req.params.userId, viewer: req.userId })
+    .then((follows) => res.status(200).send(follows))
     .catch(next);
 });
 

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 const {
   Types: { ObjectId },
 } = mongoose;
@@ -44,4 +44,73 @@ schema.statics.followers = function ({ userId, pagination, briefUsers }) {
     ...(briefUsers ? briefFollowUsers : []),
     { $project: { _id: 0, follower: 1, timestamp: 1 } },
   ]);
+};
+
+schema.statics.follows = function ({ userId, viewer }) {
+  let checkFollowed = isValidObjectId(viewer) && viewer != userId;
+  return this.aggregate([
+    [
+      {
+        $facet: Object.assign(
+          {
+            followers: [
+              {
+                $match: {
+                  following: new ObjectId(userId),
+                },
+              },
+              { $count: "total" },
+            ],
+            following: [
+              {
+                $match: {
+                  follower: new ObjectId(userId),
+                },
+              },
+              { $count: "total" },
+            ],
+          },
+          checkFollowed
+            ? {
+                followed: [
+                  {
+                    $match: {
+                      following: new ObjectId(userId),
+                      follower: new ObjectId(viewer),
+                    },
+                  },
+                ],
+              }
+            : null
+        ),
+      },
+      {
+        $project: Object.assign(
+          {
+            followers: {
+              $arrayElemAt: ["$followers.total", 0],
+            },
+            following: {
+              $arrayElemAt: ["$following.total", 0],
+            },
+          },
+          checkFollowed
+            ? {
+                followed: {
+                  $cond: {
+                    if: {
+                      $eq: [{ $size: "$followed" }, 0],
+                    },
+                    then: false,
+                    else: true,
+                  },
+                },
+              }
+            : null
+        ),
+      },
+    ],
+  ])
+    .exec()
+    .then((docs) => docs.at(0));
 };
