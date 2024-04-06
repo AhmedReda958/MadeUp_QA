@@ -157,16 +157,25 @@ const UserProfile = () => {
 
   const { userInfo, logedin } = useSelector((state) => state.auth);
 
-  const [followingProcess, setFollowingProcess] = useState(true);
-  const [followed, setFollowed] = useState(false);
+  const [followsProcess, setFollowsProcess] = useState(true);
+  const [follows, setFollows] = useState({
+    followers: 0,
+    following: 0,
+    followed: false,
+  });
   const followHandler = async () => {
-    if (followingProcess) return;
-    setFollowingProcess(true);
-    let action = !followed;
+    if (followsProcess) return;
+    setFollowsProcess(true);
+    let action = !follows.followed;
     await axios[action ? "put" : "delete"](`/users/${response?._id}/follow/`)
       .then((response) => {
         Alert({ type: "success", title: action ? "Followed" : "Unfollowed" });
-        setFollowed(action);
+        setFollows(
+          Object.assign(follows, {
+            followers: follows.followers + (action ? 1 : -1),
+            followed: action,
+          })
+        );
       })
       .catch((err) => {
         console.error(err.message);
@@ -174,14 +183,22 @@ const UserProfile = () => {
           type: "error",
           title: "Unable to " + (action ? "follow" : "unfollow"),
         });
-      }).finally(() => setFollowingProcess(false));
+      })
+      .finally(() => setFollowsProcess(false));
   };
 
-  const user = useAxios({ url: `/users/username/${username}` }, (res) => {
-    if (res.status === 200) setFollowed(res.data.followed);
-    setFollowingProcess(false);
-  });
+  const user = useAxios({ url: `/users/username/${username}` });
   const { response, error, loading } = user;
+
+  useEffect(() => {
+    axios
+      .get(`/users/username/${username}/follows`)
+      .then((res) => {
+        if (res.status === 200) setFollows(res.data);
+        setFollowsProcess(false);
+      })
+      .catch(console.error);
+  }, [followsProcess]);
 
   const dispatch = useDispatch();
   const Alert = useAlert();
@@ -209,9 +226,9 @@ const UserProfile = () => {
                   onClick={followHandler}
                 >
                   <i
-                    className={`fa fa-user-${followed ? "minus" : "plus"} ${
-                      followed && "text-red-600"
-                    }`}
+                    className={`fa fa-user-${
+                      follows.followed ? "minus" : "plus"
+                    } ${follows.followed && "text-red-600"}`}
                   ></i>
                 </div>
               ) : (
@@ -248,10 +265,10 @@ const UserProfile = () => {
 
               <div className="text-altcolor font-bold text-center grow flex items-center justify-around">
                 <div>
-                  <div>0</div> followers
+                  <div>{follows.followers}</div> followers
                 </div>
                 <div>
-                  <div>0</div> following
+                  <div>{follows.following}</div> following
                 </div>
               </div>
             </div>
