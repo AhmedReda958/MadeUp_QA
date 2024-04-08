@@ -89,6 +89,12 @@ router
       if (req.userId != user._id)
         for (let key of privateUserData) delete view[key];
 
+      try {
+        view.follows = await Follow.follows({ userId, viewer: req.userId });
+      } catch (err) {
+        console.error(err); // TODO: log errors
+      }
+
       if (req.userId === user._id.toString())
         // TODO: enhance is online logic
         await User.updateOne({ _id: user._id }, { lastSeen: new Date() });

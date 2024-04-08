@@ -187,7 +187,10 @@ const UserProfile = () => {
       .finally(() => setFollowsProcess(false));
   };
 
-  const user = useAxios({ url: `/users/username/${username}` });
+  const user = useAxios({ url: `/users/username/${username}` }, ({data}) => {
+    if (data.follows) setFollows(data.follows);
+    setFollowsProcess(false);
+  });
   const { response, error, loading } = user;
 
   useEffect(() => {
