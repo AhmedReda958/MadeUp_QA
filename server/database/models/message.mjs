@@ -6,11 +6,11 @@ const {
   models,
   Types: { ObjectId },
 } = mongoose;
-import paginationStages from "#database/stages/pagination.mjs";
+import paginationStages from "##/database/stages/pagination.mjs";
 import briefUsersStages, {
   briefUsersReplacingSetStage,
-} from "#database/stages/brief-users.mjs";
-import events from "#tools/events.mjs";
+} from "##/database/stages/brief-users.mjs";
+import events from "##/tools/events.mjs";
 
 const messageSchema = new Schema({
   content: {

@@ -5,7 +5,7 @@ import usersRoute from "./users.mjs";
 import messagesRoute from "./messages.mjs";
 import notificationsRoute from "./notifications.mjs";
 import feedRoute from "./feed.mjs";
-import { isDBConnected } from "#database/connection.mjs";
+import { isDBConnected } from "##/database/connection.mjs";
 
 const router = Router();
 

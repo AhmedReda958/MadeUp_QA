@@ -2,11 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "#utils/*": ["./utils/*"],
-      "#errors/*": ["./errors/*"],
-      "#tools/*": ["./tools/*"],
-      "#middlewares/*": ["./middlewares/*"],
-      "#database/*": ["./database/*"]
+      "##/*": ["./*"]
     }
   }
 }

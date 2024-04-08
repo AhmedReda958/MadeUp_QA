@@ -1,4 +1,4 @@
-import DatabaseError from "#errors/database.mjs";
+import DatabaseError from "##/errors/database.mjs";
 const { MONGODB_URI, MONGODB_DBNAME } = process.env;
 import mongoose from "mongoose";
 

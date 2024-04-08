@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const { Schema, model, models, Types } = mongoose;
-import paginationStages from "#database/stages/pagination.mjs";
+import paginationStages from "##/database/stages/pagination.mjs";
 
 const notificationSchema = new Schema({
   user: {

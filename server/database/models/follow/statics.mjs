@@ -3,10 +3,10 @@ const {
   Types: { ObjectId },
 } = mongoose;
 import schema from "./schema.mjs";
-import paginationStages from "#database/stages/pagination.mjs";
+import paginationStages from "##/database/stages/pagination.mjs";
 import briefUsersStages, {
   briefUsersReplacingSetStage,
-} from "#database/stages/brief-users.mjs";
+} from "##/database/stages/brief-users.mjs";
 
 const usersPaths = Object.keys(schema.paths).filter(
   (path) => schema.paths[path].options.ref == "User"

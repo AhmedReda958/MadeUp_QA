@@ -1,10 +1,10 @@
 import { isValidObjectId } from "mongoose";
-import paginationMiddleware from "#middlewares/pagination.mjs";
+import paginationMiddleware from "##/middlewares/pagination.mjs";
 import authMiddleware, {
   requiredAuthMiddleware,
-} from "#middlewares/authorization.mjs";
+} from "##/middlewares/authorization.mjs";
 import express from "express";
-import Notification from "#database/models/notification.mjs";
+import Notification from "##/database/models/notification.mjs";
 const router = express.Router();
 
 router.get(

@@ -1,8 +1,8 @@
-import message from "#database/models/message.mjs";
-import notification from "#database/models/notification.mjs";
+import message from "##/database/models/message.mjs";
+import notification from "##/database/models/notification.mjs";
 import authMiddleware, {
   requiredAuthMiddleware,
-} from "#middlewares/authorization.mjs";
+} from "##/middlewares/authorization.mjs";
 import express from "express";
 const router = express.Router();
 

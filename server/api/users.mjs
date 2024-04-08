@@ -1,14 +1,14 @@
-import User from "#database/models/user/index.mjs";
-import Follow from "#database/models/follow/index.mjs";
+import User from "##/database/models/user/index.mjs";
+import Follow from "##/database/models/follow/index.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,
-} from "#middlewares/authorization.mjs";
-import paginationMiddleware from "#middlewares/pagination.mjs";
+} from "##/middlewares/authorization.mjs";
+import paginationMiddleware from "##/middlewares/pagination.mjs";
 import {
   allowedUserUpdates,
   privateUserData,
-} from "#database/models/user/filters.mjs";
+} from "##/database/models/user/filters.mjs";
 
 import express from "express";
 const router = express.Router();

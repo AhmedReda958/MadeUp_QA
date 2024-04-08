@@ -1,4 +1,4 @@
-import IntegerRange from "#utils/range.mjs";
+import IntegerRange from "##/utils/range.mjs";
 let inputs = {
   page: {
     range: new IntegerRange(1, Infinity, 1, true, false),

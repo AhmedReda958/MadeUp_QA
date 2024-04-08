@@ -11,11 +11,7 @@
   "author": "",
   "license": "ISC",
   "imports": {
-    "#utils/*": "./utils/*",
-    "#errors/*": "./errors/*",
-    "#tools/*": "./tools/*",
-    "#middlewares/*": "./middlewares/*",
-    "#database/*": "./database/*"
+    "##/*": "./*"
   },
   "dependencies": {
     "@onesignal/node-onesignal": "^2.0.1-beta2",

@@ -1,4 +1,4 @@
-import { CommonError } from "#errors/index.mjs";
+import { CommonError } from "##/errors/index.mjs";
 const { JWT_SECRET_KEY } = process.env;
 import jwt from "jsonwebtoken";
 

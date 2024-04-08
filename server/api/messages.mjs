@@ -1,11 +1,11 @@
-import DatabaseError from "#errors/database.mjs";
-import User from "#database/models/user/index.mjs";
-import Message from "#database/models/message.mjs";
+import DatabaseError from "##/errors/database.mjs";
+import User from "##/database/models/user/index.mjs";
+import Message from "##/database/models/message.mjs";
 import { isValidObjectId } from "mongoose";
 import authMiddleware, {
   requiredAuthMiddleware,
-} from "#middlewares/authorization.mjs";
-import paginationMiddleware from "#middlewares/pagination.mjs";
+} from "##/middlewares/authorization.mjs";
+import paginationMiddleware from "##/middlewares/pagination.mjs";
 
 import express from "express";
 const router = express.Router();
