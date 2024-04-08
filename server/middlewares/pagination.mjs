@@ -1,11 +1,11 @@
-import IntegerRange from "##/utils/range.mjs";
+import { SteppedRange } from "@_almahllawi/utils";
 let inputs = {
   page: {
-    range: new IntegerRange(1, Infinity, 1, true, false),
+    range: new SteppedRange(1, Infinity, 1, true, false),
     default: 1
   },
   limit:  {
-    range: new IntegerRange(1, 100),
+    range: new SteppedRange(1, 100),
     default: 50
   }
 }

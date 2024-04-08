@@ -1,10 +1,10 @@
 import { MongooseError } from "mongoose";
 import { isDBConnected } from "##/database/connection.mjs";
 import { CommonError, DatabaseError } from "##/errors/index.mjs";
-import { randomString } from "##/utils/random.mjs";
+import { Randomization } from "@_almahllawi/utils";
 
 export default function errorsHandler(err, req, res, next) {
-  let inLogError = { id: randomString(8) };
+  let inLogError = { id: Randomization.randomString(8) };
 
   if (err instanceof CommonError) {
     Object.assign(inLogError, err)

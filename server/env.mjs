@@ -1,4 +1,4 @@
-import IntegerRange from "./utils/range.mjs";
+import { SteppedRange } from "@_almahllawi/utils";
 import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 const { env } = process;
@@ -9,7 +9,7 @@ console.log(`Working in ${env.NODE_ENV} mode.`);
 function isNonEmptyString(input) {
   return typeof input == "string" && input.length > 0;
 }
-let portsRange = new IntegerRange(0, Math.pow(2, 16), 1, false, false);
+let portsRange = new SteppedRange(0, Math.pow(2, 16), 1, false, false);
 // let allowedOrigins =
 //   env.ALLOWED_ORIGINS?.split("n").map((origin) => origin.trim()) ?? [];
 
