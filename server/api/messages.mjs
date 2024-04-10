@@ -71,24 +71,26 @@ router
   .get(paginationMiddleware, async (req, res, next) => {
     try {
       res.status(200).json(
-        (await Promise.all([
-          Message.answeredByUser({
-            userId: req.params.targetUserId,
-            pagination: req.pagination,
-            briefUsers: !("onlyids" in req.query),
-            viewer: req.userId,
-            publicly: true,
-            pinned: true,
-          }),
-          Message.answeredByUser({
-            userId: req.params.targetUserId,
-            pagination: req.pagination,
-            briefUsers: !("onlyids" in req.query),
-            viewer: req.userId,
-            publicly: true,
-            pinned: false,
-          }),
-        ])).reduce((pinned, answered) => pinned.concat(answered))
+        (
+          await Promise.all([
+            Message.answeredByUser({
+              userId: req.params.targetUserId,
+              pagination: req.pagination,
+              briefUsers: !("onlyids" in req.query),
+              viewer: req.userId,
+              publicly: true,
+              pinned: true,
+            }),
+            Message.answeredByUser({
+              userId: req.params.targetUserId,
+              pagination: req.pagination,
+              briefUsers: !("onlyids" in req.query),
+              viewer: req.userId,
+              publicly: true,
+              pinned: false,
+            }),
+          ])
+        ).reduce((pinned, answered) => pinned.concat(answered))
       );
     } catch (err) {
       next(err);
@@ -172,7 +174,10 @@ router
         throw new DatabaseError("UPDATE_MESSAGE_REPLY", err);
       }
 
-      events.emit("MessageReplied", Object.assign(message.toObject(), { reply }));
+      events.emit(
+        "MessageReplied",
+        Object.assign(message.toObject(), { reply })
+      );
 
       return res.status(201).json(reply);
     } catch (err) {
@@ -279,7 +284,7 @@ router
       Object.assign(
         {
           messageId: req.params.messageId,
-          usersView: req.query.usersView?.toLowerCase()
+          usersView: req.query.usersView?.toLowerCase(),
         },
         req.pagination
       )
@@ -292,14 +297,17 @@ router
   })
   // Like a message
   .put(requiredAuthMiddleware, (req, res, next) => {
+    let { messageId } = req.params;
     Message.setLikeBy({
-      messageId: req.params.messageId,
+      messageId,
       userId: req.userId,
       status: true,
     })
       .then(({ found, updated }) => {
-        if (found) res.status(200).send({ like: true, updated });
-        else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
+        if (found) {
+          if (updated) events.emit("MessageLiked", messageId, req.userId);
+          res.status(200).send({ like: true, updated });
+        } else res.status(404).send({ code: "MESSAGE_NOT_FOUND" });
       })
       .catch(next);
   })
