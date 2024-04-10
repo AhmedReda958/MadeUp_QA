@@ -1,4 +1,5 @@
 import DatabaseError from "##/errors/database.mjs";
+import events from "##/events/emitter.mjs";
 import User from "##/database/models/user/index.mjs";
 import Message from "##/database/models/message.mjs";
 import { isValidObjectId } from "mongoose";
@@ -113,6 +114,8 @@ router
         throw new DatabaseError("SAVE_MESSAGE", err);
       }
 
+      events.emit("MessageSent", message.toObject());
+
       return res
         .status(201)
         .json(
@@ -147,6 +150,7 @@ router
     try {
       const message = await Message.findById(req.params.messageId, {
         receiver: 1,
+        sender: 1,
         "reply.content": 1,
       });
       if (!message) return res.status(404).json({ code: "MESSAGE_NOT_FOUND" });
@@ -167,6 +171,8 @@ router
       } catch (err) {
         throw new DatabaseError("UPDATE_MESSAGE_REPLY", err);
       }
+
+      events.emit("MessageReplied", Object.assign(message.toObject(), { reply }));
 
       return res.status(201).json(reply);
     } catch (err) {

@@ -1,4 +1,5 @@
 import "./env.mjs";
+import "./events/index.mjs";
 import app from "./app.mjs";
 import api from "./api/index.mjs";
 import errorsHandler from "##/middlewares/errors-handler.mjs";
