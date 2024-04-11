@@ -4,9 +4,9 @@ import { notify } from "##/one-signal.mjs";
 import User from "##/database/models/user/index.mjs";
 import Message from "##/database/models/message.mjs";
 
-events.on("MessageSent", async ({ sender, anonymous, content, receiver }) => {
+events.on("MessageSent", async (content, receiver, sender, anonymous) => {
   let data = { content };
-  if (!anonymous)
+  if (sender && !anonymous)
     try {
       let senderUser = await User.findById(sender, { username: 1 });
       if (senderUser) data.sender = senderUser.username;
@@ -23,8 +23,8 @@ events.on("MessageSent", async ({ sender, anonymous, content, receiver }) => {
 
 events.on(
   "MessageReplied",
-  async ({ _id, receiver: replier, reply, sender }) => {
-    if (!sender) return;
+  async (messageId, reply, replier, repliedTo) => {
+    if (!repliedTo) return;
 
     let data = { reply: reply.content };
     try {
@@ -36,8 +36,8 @@ events.on(
 
     notify({
       template_id: env.ONESIGNAL_TEMPLATE_MESSAGE_REPLIED,
-      include_external_user_ids: [sender.toString()],
-      url: "https://madeup.vercel.app/message/" + _id, // TODO: configure
+      include_external_user_ids: [repliedTo.toString()],
+      url: "https://madeup.vercel.app/message/" + messageId, // TODO: configure
       custom_data: data,
     });
   }

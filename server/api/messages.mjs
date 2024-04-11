@@ -116,7 +116,13 @@ router
         throw new DatabaseError("SAVE_MESSAGE", err);
       }
 
-      events.emit("MessageSent", message.toObject());
+      events.emit(
+        "MessageSent",
+        message.content,
+        message.receiver,
+        message.sender,
+        message.anonymous
+      );
 
       return res
         .status(201)
@@ -150,7 +156,8 @@ router
   // Reply to a message
   .post(requiredAuthMiddleware, async (req, res, next) => {
     try {
-      const message = await Message.findById(req.params.messageId, {
+      const { messageId } = req.params;
+      const message = await Message.findById(messageId, {
         receiver: 1,
         sender: 1,
         "reply.content": 1,
@@ -162,6 +169,9 @@ router
         return res.status(409).json({ code: "ALREADY_REPLIED" });
 
       let { privately, content } = req.body;
+      if (privately && !message.sender)
+        return res.status(406).json({ code: "DENIED_PRIVATE_REPLAY" });
+
       const reply = { content };
       if (!(typeof content == "string" && content.length > 0))
         return res.status(400).json({ code: "INVALID_CONTENT" });
@@ -176,7 +186,10 @@ router
 
       events.emit(
         "MessageReplied",
-        Object.assign(message.toObject(), { reply })
+        messageId,
+        content,
+        message.receiver,
+        message.sender
       );
 
       return res.status(201).json(reply);
